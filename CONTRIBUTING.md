@@ -182,18 +182,20 @@ Não atualize todas as dependências incidentalmente durante outra tarefa.
 
 Escolha verificações de acordo com a mudança:
 
-| Tipo de alteração | Verificação mínima |
-| --- | --- |
-| documentação | revisão do diff e formatação |
-| componente visual | lint, teste de componente e revisão responsiva |
-| lógica de domínio | lint, testes unitários e build |
-| fluxo de formulário | lint, unitários, integração, E2E e build |
-| dependência ou configuração | lint, testes afetados e build |
-| schema ou migration | revisão do SQL, teste isolado, suíte afetada e build |
+| Tipo de alteração           | Verificação mínima                                   |
+| --------------------------- | ---------------------------------------------------- |
+| documentação                | `format:check` e revisão do diff                     |
+| componente visual           | formatação, lint, teste e revisão responsiva         |
+| lógica de domínio           | formatação, typecheck, lint, testes e build          |
+| fluxo de formulário         | lint, unitários, integração, E2E e build             |
+| dependência ou configuração | lint, testes afetados e build                        |
+| schema ou migration         | revisão do SQL, teste isolado, suíte afetada e build |
 
 Antes de integrar uma alteração funcional, a referência completa é:
 
 ```powershell
+pnpm format:check
+pnpm typecheck
 pnpm lint
 pnpm test
 pnpm test:e2e

@@ -16,7 +16,8 @@ Já estão configurados:
 - Vitest e React Testing Library;
 - Playwright com Chromium;
 - fundação do Drizzle ORM para PostgreSQL;
-- ESLint e pnpm.
+- ESLint, Prettier e pnpm;
+- workflow local de CI, aguardando a configuração do repositório remoto.
 
 ## Documentação
 
@@ -73,6 +74,8 @@ A aplicação ficará disponível em [http://localhost:3000](http://localhost:30
 ## Verificações
 
 ```bash
+pnpm format:check
+pnpm typecheck
 pnpm lint
 pnpm test
 pnpm test:e2e

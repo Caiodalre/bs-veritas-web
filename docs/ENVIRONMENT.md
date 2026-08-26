@@ -45,15 +45,21 @@ Usado exclusivamente pelo domínio público aprovado.
 
 A fundação foi criada e testada com:
 
-| Ferramenta | Versão validada |
-| --- | --- |
-| Windows | Windows 11 Pro for Workstations, 64 bits |
-| Node.js | `24.12.0` |
-| pnpm | `11.3.0` |
-| Corepack | `0.34.5` |
-| Git | `2.54.0.windows.1` |
+| Ferramenta | Versão validada                          |
+| ---------- | ---------------------------------------- |
+| Windows    | Windows 11 Pro for Workstations, 64 bits |
+| Node.js    | `24.12.0`                                |
+| pnpm       | `11.3.0`                                 |
+| Corepack   | `0.34.5`                                 |
+| Git        | `2.54.0.windows.1`                       |
 
 O gerenciador declarado em `package.json` é `pnpm@11.3.0`. Outro gerenciador não deverá ser usado para instalar dependências neste repositório.
+
+### Compatibilidade conhecida do ESLint
+
+O ESLint está fixado em `9.39.5`. A versão `10.9.1` foi avaliada, mas os plugins `eslint-plugin-import`, `eslint-plugin-jsx-a11y` e `eslint-plugin-react` trazidos pela configuração atual do Next.js ainda declaram compatibilidade somente com ESLint 9.
+
+O comando `pnpm peers check` passa com a versão fixada. A atualização para ESLint 10 deverá ser reavaliada quando o conjunto oficial de plugins utilizado pelo Next.js declarar suporte compatível.
 
 ## Preparação local
 
@@ -96,16 +102,19 @@ Se a porta estiver ocupada, o Next.js poderá selecionar outra. O endereço exib
 
 ## Comandos disponíveis
 
-| Comando | Finalidade |
-| --- | --- |
-| `pnpm dev` | iniciar o servidor de desenvolvimento |
-| `pnpm build` | validar e gerar o build de produção |
-| `pnpm start` | executar localmente um build já gerado |
-| `pnpm lint` | executar o ESLint |
-| `pnpm test` | executar os testes Vitest uma vez |
-| `pnpm test:watch` | executar Vitest em modo de observação |
-| `pnpm test:e2e` | executar os testes Playwright |
-| `pnpm db:generate` | gerar migrations Drizzle a partir de um schema válido |
+| Comando             | Finalidade                                            |
+| ------------------- | ----------------------------------------------------- |
+| `pnpm dev`          | iniciar o servidor de desenvolvimento                 |
+| `pnpm build`        | validar e gerar o build de produção                   |
+| `pnpm start`        | executar localmente um build já gerado                |
+| `pnpm typecheck`    | validar os tipos TypeScript sem emitir arquivos       |
+| `pnpm lint`         | executar o ESLint                                     |
+| `pnpm format`       | formatar os arquivos cobertos pelo Prettier           |
+| `pnpm format:check` | verificar a formatação sem alterar arquivos           |
+| `pnpm test`         | executar os testes Vitest uma vez                     |
+| `pnpm test:watch`   | executar Vitest em modo de observação                 |
+| `pnpm test:e2e`     | executar os testes Playwright                         |
+| `pnpm db:generate`  | gerar migrations Drizzle a partir de um schema válido |
 
 O comando `db:generate` não deve ser executado apenas para testar a instalação. Ele será usado quando houver uma alteração de schema aprovada.
 
@@ -124,6 +133,8 @@ O download do navegador não deve ser versionado no repositório.
 Antes de concluir uma alteração de código:
 
 ```powershell
+pnpm format:check
+pnpm typecheck
 pnpm lint
 pnpm test
 pnpm test:e2e
@@ -193,14 +204,14 @@ Quando essa etapa for aprovada:
 
 ## Serviços externos planejados
 
-| Serviço | Papel | Estado atual |
-| --- | --- | --- |
-| Vercel | aplicação, preview e produção | não configurado |
-| Cloudflare | DNS, segurança e Turnstile | não configurado |
-| PostgreSQL/Supabase | persistência de leads | não conectado |
-| Provedor de e-mail | notificações e e-mail corporativo | não definido |
-| GitHub | repositório e CI | remoto não configurado |
-| Analytics | métricas sem dados pessoais | não configurado |
+| Serviço             | Papel                             | Estado atual           |
+| ------------------- | --------------------------------- | ---------------------- |
+| Vercel              | aplicação, preview e produção     | não configurado        |
+| Cloudflare          | DNS, segurança e Turnstile        | não configurado        |
+| PostgreSQL/Supabase | persistência de leads             | não conectado          |
+| Provedor de e-mail  | notificações e e-mail corporativo | não definido           |
+| GitHub              | repositório e CI                  | remoto não configurado |
+| Analytics           | métricas sem dados pessoais       | não configurado        |
 
 Nenhum serviço deverá ser tratado como ativo antes de sua configuração e validação explícitas.
 

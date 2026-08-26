@@ -39,12 +39,12 @@ O e-mail corporativo utilizará o mesmo domínio, mas permanecerá independente 
 
 Configuração planejada:
 
-| Endereço | Comportamento esperado |
-| --- | --- |
-| `https://bsveritas.com.br` | domínio canônico de produção |
+| Endereço                       | Comportamento esperado                              |
+| ------------------------------ | --------------------------------------------------- |
+| `https://bsveritas.com.br`     | domínio canônico de produção                        |
 | `https://www.bsveritas.com.br` | redirecionamento permanente para o domínio canônico |
-| HTTP | redirecionamento para HTTPS |
-| URLs de preview | homologação, sem indexação |
+| HTTP                           | redirecionamento para HTTPS                         |
+| URLs de preview                | homologação, sem indexação                          |
 
 Os registros DNS exatos somente serão definidos depois que os projetos Vercel e Cloudflare existirem. Nenhum IP, CNAME ou token deverá ser inventado antecipadamente.
 
@@ -112,6 +112,8 @@ Na raiz do projeto:
 
 ```powershell
 pnpm install --frozen-lockfile
+pnpm format:check
+pnpm typecheck
 pnpm lint
 pnpm test
 pnpm test:e2e
@@ -294,18 +296,18 @@ O formato definitivo será estabelecido antes do primeiro lançamento.
 
 ## Estado atual da implantação
 
-| Componente | Estado |
-| --- | --- |
-| build local | configurado e validado |
-| testes locais | configurados e validados |
-| repositório Git local | configurado |
-| GitHub remoto | não configurado |
-| CI | não configurada |
-| Vercel | não configurada |
-| Cloudflare | não configurada |
-| domínio no projeto | não conectado |
-| PostgreSQL remoto | não conectado |
-| notificações | não configuradas |
-| produção | inexistente |
+| Componente            | Estado                              |
+| --------------------- | ----------------------------------- |
+| build local           | configurado e validado              |
+| testes locais         | configurados e validados            |
+| repositório Git local | configurado                         |
+| GitHub remoto         | não configurado                     |
+| CI                    | workflow versionado; remoto ausente |
+| Vercel                | não configurada                     |
+| Cloudflare            | não configurada                     |
+| domínio no projeto    | não conectado                       |
+| PostgreSQL remoto     | não conectado                       |
+| notificações          | não configuradas                    |
+| produção              | inexistente                         |
 
 Qualquer mudança desse estado deverá ser feita como uma etapa separada, aprovada e validada.

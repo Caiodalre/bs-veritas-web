@@ -14,6 +14,9 @@ O projeto ainda não possui uma versão pública nem um deploy de produção. At
 - definição dos ambientes em `docs/ENVIRONMENT.md`;
 - procedimento planejado de preview, produção e rollback em `docs/DEPLOYMENT.md`;
 - padrões de contribuição e revisão em `CONTRIBUTING.md`;
+- Prettier com configuração e comandos reproduzíveis;
+- comando independente de typecheck;
+- workflow de CI com formatação, tipos, lint, testes, build e Playwright;
 - este changelog.
 
 ### Alterado
@@ -22,7 +25,8 @@ O projeto ainda não possui uma versão pública nem um deploy de produção. At
 
 ### Observações
 
-- mudanças desta seção estão na branch `codex/documentation` até serem revisadas e integradas;
+- o projeto permanece sem lançamento público, mesmo após integrações locais na `main`;
+- ESLint `10.9.1` foi avaliado e rejeitado porque os plugins atuais do Next.js ainda exigem ESLint 9; a versão compatível `9.39.5` permanece fixada;
 - nenhuma integração externa, credencial ou configuração de produção foi adicionada;
 - nenhuma versão pública foi publicada.
 

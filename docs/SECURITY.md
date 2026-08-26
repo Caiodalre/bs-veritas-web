@@ -40,7 +40,9 @@ Já existem no repositório:
 
 - TypeScript em modo estrito;
 - ESLint;
+- Prettier com verificação reproduzível;
 - testes unitários e E2E básicos;
+- workflow de CI versionado, ainda sem execução remota;
 - fundação do Drizzle ORM sem credenciais reais;
 - `.gitignore` gerado para evitar o versionamento normal de arquivos locais de ambiente;
 - regras de desenvolvimento em `AGENTS.md`.
