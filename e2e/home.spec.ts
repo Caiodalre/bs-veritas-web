@@ -40,6 +40,26 @@ test("exibe a pagina institucional sobre", async ({ page }) => {
   await expect(page.getByRole("link", { name: "Ver seguros" })).toHaveAttribute("href", "/seguros");
 });
 
+test("publica sitemap com as rotas atuais", async ({ request }) => {
+  const response = await request.get("/sitemap.xml");
+  const body = await response.text();
+
+  expect(response.ok()).toBe(true);
+  expect(body).toContain("<loc>https://bsveritas.com.br/</loc>");
+  expect(body).toContain("<loc>https://bsveritas.com.br/sobre</loc>");
+  expect(body).toContain("<loc>https://bsveritas.com.br/seguros/auto</loc>");
+});
+
+test("responde com pagina 404 personalizada", async ({ page }) => {
+  const response = await page.goto("/pagina-inexistente");
+
+  expect(response?.status()).toBe(404);
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Esta página não foi encontrada" }),
+  ).toBeVisible();
+  await expect(page.getByRole("link", { name: "Voltar ao início" })).toHaveAttribute("href", "/");
+});
+
 test.describe("layout mobile", () => {
   test.use({ viewport: { width: 390, height: 844 } });
 

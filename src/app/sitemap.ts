@@ -1,0 +1,25 @@
+import type { MetadataRoute } from "next";
+import { siteConfig } from "@/config/site";
+import { insuranceCatalog } from "@/features/insurance/catalog";
+
+const publicRoutes = [
+  { path: "/", changeFrequency: "monthly", priority: 1 },
+  { path: "/sobre", changeFrequency: "monthly", priority: 0.8 },
+  { path: "/seguros", changeFrequency: "monthly", priority: 0.9 },
+] as const;
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  const routes: MetadataRoute.Sitemap = publicRoutes.map((route) => ({
+    url: new URL(route.path, siteConfig.url).toString(),
+    changeFrequency: route.changeFrequency,
+    priority: route.priority,
+  }));
+
+  const insuranceRoutes: MetadataRoute.Sitemap = insuranceCatalog.map((insurance) => ({
+    url: new URL("/seguros/" + insurance.slug, siteConfig.url).toString(),
+    changeFrequency: "monthly",
+    priority: 0.8,
+  }));
+
+  return [...routes, ...insuranceRoutes];
+}

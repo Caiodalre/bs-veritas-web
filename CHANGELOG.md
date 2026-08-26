@@ -13,6 +13,7 @@ O projeto ainda não possui uma versão pública nem um deploy de produção. At
 - componentes reutilizáveis de navegação, layout, marca textual e botões;
 - catálogo público de seguros e páginas estáticas para cada modalidade;
 - navegação e metadados específicos para as páginas de seguros;
+- sitemap das rotas públicas e página 404 personalizada;
 - testes de interface e de jornada para a experiência pública;
 - documentação inicial do propósito, escopo, stack e execução no `README.md`;
 - arquitetura e limites do V1 em `docs/ARCHITECTURE.md`;

@@ -20,7 +20,8 @@ Já estão configurados:
 - workflow local de CI, aguardando a configuração do repositório remoto;
 - página inicial institucional responsiva;
 - página Sobre com propósito, princípios e forma de atendimento;
-- catálogo de seguros e páginas estáticas das modalidades atendidas.
+- catálogo de seguros e páginas estáticas das modalidades atendidas;
+- sitemap gerado a partir das rotas públicas e página 404 personalizada.
 
 ## Documentação
 
