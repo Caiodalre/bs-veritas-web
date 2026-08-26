@@ -14,6 +14,19 @@ test("exibe a pagina inicial", async ({ page }) => {
   ).toBeVisible();
 });
 
+test("navega pelo catalogo de seguros", async ({ page }) => {
+  await page.goto("/seguros");
+
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Uma escolha orientada pela sua necessidade" }),
+  ).toBeVisible();
+
+  await page.getByRole("link", { name: "Conhecer Seguro Auto" }).click();
+  await expect(page).toHaveURL(/\/seguros\/auto$/);
+  await expect(page.getByRole("heading", { level: 1, name: "Seguro Auto" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Informações importantes" })).toBeVisible();
+});
+
 test.describe("layout mobile", () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
@@ -31,5 +44,15 @@ test.describe("layout mobile", () => {
     );
 
     expect(hasHorizontalOverflow).toBe(false);
+
+    for (const path of ["/seguros", "/seguros/auto"]) {
+      await page.goto(path);
+
+      const routeHasHorizontalOverflow = await page.evaluate(
+        () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
+      );
+
+      expect(routeHasHorizontalOverflow).toBe(false);
+    }
   });
 });

@@ -1,33 +1,11 @@
-import type { LucideIcon } from "lucide-react";
-import {
-  ArrowRight,
-  BadgeCheck,
-  Building2,
-  Car,
-  CheckCircle2,
-  HeartPulse,
-  Headphones,
-  House,
-  Plane,
-  Scale,
-  ShieldCheck,
-  UsersRound,
-} from "lucide-react";
+import { ArrowRight, BadgeCheck, CheckCircle2, Headphones, Scale, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { buttonStyles } from "@/components/ui/button";
-import { insuranceSolutions, type InsuranceIcon } from "@/config/site";
-
-const insuranceIcons: Record<InsuranceIcon, LucideIcon> = {
-  building: Building2,
-  car: Car,
-  heart: HeartPulse,
-  house: House,
-  plane: Plane,
-  shield: ShieldCheck,
-};
+import { insuranceCatalog } from "@/features/insurance/catalog";
+import { InsuranceIcon } from "@/features/insurance/components/insurance-icon";
 
 const trustItems = [
   { label: "Atendimento personalizado", icon: UsersRound },
@@ -171,21 +149,29 @@ export default function Home() {
             </div>
 
             <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {insuranceSolutions.map((solution) => {
-                const Icon = insuranceIcons[solution.icon];
-
+              {insuranceCatalog.map((solution) => {
                 return (
                   <article
-                    className="group rounded-2xl border border-border bg-white p-7 shadow-[0_14px_45px_rgba(7,24,39,0.055)] transition duration-200 hover:-translate-y-1 hover:border-aqua-400"
-                    key={solution.name}
+                    className="group flex flex-col rounded-2xl border border-border bg-white p-7 shadow-[0_14px_45px_rgba(7,24,39,0.055)] transition duration-200 hover:-translate-y-1 hover:border-aqua-400"
+                    key={solution.slug}
                   >
                     <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-aqua-100 text-aqua-700 transition-colors group-hover:bg-aqua-300 group-hover:text-navy-950">
-                      <Icon aria-hidden="true" size={25} strokeWidth={1.7} />
+                      <InsuranceIcon name={solution.icon} size={25} />
                     </div>
                     <h3 className="mt-6 font-serif text-xl font-bold text-navy-950">
                       {solution.name}
                     </h3>
-                    <p className="mt-3 text-sm leading-7 text-slate-600">{solution.description}</p>
+                    <p className="mt-3 flex-1 text-sm leading-7 text-slate-600">
+                      {solution.description}
+                    </p>
+                    <Link
+                      aria-label={"Conhecer " + solution.name}
+                      className="mt-6 inline-flex items-center gap-2 font-semibold text-aqua-700 hover:text-navy-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-500"
+                      href={"/seguros/" + solution.slug}
+                    >
+                      Conhecer detalhes
+                      <ArrowRight aria-hidden="true" size={17} />
+                    </Link>
                   </article>
                 );
               })}

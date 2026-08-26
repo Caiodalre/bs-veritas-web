@@ -22,7 +22,7 @@ export function SiteHeader() {
           {mainNavigation.map((item) => (
             <Link
               className="text-sm font-medium text-slate-200 transition-colors hover:text-aqua-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-300"
-              href={`/${item.href}`}
+              href={item.href}
               key={item.href}
             >
               {item.label}
@@ -49,7 +49,7 @@ export function SiteHeader() {
             {mainNavigation.map((item) => (
               <Link
                 className="block rounded-lg px-4 py-3 text-sm font-medium text-slate-100 hover:bg-white/8 hover:text-aqua-200"
-                href={`/${item.href}`}
+                href={item.href}
                 key={item.href}
               >
                 {item.label}

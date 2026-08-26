@@ -6,7 +6,7 @@ O projeto tem como objetivos transmitir confiança, apresentar a corretora e seu
 
 ## Estado atual
 
-O projeto está na fase de fundação técnica. A aplicação ainda não possui integrações de produção, credenciais, dados reais ou conteúdo institucional definitivo.
+O projeto está na construção da experiência pública. A aplicação ainda não possui integrações de produção, credenciais ou coleta de dados.
 
 Já estão configurados:
 
@@ -17,7 +17,9 @@ Já estão configurados:
 - Playwright com Chromium;
 - fundação do Drizzle ORM para PostgreSQL;
 - ESLint, Prettier e pnpm;
-- workflow local de CI, aguardando a configuração do repositório remoto.
+- workflow local de CI, aguardando a configuração do repositório remoto;
+- página inicial institucional responsiva;
+- catálogo de seguros e páginas estáticas das modalidades atendidas.
 
 ## Documentação
 
