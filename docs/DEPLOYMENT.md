@@ -1,0 +1,311 @@
+# Implantação do B&S Veritas Web
+
+Este documento descreve o processo planejado de preview, publicação, validação e rollback do site da **B&S VERITAS CORRETORA DE SEGUROS LTDA**.
+
+Nenhum deploy, domínio, projeto Vercel, zona Cloudflare, banco remoto ou repositório GitHub está configurado na etapa atual.
+
+## Objetivos
+
+- publicar somente revisões identificáveis e verificadas;
+- manter preview e produção isolados;
+- impedir o uso de dados reais em homologação;
+- permitir rollback seguro;
+- validar aplicação, domínio e integrações após cada publicação;
+- evitar alterações manuais em arquivos de produção.
+
+## Arquitetura planejada de publicação
+
+```text
+Registro.br
+   |
+   v
+Cloudflare
+DNS, DNSSEC e proteção
+   |
+   v
+Vercel
+Next.js
+   |
+   +--> PostgreSQL
+   |
+   +--> Turnstile
+   |
+   `--> serviço de notificação
+```
+
+O e-mail corporativo utilizará o mesmo domínio, mas permanecerá independente do deploy da aplicação.
+
+## Domínios
+
+Configuração planejada:
+
+| Endereço | Comportamento esperado |
+| --- | --- |
+| `https://bsveritas.com.br` | domínio canônico de produção |
+| `https://www.bsveritas.com.br` | redirecionamento permanente para o domínio canônico |
+| HTTP | redirecionamento para HTTPS |
+| URLs de preview | homologação, sem indexação |
+
+Os registros DNS exatos somente serão definidos depois que os projetos Vercel e Cloudflare existirem. Nenhum IP, CNAME ou token deverá ser inventado antecipadamente.
+
+## Ambientes
+
+### Local
+
+Desenvolvimento e testes na máquina do desenvolvedor. Não possui acesso a dados ou credenciais de produção.
+
+### Preview
+
+Criado a partir de uma branch ou revisão candidata.
+
+- configuração separada;
+- dados exclusivamente fictícios;
+- `noindex` e bloqueio de indexação;
+- integrações externas em modo de teste ou desativadas;
+- URL utilizada para revisão visual, funcional e mobile.
+
+### Produção
+
+Criado somente a partir da revisão aprovada na `main`.
+
+- domínio oficial;
+- credenciais exclusivas;
+- banco de produção;
+- logs e monitoramento restritos;
+- estratégia de rollback disponível.
+
+## Fluxo de entrega
+
+```text
+branch de trabalho
+   -> verificações locais
+      -> revisão do diff
+         -> preview
+            -> homologação
+               -> integração na main
+                  -> produção
+                     -> smoke tests
+```
+
+Uma passagem entre etapas depende da validação da etapa anterior. Um preview bem-sucedido não autoriza automaticamente a produção.
+
+## Pré-requisitos para configurar as plataformas
+
+Antes de conectar serviços externos:
+
+- [ ] domínio sob titularidade e controle da empresa;
+- [ ] repositório remoto corporativo definido;
+- [ ] responsáveis administrativos identificados;
+- [ ] MFA habilitada nas contas administrativas;
+- [ ] projeto Vercel criado na conta correta;
+- [ ] zona Cloudflare criada na conta correta;
+- [ ] ambientes e responsáveis pelo PostgreSQL definidos;
+- [ ] política de segredos aprovada;
+- [ ] contatos e conteúdo mínimo de produção confirmados;
+- [ ] procedimento de recuperação registrado.
+
+Nenhuma credencial deve ser compartilhada por mensagem, issue ou arquivo versionado.
+
+## Verificações antes de um preview
+
+Na raiz do projeto:
+
+```powershell
+pnpm install --frozen-lockfile
+pnpm lint
+pnpm test
+pnpm test:e2e
+pnpm build
+```
+
+Também devem ser revisados:
+
+- diff completo da branch;
+- arquivos novos e removidos;
+- mudanças no lockfile;
+- dependências e scripts de instalação;
+- uso de variáveis de ambiente;
+- ausência de segredos e dados reais;
+- impacto em schema e migrations;
+- comportamento em desktop e mobile.
+
+## Configuração planejada da Vercel
+
+Quando aprovada, a configuração deverá:
+
+- importar o repositório corporativo correto;
+- usar pnpm e o lockfile versionado;
+- distinguir variáveis de preview e produção;
+- limitar quem pode alterar configurações e promover deploys;
+- associar o domínio somente depois da validação por URL temporária;
+- manter registro da revisão Git correspondente a cada deploy;
+- preservar deploy anterior para rollback.
+
+Não serão adicionadas variáveis sem documentação de nome, finalidade, ambiente e responsável.
+
+## Configuração planejada da Cloudflare
+
+Quando aprovada, a configuração deverá:
+
+- administrar o DNS autoritativo do domínio;
+- preservar os registros necessários ao provedor de e-mail;
+- habilitar DNSSEC após validação da cadeia completa;
+- encaminhar o site para a configuração indicada pela Vercel;
+- forçar HTTPS sem criar loop de redirecionamento;
+- configurar Turnstile somente quando os formulários existirem;
+- revisar cache e regras de segurança antes da ativação.
+
+Alterações DNS serão feitas uma por vez, com registro do valor anterior e teste após cada mudança.
+
+## Variáveis de ambiente
+
+Cada variável futura deverá possuir:
+
+- nome;
+- finalidade;
+- classificação pública, privada ou segredo;
+- ambientes em que existe;
+- serviço responsável;
+- procedimento de rotação quando aplicável.
+
+Regras:
+
+- preview e produção não compartilharão segredos por conveniência;
+- segredos nunca usarão o prefixo `NEXT_PUBLIC_`;
+- valores reais não serão copiados para `.env.example`;
+- uma variável removida do código também deverá ser removida da plataforma;
+- a aplicação deverá falhar cedo quando uma variável obrigatória estiver ausente.
+
+## Banco e migrations
+
+Quando o banco entrar no fluxo de publicação:
+
+1. gerar a migration a partir de uma alteração aprovada do schema;
+2. revisar o SQL gerado;
+3. testar a migration em ambiente não produtivo;
+4. verificar impacto, duração e possibilidade de reversão;
+5. criar ou confirmar backup recuperável;
+6. aplicar a migration pelo processo definido;
+7. validar aplicação e dados após a mudança.
+
+O deploy da aplicação e a migration deverão ter uma ordem explícita e compatível. Mudanças destrutivas de schema exigirão plano específico e não serão aplicadas automaticamente.
+
+## Homologação do preview
+
+O preview candidato deverá validar pelo menos:
+
+- carregamento da Home;
+- navegação principal e mobile;
+- páginas de seguros alteradas;
+- links internos e externos;
+- formulário em estados inicial, inválido, envio e falha;
+- WhatsApp sem dados pessoais na URL;
+- layout em larguras móveis e desktop;
+- foco por teclado e labels acessíveis;
+- metadata, canonical e bloqueio de indexação do preview;
+- ausência de erros no console e de requisições inesperadas;
+- respostas sem detalhes técnicos ou dados pessoais.
+
+Somente funcionalidades que já existirem precisam ser marcadas como verificadas. Recursos ainda não implementados permanecem pendentes.
+
+## Publicação em produção
+
+Antes da promoção:
+
+- [ ] revisão candidata identificada por commit;
+- [ ] verificações automatizadas aprovadas;
+- [ ] homologação registrada;
+- [ ] schema e migrations compatíveis;
+- [ ] variáveis de produção confirmadas sem expor valores;
+- [ ] integrações externas em modo de produção correto;
+- [ ] domínio e certificados válidos;
+- [ ] backup ou ponto de retorno disponível;
+- [ ] responsável pela publicação definido;
+- [ ] janela de acompanhamento após o deploy disponível.
+
+A publicação deverá utilizar a revisão aprovada, sem alterações locais não versionadas.
+
+## Smoke tests após publicação
+
+Imediatamente após o deploy:
+
+1. abrir `https://bsveritas.com.br`;
+2. confirmar HTTPS e o domínio canônico;
+3. testar o redirecionamento de `www` e HTTP;
+4. abrir as páginas públicas principais;
+5. validar navegação desktop e mobile;
+6. testar um lead fictício controlado, se o formulário estiver ativo;
+7. confirmar persistência e notificação sem expor os dados em logs;
+8. verificar erros de aplicação e serviços externos;
+9. confirmar `robots.txt`, sitemap e regras de indexação;
+10. registrar o resultado e a revisão publicada.
+
+O lead de smoke test deverá ser claramente identificado como fictício e removido conforme o procedimento de teste aprovado.
+
+## Rollback
+
+O rollback será considerado quando houver:
+
+- indisponibilidade relevante;
+- falha de navegação ou conversão principal;
+- exposição de dados ou segredo;
+- erro de integração que gere perda ou duplicação de leads;
+- incompatibilidade entre aplicação e banco;
+- regressão sem correção segura imediata.
+
+Procedimento geral:
+
+1. interromper novas mudanças;
+2. identificar a última revisão estável;
+3. avaliar se houve migration incompatível;
+4. restaurar o deploy anterior pela plataforma;
+5. tratar o banco separadamente conforme o plano da migration;
+6. executar smoke tests;
+7. registrar causa, impacto e decisão;
+8. corrigir em nova branch, sem editar produção manualmente.
+
+Rollback da aplicação não implica rollback automático do banco. Essa compatibilidade deve ser planejada antes de cada alteração de schema.
+
+## Falha durante o deploy
+
+Se build, testes ou publicação falharem:
+
+- não promover o artefato incompleto;
+- preservar a saída do erro sem divulgar segredos;
+- identificar o primeiro erro relevante;
+- corrigir a causa em código ou configuração versionada;
+- repetir as verificações desde a etapa afetada;
+- não desativar controles apenas para obter um deploy verde.
+
+## Registro de releases
+
+Cada publicação de produção deverá registrar:
+
+- data e hora;
+- commit implantado;
+- responsável;
+- resumo das mudanças;
+- migrations aplicadas;
+- resultado dos smoke tests;
+- problemas conhecidos;
+- rollback, quando ocorrido.
+
+O formato definitivo será estabelecido antes do primeiro lançamento.
+
+## Estado atual da implantação
+
+| Componente | Estado |
+| --- | --- |
+| build local | configurado e validado |
+| testes locais | configurados e validados |
+| repositório Git local | configurado |
+| GitHub remoto | não configurado |
+| CI | não configurada |
+| Vercel | não configurada |
+| Cloudflare | não configurada |
+| domínio no projeto | não conectado |
+| PostgreSQL remoto | não conectado |
+| notificações | não configuradas |
+| produção | inexistente |
+
+Qualquer mudança desse estado deverá ser feita como uma etapa separada, aprovada e validada.
