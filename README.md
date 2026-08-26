@@ -19,6 +19,7 @@ Já estão configurados:
 - ESLint, Prettier e pnpm;
 - workflow local de CI, aguardando a configuração do repositório remoto;
 - página inicial institucional responsiva;
+- página Sobre com propósito, princípios e forma de atendimento;
 - catálogo de seguros e páginas estáticas das modalidades atendidas.
 
 ## Documentação

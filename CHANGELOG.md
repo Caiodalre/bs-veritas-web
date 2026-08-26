@@ -9,6 +9,7 @@ O projeto ainda não possui uma versão pública nem um deploy de produção. At
 ### Adicionado
 
 - página inicial institucional responsiva com identidade visual própria;
+- página institucional Sobre com propósito e princípios de atendimento;
 - componentes reutilizáveis de navegação, layout, marca textual e botões;
 - catálogo público de seguros e páginas estáticas para cada modalidade;
 - navegação e metadados específicos para as páginas de seguros;

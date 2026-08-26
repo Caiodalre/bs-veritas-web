@@ -231,6 +231,13 @@ export default function Home() {
                 Cada atendimento parte da realidade do cliente, com explicações claras e
                 acompanhamento nos momentos em que a proteção precisa fazer diferença.
               </p>
+              <Link
+                className="inline-flex items-center gap-2 font-semibold text-aqua-700 hover:text-navy-900 sm:col-span-2"
+                href="/sobre"
+              >
+                Conheça nossa forma de trabalhar
+                <ArrowRight aria-hidden="true" size={17} />
+              </Link>
             </div>
           </Container>
         </section>

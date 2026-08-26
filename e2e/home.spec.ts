@@ -27,6 +27,19 @@ test("navega pelo catalogo de seguros", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Informações importantes" })).toBeVisible();
 });
 
+test("exibe a pagina institucional sobre", async ({ page }) => {
+  await page.goto("/sobre");
+
+  await expect(
+    page.getByRole("heading", {
+      level: 1,
+      name: "Confiança se constrói com clareza e presença",
+    }),
+  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "O que orienta cada atendimento" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Ver seguros" })).toHaveAttribute("href", "/seguros");
+});
+
 test.describe("layout mobile", () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
@@ -45,7 +58,7 @@ test.describe("layout mobile", () => {
 
     expect(hasHorizontalOverflow).toBe(false);
 
-    for (const path of ["/seguros", "/seguros/auto"]) {
+    for (const path of ["/sobre", "/seguros", "/seguros/auto"]) {
       await page.goto(path);
 
       const routeHasHorizontalOverflow = await page.evaluate(

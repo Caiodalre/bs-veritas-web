@@ -10,7 +10,7 @@ export const siteConfig = {
 
 export const mainNavigation = [
   { label: "Início", href: "/#inicio" },
-  { label: "Sobre", href: "/#sobre" },
+  { label: "Sobre", href: "/sobre" },
   { label: "Seguros", href: "/seguros" },
   { label: "Diferenciais", href: "/#diferenciais" },
   { label: "Seguradoras", href: "/#seguradoras" },
