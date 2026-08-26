@@ -1,26 +1,78 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  --background: #f7faf9;
+  --foreground: #13263a;
+  --surface: #ffffff;
+  --muted: #5d6e7c;
+  --border: #d8e2e3;
+  --navy-950: #071827;
+  --navy-900: #0b263e;
+  --navy-800: #113653;
+  --navy-700: #1a4a6b;
+  --aqua-700: #0f766e;
+  --aqua-600: #0d9488;
+  --aqua-500: #26c6b7;
+  --aqua-400: #48d7c8;
+  --aqua-300: #76e6da;
+  --aqua-200: #a8f0e8;
+  --aqua-100: #dff9f5;
+  --aqua-50: #effcf9;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-surface: var(--surface);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-navy-950: var(--navy-950);
+  --color-navy-900: var(--navy-900);
+  --color-navy-800: var(--navy-800);
+  --color-navy-700: var(--navy-700);
+  --color-aqua-700: var(--aqua-700);
+  --color-aqua-600: var(--aqua-600);
+  --color-aqua-500: var(--aqua-500);
+  --color-aqua-400: var(--aqua-400);
+  --color-aqua-300: var(--aqua-300);
+  --color-aqua-200: var(--aqua-200);
+  --color-aqua-100: var(--aqua-100);
+  --color-aqua-50: var(--aqua-50);
+  --font-sans: var(--font-manrope);
+  --font-serif: var(--font-libre-baskerville);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: var(--border);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-manrope), Arial, Helvetica, sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--aqua-300);
+  color: var(--navy-950);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
