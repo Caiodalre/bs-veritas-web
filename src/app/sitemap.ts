@@ -2,6 +2,8 @@ import type { MetadataRoute } from "next";
 import { siteConfig } from "@/config/site";
 import { insuranceCatalog } from "@/features/insurance/catalog";
 
+export const dynamic = "force-static";
+
 const publicRoutes = [
   { path: "/", changeFrequency: "monthly", priority: 1 },
   { path: "/sobre", changeFrequency: "monthly", priority: 0.8 },
