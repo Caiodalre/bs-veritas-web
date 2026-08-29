@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { insuranceCatalog } from "../src/features/insurance/catalog";
 
 test("exibe a pagina inicial", async ({ page }) => {
   await page.goto("/");
@@ -27,6 +28,16 @@ test("navega pelo catalogo de seguros", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Informações importantes" })).toBeVisible();
 });
 
+for (const insurance of insuranceCatalog) {
+  test(`publica a pagina de ${insurance.name}`, async ({ page }) => {
+    const response = await page.goto(`/seguros/${insurance.slug}`);
+
+    expect(response?.ok()).toBe(true);
+    await expect(page.getByRole("heading", { level: 1, name: insurance.name })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Informações importantes" })).toBeVisible();
+  });
+}
+
 test("exibe a pagina institucional sobre", async ({ page }) => {
   await page.goto("/sobre");
 
@@ -47,7 +58,10 @@ test("publica sitemap com as rotas atuais", async ({ request }) => {
   expect(response.ok()).toBe(true);
   expect(body).toContain("<loc>https://bsveritas.com.br/</loc>");
   expect(body).toContain("<loc>https://bsveritas.com.br/sobre</loc>");
-  expect(body).toContain("<loc>https://bsveritas.com.br/seguros/auto</loc>");
+
+  for (const insurance of insuranceCatalog) {
+    expect(body).toContain(`<loc>https://bsveritas.com.br/seguros/${insurance.slug}</loc>`);
+  }
 });
 
 test("responde com pagina 404 personalizada", async ({ page }) => {
