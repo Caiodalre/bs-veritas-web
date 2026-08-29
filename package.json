@@ -8,7 +8,7 @@
     "start": "wrangler dev",
     "cloudflare:check": "wrangler deploy --dry-run",
     "cloudflare:deploy": "wrangler deploy",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "lint": "eslint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
