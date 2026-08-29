@@ -17,8 +17,8 @@
 - Drizzle ORM com PostgreSQL
 - pnpm como unico gerenciador de pacotes
 - Git com `main` como branch principal
-- Vercel para hospedagem da aplicacao
-- Cloudflare para DNS e servicos de borda
+- Cloudflare Workers Static Assets para hospedagem inicial
+- Cloudflare para DNS, CDN, SSL e servicos de borda
 
 ## Regras de implementacao
 
@@ -31,6 +31,7 @@
 - Preferir mudancas pequenas, focadas e faceis de revisar.
 - Nao criar integracoes externas, recursos em nuvem ou deploys sem aprovacao.
 - Nao fazer push direto para `main`.
+- Na fase inicial, usar somente servicos que permitam uso comercial sem custo; qualquer plano pago exige aprovacao explicita.
 
 ## Validacao
 

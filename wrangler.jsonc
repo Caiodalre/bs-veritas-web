@@ -1,0 +1,14 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "bs-veritas-web",
+  "compatibility_date": "2026-08-26",
+  "build": {
+    "command": "pnpm build",
+    "watch_dir": ["src", "public", "next.config.ts"],
+  },
+  "assets": {
+    "directory": "./out",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash",
+  },
+}

@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "wrangler dev",
+    "cloudflare:check": "wrangler deploy --dry-run",
+    "cloudflare:deploy": "wrangler deploy",
     "typecheck": "tsc --noEmit",
     "lint": "eslint",
     "format": "prettier --write .",
@@ -42,7 +44,8 @@
     "prettier": "3.9.6",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "vitest": "^4.1.11"
+    "vitest": "^4.1.11",
+    "wrangler": "4.126.0"
   },
   "packageManager": "pnpm@11.3.0"
 }
