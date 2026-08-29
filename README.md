@@ -6,7 +6,9 @@ O projeto tem como objetivos transmitir confiança, apresentar a corretora e seu
 
 ## Estado atual
 
-O projeto está na construção da experiência pública. A aplicação ainda não possui integrações de produção, credenciais ou coleta de dados.
+O projeto está na construção da experiência pública. O repositório privado e a integração contínua estão ativos, e uma versão de preview está publicada na Cloudflare Workers Static Assets.
+
+O domínio de produção ainda não foi conectado. A aplicação não coleta dados, não possui banco remoto e não utiliza credenciais de produção.
 
 Já estão configurados:
 
@@ -17,7 +19,8 @@ Já estão configurados:
 - Playwright com Chromium;
 - fundação do Drizzle ORM para PostgreSQL;
 - ESLint, Prettier e pnpm;
-- workflow local de CI, aguardando a configuração do repositório remoto;
+- repositório privado no GitHub e CI remoto ativo;
+- exportação estática e preview público com `noindex` na Cloudflare Workers;
 - página inicial institucional responsiva;
 - página Sobre com propósito, princípios e forma de atendimento;
 - catálogo de seguros e páginas estáticas das modalidades atendidas;
@@ -105,11 +108,13 @@ pnpm exec playwright install chromium
 
 As regras completas de desenvolvimento estão em [`AGENTS.md`](./AGENTS.md).
 
-## Infraestrutura planejada
+## Infraestrutura atual e planejada
 
-- Vercel para aplicação e previews;
-- Cloudflare para DNS, segurança e Turnstile;
+- Cloudflare Workers Static Assets para preview e hospedagem inicial;
+- Cloudflare para DNS, CDN, SSL e Turnstile quando os formulários existirem;
 - PostgreSQL, inicialmente por infraestrutura Supabase;
 - GitHub para repositório e integração contínua.
 
-Esses serviços ainda serão configurados em etapas separadas e aprovadas.
+O GitHub, o CI e o preview da Cloudflare já estão configurados. O domínio, o banco, os formulários e os serviços de notificação continuam pendentes e serão tratados em etapas separadas.
+
+O plano gratuito Hobby da Vercel não será utilizado porque restringe o uso a projetos pessoais e não comerciais. Qualquer futura mudança de hospedagem exigirá compatibilidade com uso empresarial sem custo ou aprovação explícita de um plano pago.

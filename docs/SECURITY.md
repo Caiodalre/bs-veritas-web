@@ -16,7 +16,7 @@ Esta política cobre:
 - ambientes local, preview e produção;
 - dependências e processo de entrega.
 
-O e-mail corporativo, as contas Cloudflare, Vercel, GitHub e PostgreSQL também precisarão de políticas administrativas próprias quando forem configurados.
+O e-mail corporativo e as contas Cloudflare, GitHub e PostgreSQL também precisam de políticas administrativas próprias conforme forem configurados.
 
 ## Modelo de risco inicial
 
@@ -42,10 +42,13 @@ Já existem no repositório:
 - ESLint;
 - Prettier com verificação reproduzível;
 - testes unitários e E2E básicos;
-- workflow de CI versionado, ainda sem execução remota;
+- repositório privado no GitHub e CI remoto validado;
 - fundação do Drizzle ORM sem credenciais reais;
 - `.gitignore` gerado para evitar o versionamento normal de arquivos locais de ambiente;
-- regras de desenvolvimento em `AGENTS.md`.
+- regras de desenvolvimento em `AGENTS.md`;
+- preview estático na Cloudflare Workers sem dados reais;
+- HTTPS, proteção contra framing, `nosniff`, política de referência e política de permissões;
+- cabeçalho `X-Robots-Tag: noindex` no endereço `workers.dev`.
 
 Ainda não estão configurados:
 
@@ -55,7 +58,7 @@ Ainda não estão configurados:
 - rate limiting;
 - honeypot;
 - Cloudflare Turnstile;
-- headers HTTP finais;
+- Content Security Policy e HSTS finais para o domínio de produção;
 - provedor de notificação;
 - analytics;
 - monitoramento e alertas de produção.

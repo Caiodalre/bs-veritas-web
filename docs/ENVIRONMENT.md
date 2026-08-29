@@ -2,7 +2,7 @@
 
 Este documento descreve como o projeto deve ser executado e configurado nos ambientes local, preview e produção.
 
-Nenhuma credencial real ou integração de produção está configurada na etapa atual.
+Nenhuma credencial de produção está configurada. O GitHub, o CI e um preview estático sem coleta de dados estão ativos.
 
 ## Ambientes previstos
 
@@ -23,12 +23,13 @@ Usado para desenvolvimento e verificações na máquina do desenvolvedor.
 
 ### Preview
 
-Usado para revisão de uma branch antes da integração na `main`.
+Usado para revisão antes da produção. O preview atual está publicado em `https://bs-veritas-web.caio-dalre.workers.dev`.
 
-- terá configuração separada de produção;
-- não utilizará dados reais;
-- deverá permanecer fora da indexação de buscadores;
-- deverá exibir claramente que não é o site oficial em produção;
+- possui configuração separada de produção;
+- não utiliza dados reais;
+- envia `X-Robots-Tag: noindex`;
+- permanece fora da indexação de buscadores;
+- não é o domínio oficial de produção;
 - integrações externas deverão usar modo de teste ou permanecer desativadas.
 
 ### Produção
@@ -102,19 +103,21 @@ Se a porta estiver ocupada, o Next.js poderá selecionar outra. O endereço exib
 
 ## Comandos disponíveis
 
-| Comando             | Finalidade                                            |
-| ------------------- | ----------------------------------------------------- |
-| `pnpm dev`          | iniciar o servidor de desenvolvimento                 |
-| `pnpm build`        | validar e gerar o build de produção                   |
-| `pnpm start`        | executar localmente um build já gerado                |
-| `pnpm typecheck`    | validar os tipos TypeScript sem emitir arquivos       |
-| `pnpm lint`         | executar o ESLint                                     |
-| `pnpm format`       | formatar os arquivos cobertos pelo Prettier           |
-| `pnpm format:check` | verificar a formatação sem alterar arquivos           |
-| `pnpm test`         | executar os testes Vitest uma vez                     |
-| `pnpm test:watch`   | executar Vitest em modo de observação                 |
-| `pnpm test:e2e`     | executar os testes Playwright                         |
-| `pnpm db:generate`  | gerar migrations Drizzle a partir de um schema válido |
+| Comando                  | Finalidade                                            |
+| ------------------------ | ----------------------------------------------------- |
+| `pnpm dev`               | iniciar o servidor de desenvolvimento                 |
+| `pnpm build`             | validar e gerar o build de produção                   |
+| `pnpm start`             | servir localmente o projeto com Wrangler              |
+| `pnpm typecheck`         | gerar tipos do Next.js e validar o TypeScript         |
+| `pnpm lint`              | executar o ESLint                                     |
+| `pnpm format`            | formatar os arquivos cobertos pelo Prettier           |
+| `pnpm format:check`      | verificar a formatação sem alterar arquivos           |
+| `pnpm test`              | executar os testes Vitest uma vez                     |
+| `pnpm test:watch`        | executar Vitest em modo de observação                 |
+| `pnpm test:e2e`          | executar os testes Playwright                         |
+| `pnpm cloudflare:check`  | validar o pacote Cloudflare sem publicar              |
+| `pnpm cloudflare:deploy` | publicar manualmente na Cloudflare Workers            |
+| `pnpm db:generate`       | gerar migrations Drizzle a partir de um schema válido |
 
 O comando `db:generate` não deve ser executado apenas para testar a instalação. Ele será usado quando houver uma alteração de schema aprovada.
 
@@ -204,16 +207,16 @@ Quando essa etapa for aprovada:
 
 ## Serviços externos planejados
 
-| Serviço             | Papel                             | Estado atual           |
-| ------------------- | --------------------------------- | ---------------------- |
-| Vercel              | aplicação, preview e produção     | não configurado        |
-| Cloudflare          | DNS, segurança e Turnstile        | não configurado        |
-| PostgreSQL/Supabase | persistência de leads             | não conectado          |
-| Provedor de e-mail  | notificações e e-mail corporativo | não definido           |
-| GitHub              | repositório e CI                  | remoto não configurado |
-| Analytics           | métricas sem dados pessoais       | não configurado        |
+| Serviço             | Papel                                 | Estado atual                  |
+| ------------------- | ------------------------------------- | ----------------------------- |
+| Cloudflare Workers  | preview e hospedagem estática inicial | preview ativo                 |
+| Cloudflare          | DNS, CDN, SSL e Turnstile futuro      | domínio não conectado ao site |
+| PostgreSQL/Supabase | persistência de leads                 | não conectado                 |
+| Provedor de e-mail  | notificações e e-mail corporativo     | não definido                  |
+| GitHub              | repositório privado e CI              | configurado e validado        |
+| Analytics           | métricas sem dados pessoais           | não configurado               |
 
-Nenhum serviço deverá ser tratado como ativo antes de sua configuração e validação explícitas.
+A Vercel Hobby não faz parte da infraestrutura porque não permite uso comercial. Nenhum outro serviço deverá ser tratado como ativo antes de sua configuração e validação explícitas.
 
 ## Dados de desenvolvimento
 
