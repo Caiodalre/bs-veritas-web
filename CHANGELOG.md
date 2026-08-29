@@ -2,7 +2,7 @@
 
 Este arquivo registra mudanças relevantes do **B&S Veritas Web**.
 
-O projeto ainda não possui uma versão pública nem um deploy de produção. Até o primeiro lançamento, as mudanças permanecerão na seção **Não lançado** e os marcos internos serão identificados explicitamente.
+O projeto possui um preview público não indexável, mas ainda não possui domínio conectado nem lançamento de produção. Até o primeiro lançamento, as mudanças permanecerão na seção **Não lançado** e os marcos internos serão identificados explicitamente.
 
 ## Não lançado
 
@@ -22,8 +22,12 @@ O projeto ainda não possui uma versão pública nem um deploy de produção. At
 - procedimento planejado de preview, produção e rollback em `docs/DEPLOYMENT.md`;
 - padrões de contribuição e revisão em `CONTRIBUTING.md`;
 - Prettier com configuração e comandos reproduzíveis;
-- comando independente de typecheck;
+- comando independente de typecheck com geração prévia dos tipos do Next.js;
 - workflow de CI com formatação, tipos, lint, testes, build e Playwright;
+- repositório privado no GitHub com CI remoto validado;
+- política de finais de linha reproduzível em `.gitattributes`;
+- exportação estática e configuração da Cloudflare Workers Static Assets;
+- preview público na Cloudflare com cabeçalho `X-Robots-Tag: noindex`;
 - este changelog.
 
 ### Alterado
@@ -32,10 +36,11 @@ O projeto ainda não possui uma versão pública nem um deploy de produção. At
 
 ### Observações
 
-- o projeto permanece sem lançamento público, mesmo após integrações locais na `main`;
+- o projeto permanece sem lançamento de produção; a URL `workers.dev` é somente preview;
 - ESLint `10.9.1` foi avaliado e rejeitado porque os plugins atuais do Next.js ainda exigem ESLint 9; a versão compatível `9.39.5` permanece fixada;
-- nenhuma integração externa, credencial ou configuração de produção foi adicionada;
-- nenhuma versão pública foi publicada.
+- GitHub, CI e Cloudflare Workers estão ativos sem credenciais versionadas;
+- domínio personalizado, banco, formulários e integrações de produção ainda não estão configurados;
+- a Vercel Hobby foi excluída da arquitetura gratuita por restringir o uso a projetos pessoais e não comerciais.
 
 ## Fundação técnica — 2026-08-25
 

@@ -32,13 +32,11 @@ Visitante
    |
    v
 Cloudflare
-DNS, proteção e Turnstile planejado
+DNS, CDN, SSL e proteção de borda
    |
    v
-Vercel
-   |
-   v
-Next.js
+Cloudflare Workers Static Assets
+Next.js com exportação estática
    |
    +--> páginas institucionais
    |
@@ -62,6 +60,10 @@ Next.js
            v
       notificação comercial
 ```
+
+O preview atual utiliza somente os arquivos estáticos gerados pelo Next.js e não processa formulários nem dados pessoais.
+
+Quando recursos dinâmicos forem aprovados, a camada de execução no servidor deverá ser definida e validada separadamente, preservando a hospedagem comercial sem custo enquanto isso for tecnicamente adequado.
 
 O e-mail corporativo é uma infraestrutura independente. A troca do provedor de e-mail não deve exigir reconstrução do site.
 
@@ -205,6 +207,8 @@ As políticas serão ajustadas aos serviços efetivamente utilizados. Estão pla
 A política de segurança não deverá liberar domínios externos sem necessidade comprovada.
 
 ## Renderização e desempenho
+
+A hospedagem inicial usa exportação estática no Cloudflare Workers Static Assets. Essa decisão será reavaliada antes da implementação de formulários ou outros pontos de entrada dinâmicos.
 
 - Server Components por padrão;
 - JavaScript no cliente somente quando necessário;

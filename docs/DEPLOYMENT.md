@@ -2,7 +2,7 @@
 
 Este documento descreve o processo planejado de preview, publicação, validação e rollback do site da **B&S VERITAS CORRETORA DE SEGUROS LTDA**.
 
-Nenhum deploy, domínio, projeto Vercel, zona Cloudflare, banco remoto ou repositório GitHub está configurado na etapa atual.
+O repositório privado, o CI e um preview estático na Cloudflare Workers estão configurados. O domínio de produção, o banco remoto, os formulários e as integrações comerciais ainda não estão ativos.
 
 ## Objetivos
 
@@ -20,18 +20,16 @@ Registro.br
    |
    v
 Cloudflare
-DNS, DNSSEC e proteção
+DNS, CDN, SSL e proteção
    |
    v
-Vercel
-Next.js
+Workers Static Assets
+Next.js com exportação estática
    |
-   +--> PostgreSQL
-   |
-   +--> Turnstile
-   |
-   `--> serviço de notificação
+   `--> páginas públicas sem coleta de dados
 ```
+
+PostgreSQL, Turnstile e notificações serão conectados somente depois da definição da camada dinâmica e das respectivas políticas de dados e segredos.
 
 O e-mail corporativo utilizará o mesmo domínio, mas permanecerá independente do deploy da aplicação.
 
@@ -46,7 +44,7 @@ Configuração planejada:
 | HTTP                           | redirecionamento para HTTPS                         |
 | URLs de preview                | homologação, sem indexação                          |
 
-Os registros DNS exatos somente serão definidos depois que os projetos Vercel e Cloudflare existirem. Nenhum IP, CNAME ou token deverá ser inventado antecipadamente.
+Os registros DNS do site somente serão alterados quando a conexão do domínio for aprovada. Nenhum IP, CNAME ou token deverá ser inventado antecipadamente.
 
 ## Ambientes
 
@@ -94,11 +92,11 @@ Uma passagem entre etapas depende da validação da etapa anterior. Um preview b
 Antes de conectar serviços externos:
 
 - [ ] domínio sob titularidade e controle da empresa;
-- [ ] repositório remoto corporativo definido;
+- [x] repositório remoto privado definido;
 - [ ] responsáveis administrativos identificados;
 - [ ] MFA habilitada nas contas administrativas;
-- [ ] projeto Vercel criado na conta correta;
-- [ ] zona Cloudflare criada na conta correta;
+- [x] preview Cloudflare Workers criado e validado;
+- [ ] titularidade administrativa da zona Cloudflare confirmada para produção;
 - [ ] ambientes e responsáveis pelo PostgreSQL definidos;
 - [ ] política de segredos aprovada;
 - [ ] contatos e conteúdo mínimo de produção confirmados;
@@ -131,28 +129,28 @@ Também devem ser revisados:
 - impacto em schema e migrations;
 - comportamento em desktop e mobile.
 
-## Configuração planejada da Vercel
+## Configuração atual da Cloudflare Workers
 
-Quando aprovada, a configuração deverá:
+O preview atual:
 
-- importar o repositório corporativo correto;
-- usar pnpm e o lockfile versionado;
-- distinguir variáveis de preview e produção;
-- limitar quem pode alterar configurações e promover deploys;
-- associar o domínio somente depois da validação por URL temporária;
-- manter registro da revisão Git correspondente a cada deploy;
-- preservar deploy anterior para rollback.
+- usa Cloudflare Workers Static Assets no plano gratuito;
+- publica a pasta `out` gerada pelo Next.js;
+- executa o build com `pnpm build`;
+- permanece no endereço `workers.dev` sem domínio personalizado;
+- envia `X-Robots-Tag: noindex` no preview;
+- não possui bindings, banco, variáveis ou segredos de produção;
+- foi validado por smoke tests HTTP e navegação automatizada.
 
-Não serão adicionadas variáveis sem documentação de nome, finalidade, ambiente e responsável.
+A publicação ainda é manual. Automatizar deploys exigirá uma etapa separada, com credencial de escopo mínimo e aprovação explícita.
 
-## Configuração planejada da Cloudflare
+## Configuração planejada do domínio Cloudflare
 
 Quando aprovada, a configuração deverá:
 
 - administrar o DNS autoritativo do domínio;
 - preservar os registros necessários ao provedor de e-mail;
 - habilitar DNSSEC após validação da cadeia completa;
-- encaminhar o site para a configuração indicada pela Vercel;
+- conectar o domínio diretamente ao Worker aprovado;
 - forçar HTTPS sem criar loop de redirecionamento;
 - configurar Turnstile somente quando os formulários existirem;
 - revisar cache e regras de segurança antes da ativação.
@@ -296,18 +294,18 @@ O formato definitivo será estabelecido antes do primeiro lançamento.
 
 ## Estado atual da implantação
 
-| Componente            | Estado                              |
-| --------------------- | ----------------------------------- |
-| build local           | configurado e validado              |
-| testes locais         | configurados e validados            |
-| repositório Git local | configurado                         |
-| GitHub remoto         | não configurado                     |
-| CI                    | workflow versionado; remoto ausente |
-| Vercel                | não configurada                     |
-| Cloudflare            | não configurada                     |
-| domínio no projeto    | não conectado                       |
-| PostgreSQL remoto     | não conectado                       |
-| notificações          | não configuradas                    |
-| produção              | inexistente                         |
+| Componente            | Estado                     |
+| --------------------- | -------------------------- |
+| build local           | configurado e validado     |
+| testes locais         | configurados e validados   |
+| repositório Git local | configurado                |
+| GitHub remoto         | privado e configurado      |
+| CI                    | ativo e validado no GitHub |
+| Cloudflare Workers    | preview estático ativo     |
+| Vercel                | excluída do plano gratuito |
+| domínio no projeto    | não conectado              |
+| PostgreSQL remoto     | não conectado              |
+| notificações          | não configuradas           |
+| produção              | inexistente                |
 
 Qualquer mudança desse estado deverá ser feita como uma etapa separada, aprovada e validada.
