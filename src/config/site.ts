@@ -12,6 +12,6 @@ export const mainNavigation = [
   { label: "Início", href: "/#inicio" },
   { label: "Sobre", href: "/sobre" },
   { label: "Seguros", href: "/seguros" },
-  { label: "Diferenciais", href: "/#diferenciais" },
+  { label: "Sinistros", href: "/sinistros" },
   { label: "Seguradoras", href: "/#seguradoras" },
 ] as const;

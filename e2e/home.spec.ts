@@ -51,6 +51,19 @@ test("exibe a pagina institucional sobre", async ({ page }) => {
   await expect(page.getByRole("link", { name: "Ver seguros" })).toHaveAttribute("href", "/seguros");
 });
 
+test("publica orientacoes seguras sobre sinistros", async ({ page }) => {
+  await page.goto("/sinistros");
+
+  await expect(
+    page.getByRole("heading", {
+      level: 1,
+      name: "Orientação clara quando acontece um sinistro",
+    }),
+  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Há risco imediato?" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Apoio sem promessas indevidas" })).toBeVisible();
+});
+
 test("publica sitemap com as rotas atuais", async ({ request }) => {
   const response = await request.get("/sitemap.xml");
   const body = await response.text();
@@ -58,6 +71,7 @@ test("publica sitemap com as rotas atuais", async ({ request }) => {
   expect(response.ok()).toBe(true);
   expect(body).toContain("<loc>https://bsveritas.com.br/</loc>");
   expect(body).toContain("<loc>https://bsveritas.com.br/sobre</loc>");
+  expect(body).toContain("<loc>https://bsveritas.com.br/sinistros</loc>");
 
   for (const insurance of insuranceCatalog) {
     expect(body).toContain(`<loc>https://bsveritas.com.br/seguros/${insurance.slug}</loc>`);
@@ -92,7 +106,7 @@ test.describe("layout mobile", () => {
 
     expect(hasHorizontalOverflow).toBe(false);
 
-    for (const path of ["/sobre", "/seguros", "/seguros/auto"]) {
+    for (const path of ["/sobre", "/seguros", "/seguros/auto", "/sinistros"]) {
       await page.goto(path);
 
       const routeHasHorizontalOverflow = await page.evaluate(

@@ -8,6 +8,7 @@ const publicRoutes = [
   { path: "/", changeFrequency: "monthly", priority: 1 },
   { path: "/sobre", changeFrequency: "monthly", priority: 0.8 },
   { path: "/seguros", changeFrequency: "monthly", priority: 0.9 },
+  { path: "/sinistros", changeFrequency: "monthly", priority: 0.8 },
 ] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {
