@@ -95,11 +95,11 @@ A fundação local valida e normaliza os campos com Zod, restringe modalidades a
 
 ### Serviços
 
-Serviços representarão casos de uso, como registrar um pedido de cotação. Eles não devem depender de componentes React nem conhecer detalhes visuais.
+O serviço local de cotação já define o caso de uso de registrar um pedido validado. Ele exige a versão da política e a data de expiração da retenção, sem fixar esses valores enquanto as decisões correspondentes estiverem pendentes. Serviços não dependem de componentes React nem conhecem detalhes visuais.
 
 ### Repositórios
 
-Repositórios concentrarão operações de persistência. O restante da aplicação não deverá espalhar consultas ao banco por páginas e componentes.
+O contrato local do repositório de cotação concentra a futura gravação do lead. Ainda não existe adaptador PostgreSQL nem conexão real. O restante da aplicação não deverá espalhar consultas ao banco por páginas e componentes.
 
 ### Infraestrutura
 

@@ -44,6 +44,8 @@ Já existem no repositório:
 - testes unitários e E2E básicos;
 - repositório privado no GitHub e CI remoto validado;
 - fundação do Drizzle ORM sem credenciais reais;
+- schema local, validação Zod, normalização e honeypot para cotação;
+- serviço local de cotação atrás de um contrato de repositório, sem persistência ativa;
 - `.gitignore` gerado para evitar o versionamento normal de arquivos locais de ambiente;
 - regras de desenvolvimento em `AGENTS.md`;
 - preview estático na Cloudflare Workers sem dados reais;
@@ -54,9 +56,7 @@ Ainda não estão configurados:
 
 - banco de produção;
 - formulários públicos funcionais;
-- Zod e schemas de entrada;
 - rate limiting;
-- honeypot;
 - Cloudflare Turnstile;
 - Content Security Policy e HSTS finais para o domínio de produção;
 - provedor de notificação;
@@ -135,7 +135,7 @@ Os limites numéricos serão estabelecidos com base no ambiente real e testados 
 - consultas deverão ser feitas por APIs seguras do ORM, sem concatenação manual de entrada externa;
 - dados reais não serão copiados para testes locais ou previews.
 
-O schema atual está vazio e não existe conexão de produção configurada.
+O schema local de cotação existe, mas nenhuma migration foi aplicada e não existe conexão de produção configurada.
 
 ## Segredos e variáveis de ambiente
 
