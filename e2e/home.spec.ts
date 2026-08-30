@@ -90,6 +90,16 @@ test("publica sitemap com as rotas atuais", async ({ request }) => {
   }
 });
 
+test("publica robots com rastreamento permitido no domínio oficial", async ({ request }) => {
+  const response = await request.get("/robots.txt");
+  const body = await response.text();
+
+  expect(response.ok()).toBe(true);
+  expect(body).toContain("User-Agent: *");
+  expect(body).toContain("Allow: /");
+  expect(body).toContain("Sitemap:");
+});
+
 test("responde com pagina 404 personalizada", async ({ page }) => {
   const response = await page.goto("/pagina-inexistente");
 

@@ -15,6 +15,7 @@ O projeto possui um preview público não indexável, mas ainda não possui dom�
 - navegação e metadados específicos para as páginas de seguros;
 - página pública de Sinistros com orientação inicial e responsabilidades claramente delimitadas;
 - página pública de Contato com e-mail, telefone, WhatsApp e identificação empresarial;
+- `robots.txt` de produção com rastreamento permitido e referência ao sitemap canônico;
 - sitemap das rotas públicas e página 404 personalizada;
 - testes de interface e de jornada para a experiência pública;
 - cobertura E2E de todas as páginas de modalidades e de suas entradas no sitemap;
