@@ -63,7 +63,8 @@ Next.js com exportação estática
 
 O preview atual utiliza somente os arquivos estáticos gerados pelo Next.js e não processa formulários nem dados pessoais.
 
-Quando recursos dinâmicos forem aprovados, a camada de execução no servidor deverá ser definida e validada separadamente, preservando a hospedagem comercial sem custo enquanto isso for tecnicamente adequado.
+A camada dinâmica foi definida como um Cloudflare Worker restrito às rotas `/api/*`, com Neon PostgreSQL conectado por Hyperdrive. O endpoint de cotação permanece desativado até que todos os controles necessários sejam aprovados.
+A decisão completa está registrada em [`docs/decisions/0001-quote-runtime-and-database.md`](decisions/0001-quote-runtime-and-database.md).
 
 O e-mail corporativo é uma infraestrutura independente. A troca do provedor de e-mail não deve exigir reconstrução do site.
 
@@ -183,7 +184,7 @@ Regras obrigatórias:
 
 O PostgreSQL será acessado somente pelo backend da aplicação. O navegador não receberá credenciais administrativas nem permissão irrestrita de escrita.
 
-O Drizzle ORM já possui uma fundação no repositório. O schema de produção, as migrações e a conexão real ainda não foram definidos.
+O schema local inicial registra somente os campos aprovados para cotação, a versão da política e a expiração de retenção. Nenhuma migration foi aplicada e a conexão real ainda não existe.
 
 ## Configuração e segredos
 
@@ -208,7 +209,7 @@ A política de segurança não deverá liberar domínios externos sem necessidad
 
 ## Renderização e desempenho
 
-A hospedagem inicial usa exportação estática no Cloudflare Workers Static Assets. Essa decisão será reavaliada antes da implementação de formulários ou outros pontos de entrada dinâmicos.
+A hospedagem mantém a exportação estática no Cloudflare Workers Static Assets. Um Worker separado no mesmo projeto atenderá somente os pontos de entrada dinâmicos aprovados.
 
 - Server Components por padrão;
 - JavaScript no cliente somente quando necessário;
@@ -245,7 +246,7 @@ Não haverá edição manual de arquivos em produção.
 ## Decisões ainda pendentes
 
 - provedor definitivo de e-mail e notificações;
-- credenciais e projeto PostgreSQL/Supabase;
+- criação do projeto Neon, credenciais e binding Hyperdrive;
 - estratégia e valores de rate limiting;
 - política de retenção dos leads;
 - conteúdo jurídico revisado;
