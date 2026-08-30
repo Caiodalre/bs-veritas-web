@@ -69,7 +69,7 @@ export default function Home() {
               </p>
 
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-                <Link className={buttonStyles({ size: "lg" })} href="#cotacao">
+                <Link className={buttonStyles({ size: "lg" })} href="/contato">
                   Solicitar cotação
                   <ArrowRight aria-hidden="true" size={18} />
                 </Link>
@@ -292,6 +292,10 @@ export default function Home() {
                   O formulário digital será ativado somente após a conexão segura do banco e das
                   camadas anti-spam. Nenhum dado está sendo coletado nesta versão.
                 </p>
+                <Link className={buttonStyles({ className: "mt-8", size: "lg" })} href="/contato">
+                  Falar com a corretora
+                  <ArrowRight aria-hidden="true" size={18} />
+                </Link>
               </div>
 
               <ol className="grid gap-5 md:grid-cols-3">

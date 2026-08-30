@@ -4,6 +4,14 @@ export const siteConfig = {
   descriptor: "Corretora de Seguros",
   domain: "bsveritas.com.br",
   url: "https://bsveritas.com.br",
+  cnpj: "68.711.730/0001-34",
+  location: "São Paulo - SP",
+  contact: {
+    email: "contato@bsveritas.com.br",
+    phone: "+55 11 98526-9641",
+    phoneHref: "tel:+5511985269641",
+    whatsappHref: "https://wa.me/5511985269641",
+  },
   description:
     "Soluções em seguros para pessoas, famílias e empresas, com atendimento próximo, transparente e personalizado.",
 } as const;
@@ -13,5 +21,5 @@ export const mainNavigation = [
   { label: "Sobre", href: "/sobre" },
   { label: "Seguros", href: "/seguros" },
   { label: "Sinistros", href: "/sinistros" },
-  { label: "Seguradoras", href: "/#seguradoras" },
+  { label: "Contato", href: "/contato" },
 ] as const;

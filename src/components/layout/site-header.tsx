@@ -31,7 +31,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden lg:block">
-          <Link className={buttonStyles({ size: "sm" })} href="/#cotacao">
+          <Link className={buttonStyles({ size: "sm" })} href="/contato">
             Cotar agora
           </Link>
         </div>
@@ -57,7 +57,7 @@ export function SiteHeader() {
             ))}
             <Link
               className={buttonStyles({ className: "mt-2 w-full", size: "sm" })}
-              href="/#cotacao"
+              href="/contato"
             >
               Cotar agora
             </Link>

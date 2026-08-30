@@ -12,6 +12,7 @@ describe("sitemap", () => {
     expect(urls).toContain("https://bsveritas.com.br/sobre");
     expect(urls).toContain("https://bsveritas.com.br/seguros");
     expect(urls).toContain("https://bsveritas.com.br/sinistros");
+    expect(urls).toContain("https://bsveritas.com.br/contato");
 
     for (const insurance of insuranceCatalog) {
       expect(urls).toContain("https://bsveritas.com.br/seguros/" + insurance.slug);

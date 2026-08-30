@@ -25,6 +25,7 @@ Já estão configurados:
 - página Sobre com propósito, princípios e forma de atendimento;
 - catálogo de seguros e páginas estáticas das modalidades atendidas;
 - página de Sinistros com primeiros cuidados, limites e orientação segura;
+- página de Contato com canais públicos e sem formulário ou coleta direta de dados;
 - sitemap gerado a partir das rotas públicas e página 404 personalizada.
 
 ## Documentação
