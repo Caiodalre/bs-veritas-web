@@ -138,6 +138,7 @@ O preview atual:
 - executa o build com `pnpm build`;
 - permanece no endereço `workers.dev` sem domínio personalizado;
 - envia `X-Robots-Tag: noindex` no preview;
+- mantém o `robots.txt` canônico preparado para permitir rastreamento somente quando o domínio oficial for conectado;
 - não possui bindings, banco, variáveis ou segredos de produção;
 - foi validado por smoke tests HTTP e navegação automatizada.
 
