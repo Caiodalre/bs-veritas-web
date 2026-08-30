@@ -91,7 +91,7 @@ Server Actions ou Route Handlers receberão requisições externas. Eles coorden
 
 ### Validação e segurança
 
-Dados externos serão validados novamente no servidor. A implementação planejada inclui Zod, honeypot, rate limiting e Cloudflare Turnstile.
+A fundação local valida e normaliza os campos com Zod, restringe modalidades ao catálogo e inclui honeypot. A ativação ainda depende de rate limiting, Cloudflare Turnstile e nova validação no servidor antes da persistência.
 
 ### Serviços
 
