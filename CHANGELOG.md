@@ -31,6 +31,7 @@ O projeto possui um preview público não indexável, mas ainda não possui dom�
 - decisão arquitetural para Cloudflare Worker, Hyperdrive e Neon PostgreSQL;
 - schema local inicial de solicitações de cotação, sem banco ou migration aplicada;
 - endpoint `/api/quote` desativado por padrão, sem coleta de dados;
+- validação local com Zod, normalização, modalidades permitidas e honeypot;
 - preview público na Cloudflare com cabeçalho `X-Robots-Tag: noindex`;
 - este changelog.
 
