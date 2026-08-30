@@ -9,6 +9,19 @@ function createAssetsBinding() {
   };
 }
 
+function expectApiSecurityHeaders(response: Response) {
+  expect(response.headers.get("cache-control")).toBe("no-store");
+  expect(response.headers.get("content-security-policy")).toBe(
+    "default-src 'none'; frame-ancestors 'none'",
+  );
+  expect(response.headers.get("permissions-policy")).toBe(
+    "camera=(), geolocation=(), microphone=()",
+  );
+  expect(response.headers.get("referrer-policy")).toBe("no-referrer");
+  expect(response.headers.get("x-content-type-options")).toBe("nosniff");
+  expect(response.headers.get("x-frame-options")).toBe("DENY");
+}
+
 describe("quote worker", () => {
   it("encaminha rotas públicas para os assets estáticos", async () => {
     const assets = createAssetsBinding();
@@ -29,7 +42,7 @@ describe("quote worker", () => {
 
     expect(response.status).toBe(405);
     expect(response.headers.get("allow")).toBe("POST");
-    expect(response.headers.get("cache-control")).toBe("no-store");
+    expectApiSecurityHeaders(response);
     expect(assets.fetch).not.toHaveBeenCalled();
   });
 
@@ -41,6 +54,7 @@ describe("quote worker", () => {
 
     expect(response.status).toBe(503);
     expect(response.headers.get("retry-after")).toBe("86400");
+    expectApiSecurityHeaders(response);
     await expect(response.json()).resolves.toEqual({
       error: {
         code: "quote_unavailable",

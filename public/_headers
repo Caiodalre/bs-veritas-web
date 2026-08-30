@@ -1,4 +1,5 @@
 /*
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; connect-src 'self'; font-src 'self'; form-action 'self'; frame-ancestors 'none'; img-src 'self' data: blob:; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; upgrade-insecure-requests
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
@@ -9,3 +10,9 @@
 
 https://:version.:subdomain.workers.dev/*
   X-Robots-Tag: noindex
+
+https://bsveritas.com.br/*
+  Strict-Transport-Security: max-age=31536000
+
+https://www.bsveritas.com.br/*
+  Strict-Transport-Security: max-age=31536000

@@ -138,6 +138,9 @@ O preview atual:
 - executa o build com `pnpm build`;
 - permanece no endereço `workers.dev` sem domínio personalizado;
 - envia `X-Robots-Tag: noindex` no preview;
+- aplica uma Content Security Policy compatível com a exportação estática;
+- mantém HSTS versionado somente para os hosts oficiais, sem `includeSubDomains` ou `preload`;
+- protege diretamente as respostas da API, que não recebem as regras do arquivo `_headers`;
 - mantém o `robots.txt` canônico preparado para permitir rastreamento somente quando o domínio oficial for conectado;
 - não possui bindings, banco, variáveis ou segredos de produção;
 - foi validado por smoke tests HTTP e navegação automatizada.
@@ -154,7 +157,7 @@ Quando aprovada, a configuração deverá:
 - conectar o domínio diretamente ao Worker aprovado;
 - forçar HTTPS sem criar loop de redirecionamento;
 - configurar Turnstile somente quando os formulários existirem;
-- revisar cache e regras de segurança antes da ativação.
+- validar cache, CSP e HSTS no domínio final antes da ativação pública.
 
 Alterações DNS serão feitas uma por vez, com registro do valor anterior e teste após cada mudança.
 
