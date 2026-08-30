@@ -24,6 +24,7 @@ Já estão configurados:
 - página inicial institucional responsiva;
 - página Sobre com propósito, princípios e forma de atendimento;
 - catálogo de seguros e páginas estáticas das modalidades atendidas;
+- página de Sinistros com primeiros cuidados, limites e orientação segura;
 - sitemap gerado a partir das rotas públicas e página 404 personalizada.
 
 ## Documentação
