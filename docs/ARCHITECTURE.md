@@ -99,7 +99,7 @@ O serviço local de cotação já define o caso de uso de registrar um pedido va
 
 ### Repositórios
 
-O contrato local do repositório de cotação concentra a futura gravação do lead. Ainda não existe adaptador PostgreSQL nem conexão real. O restante da aplicação não deverá espalhar consultas ao banco por páginas e componentes.
+O contrato local do repositório de cotação concentra a futura gravação do lead. Um adaptador Drizzle tipado prepara o `insert` e retorna somente o identificador criado, mas ainda não existe conexão real nem migration aplicada. O restante da aplicação não deverá espalhar consultas ao banco por páginas e componentes.
 
 ### Infraestrutura
 
