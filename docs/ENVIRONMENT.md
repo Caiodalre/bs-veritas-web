@@ -189,13 +189,13 @@ O arquivo `.env.example` ainda não será criado porque nenhuma integração que
 
 ## Banco de dados
 
-O Drizzle está configurado apenas como fundação técnica. Ainda não existem:
+O Drizzle possui schema de cotação e migration inicial versionados. Ainda não existem:
 
 - URL real de PostgreSQL;
 - credenciais locais, de preview ou produção;
-- schema de negócio;
-- migrations;
 - banco conectado à aplicação.
+
+A migration gerada em `drizzle/0000_quote_requests.sql` não foi aplicada a nenhum ambiente.
 
 Quando essa etapa for aprovada:
 

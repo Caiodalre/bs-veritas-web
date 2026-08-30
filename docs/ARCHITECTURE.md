@@ -184,7 +184,7 @@ Regras obrigatórias:
 
 O PostgreSQL será acessado somente pelo backend da aplicação. O navegador não receberá credenciais administrativas nem permissão irrestrita de escrita.
 
-O schema local inicial registra somente os campos aprovados para cotação, a versão da política e a expiração de retenção. Nenhuma migration foi aplicada e a conexão real ainda não existe.
+O schema local inicial registra somente os campos aprovados para cotação, a versão da política e a expiração de retenção. A migration PostgreSQL inicial está versionada, mas não foi aplicada e a conexão real ainda não existe.
 
 ## Configuração e segredos
 
