@@ -34,6 +34,7 @@ O projeto possui um preview público não indexável, mas ainda não possui dom�
 - validação local com Zod, normalização, modalidades permitidas e honeypot;
 - serviço local de cotação com política explícita e contrato de repositório, sem persistência ativa;
 - adaptador local Drizzle para solicitações de cotação, sem conexão ou migration aplicada;
+- migration PostgreSQL inicial do schema de cotação, gerada e revisada sem aplicação em banco;
 - preview público na Cloudflare com cabeçalho `X-Robots-Tag: noindex`;
 - este changelog.
 
