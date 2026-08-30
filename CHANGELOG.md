@@ -28,6 +28,9 @@ O projeto possui um preview público não indexável, mas ainda não possui dom�
 - repositório privado no GitHub com CI remoto validado;
 - política de finais de linha reproduzível em `.gitattributes`;
 - exportação estática e configuração da Cloudflare Workers Static Assets;
+- decisão arquitetural para Cloudflare Worker, Hyperdrive e Neon PostgreSQL;
+- schema local inicial de solicitações de cotação, sem banco ou migration aplicada;
+- endpoint `/api/quote` desativado por padrão, sem coleta de dados;
 - preview público na Cloudflare com cabeçalho `X-Robots-Tag: noindex`;
 - este changelog.
 
