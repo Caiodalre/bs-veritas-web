@@ -33,6 +33,7 @@ O projeto possui um preview público não indexável, mas ainda não possui dom�
 - endpoint `/api/quote` desativado por padrão, sem coleta de dados;
 - validação local com Zod, normalização, modalidades permitidas e honeypot;
 - serviço local de cotação com política explícita e contrato de repositório, sem persistência ativa;
+- adaptador local Drizzle para solicitações de cotação, sem conexão ou migration aplicada;
 - preview público na Cloudflare com cabeçalho `X-Robots-Tag: noindex`;
 - este changelog.
 
