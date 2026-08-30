@@ -123,7 +123,7 @@ export default function InsuranceCatalogPage() {
               versão atual do site.
             </p>
           </div>
-          <Link className={buttonStyles({ size: "lg" })} href="/#cotacao">
+          <Link className={buttonStyles({ size: "lg" })} href="/contato">
             Ver jornada de cotação
             <ArrowRight aria-hidden="true" size={18} />
           </Link>

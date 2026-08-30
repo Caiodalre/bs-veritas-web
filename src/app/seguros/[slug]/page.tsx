@@ -78,7 +78,7 @@ export default async function InsurancePage({ params }: InsurancePageProps) {
                 {insurance.introduction}
               </p>
             </div>
-            <Link className={buttonStyles({ size: "lg" })} href="/#cotacao">
+            <Link className={buttonStyles({ size: "lg" })} href="/contato">
               Solicitar orientação
               <ArrowRight aria-hidden="true" size={18} />
             </Link>
@@ -153,7 +153,7 @@ export default async function InsurancePage({ params }: InsurancePageProps) {
               <ArrowLeft aria-hidden="true" size={18} />
               Ver todos os seguros
             </Link>
-            <Link className={buttonStyles({ variant: "subtle" })} href="/#cotacao">
+            <Link className={buttonStyles({ variant: "subtle" })} href="/contato">
               Conhecer a jornada de cotação
             </Link>
           </div>
