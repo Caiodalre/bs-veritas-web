@@ -46,6 +46,33 @@ Configuração planejada:
 
 Os registros DNS do site somente serão alterados quando a conexão do domínio for aprovada. Nenhum IP, CNAME ou token deverá ser inventado antecipadamente.
 
+### Redirecionamento canônico
+
+O redirecionamento de `www` será implementado como uma **Single Redirect** na zona Cloudflare, recurso disponível no plano gratuito. A regra será executada na borda, antes do Worker.
+
+Não será usado o arquivo `_redirects`, pois os redirects de Static Assets não aceitam correspondência por domínio. Também não será alterado `run_worker_first` para todas as páginas, evitando invocações e latência desnecessárias no site estático.
+
+Configuração planejada:
+
+| Campo                  | Valor                            |
+| ---------------------- | -------------------------------- |
+| nome                   | `WWW para domínio principal`     |
+| origem                 | `https://www.bsveritas.com.br/*` |
+| destino                | `https://bsveritas.com.br/${1}`  |
+| status                 | `301`                            |
+| preservar query string | sim                              |
+
+Pré-condições:
+
+- ambos os hosts conectados e com certificados válidos;
+- registros DNS correspondentes em modo proxy pela Cloudflare;
+- domínio principal respondendo com a revisão aprovada;
+- valor anterior de qualquer regra conflitante registrado antes da mudança.
+
+Após a ativação, deverão ser verificados caminho, query string, resposta única `301`, ausência de loop e permanência do domínio principal sem redirecionamento.
+
+A regra permanece apenas planejada e não será criada sem aprovação explícita da alteração na Cloudflare.
+
 ## Ambientes
 
 ### Local
