@@ -19,6 +19,7 @@ O projeto possui um preview público não indexável, mas ainda não possui dom�
 - sitemap das rotas públicas e página 404 personalizada;
 - testes de interface e de jornada para a experiência pública;
 - cobertura E2E de todas as páginas de modalidades e de suas entradas no sitemap;
+- política CSP para páginas estáticas, HSTS restrito aos hosts oficiais e cabeçalhos defensivos na API;
 - documentação inicial do propósito, escopo, stack e execução no `README.md`;
 - arquitetura e limites do V1 em `docs/ARCHITECTURE.md`;
 - política e checklist de segurança em `docs/SECURITY.md`;

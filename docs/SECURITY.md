@@ -50,6 +50,9 @@ Já existem no repositório:
 - regras de desenvolvimento em `AGENTS.md`;
 - preview estático na Cloudflare Workers sem dados reais;
 - HTTPS, proteção contra framing, `nosniff`, política de referência e política de permissões;
+- Content Security Policy compatível com a exportação estática do Next.js;
+- HSTS restrito aos hosts oficiais, sem incluir subdomínios ainda não auditados;
+- cabeçalhos defensivos aplicados diretamente às respostas JSON da API;
 - cabeçalho `X-Robots-Tag: noindex` no endereço `workers.dev`.
 
 Ainda não estão configurados:
@@ -58,7 +61,7 @@ Ainda não estão configurados:
 - formulários públicos funcionais;
 - rate limiting;
 - Cloudflare Turnstile;
-- Content Security Policy e HSTS finais para o domínio de produção;
+- validação da CSP e do HSTS no domínio de produção;
 - provedor de notificação;
 - analytics;
 - monitoramento e alertas de produção.
@@ -170,17 +173,21 @@ Eventos de analytics poderão registrar ações como início ou envio de cotaç�
 
 ## Segurança HTTP
 
-Antes da produção serão definidos e testados:
+As respostas estáticas possuem:
 
-- `Content-Security-Policy`;
-- `Strict-Transport-Security`;
+- `Content-Security-Policy` restritiva às origens utilizadas pelo site;
 - `X-Content-Type-Options`;
 - `Referrer-Policy`;
 - `Permissions-Policy`;
-- política de framing;
-- comportamento de cache para respostas sensíveis.
+- bloqueio de framing.
 
-A Content Security Policy será construída a partir dos recursos realmente utilizados. Não serão liberadas origens por conveniência sem justificativa.
+O HSTS está preparado somente para `bsveritas.com.br` e `www.bsveritas.com.br`, com duração de um ano. `includeSubDomains` e `preload` permanecem desativados até que todos os subdomínios e o serviço de e-mail sejam auditados.
+
+As respostas JSON geradas pelo Worker aplicam seus próprios cabeçalhos defensivos e `Cache-Control: no-store`, pois não herdam as regras dos assets estáticos.
+
+A Content Security Policy foi construída a partir dos recursos atuais. A exportação estática do Next.js exige scripts e estilos inline; migrar para nonces exigiria renderização dinâmica e uma decisão arquitetural separada. Não serão liberadas novas origens por conveniência sem justificativa.
+
+Antes do lançamento, CSP e HSTS ainda deverão ser verificados no domínio final.
 
 ## Autenticação administrativa
 
