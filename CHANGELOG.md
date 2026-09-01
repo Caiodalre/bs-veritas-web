@@ -21,6 +21,7 @@ O projeto possui um preview público não indexável, mas ainda não possui dom�
 - cobertura E2E de todas as páginas de modalidades e de suas entradas no sitemap;
 - política CSP para páginas estáticas, HSTS restrito aos hosts oficiais e cabeçalhos defensivos na API;
 - procedimento de redirecionamento canônico de `www` para o domínio principal por regra gratuita da Cloudflare;
+- configuração versionada do domínio principal como Custom Domain do Worker, ainda sem ativação;
 - documentação inicial do propósito, escopo, stack e execução no `README.md`;
 - arquitetura e limites do V1 em `docs/ARCHITECTURE.md`;
 - política e checklist de segurança em `docs/SECURITY.md`;

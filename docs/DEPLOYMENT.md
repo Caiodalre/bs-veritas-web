@@ -163,7 +163,8 @@ O preview atual:
 - usa Cloudflare Workers Static Assets no plano gratuito;
 - publica a pasta `out` gerada pelo Next.js;
 - executa o build com `pnpm build`;
-- permanece no endereço `workers.dev` sem domínio personalizado;
+- permanece no endereço `workers.dev` sem domínio personalizado ativo;
+- declara `bsveritas.com.br` como Custom Domain no `wrangler.jsonc`, pendente de merge e deploy autorizados;
 - envia `X-Robots-Tag: noindex` no preview;
 - aplica uma Content Security Policy compatível com a exportação estática;
 - mantém HSTS versionado somente para os hosts oficiais, sem `includeSubDomains` ou `preload`;
@@ -334,7 +335,7 @@ O formato definitivo será estabelecido antes do primeiro lançamento.
 | CI                    | ativo e validado no GitHub |
 | Cloudflare Workers    | preview estático ativo     |
 | Vercel                | excluída do plano gratuito |
-| domínio no projeto    | não conectado              |
+| domínio no projeto    | configuração preparada     |
 | PostgreSQL remoto     | não conectado              |
 | notificações          | não configuradas           |
 | produção              | inexistente                |
