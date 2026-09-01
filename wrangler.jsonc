@@ -3,6 +3,12 @@
   "name": "bs-veritas-web",
   "compatibility_date": "2026-08-26",
   "main": "./worker/index.ts",
+  "routes": [
+    {
+      "pattern": "bsveritas.com.br",
+      "custom_domain": true,
+    },
+  ],
   "build": {
     "command": "pnpm build",
     "watch_dir": ["src", "public", "next.config.ts", "worker"],
