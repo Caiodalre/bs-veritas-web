@@ -2,7 +2,7 @@
 
 Este documento descreve como o projeto deve ser executado e configurado nos ambientes local, preview e produção.
 
-Nenhuma credencial de produção está configurada. O GitHub, o CI e um preview estático sem coleta de dados estão ativos.
+Nenhuma credencial de aplicação em produção está configurada. O GitHub, o CI, um preview sem indexação e a produção estática sem coleta de dados estão ativos.
 
 ## Ambientes previstos
 
@@ -34,12 +34,14 @@ Usado para revisão antes da produção. O preview atual está publicado em `htt
 
 ### Produção
 
-Usado exclusivamente pelo domínio público aprovado.
+Usado exclusivamente pelo domínio público aprovado e ativo.
 
-- domínio canônico planejado: `https://bsveritas.com.br`;
-- credenciais exclusivas e armazenadas na plataforma;
+- domínio canônico: `https://bsveritas.com.br`;
+- revisão inicial implantada: `70feb0c`;
+- aplicação estática sem banco, variáveis ou segredos de aplicação;
 - logs sem dados pessoais;
-- monitoramento, backup e rollback definidos;
+- rollback disponível pelas versões anteriores do Worker;
+- monitoramento de produção ainda pendente;
 - alterações somente por código versionado e fluxo de implantação aprovado.
 
 ## Ambiente local validado
@@ -207,16 +209,16 @@ Quando essa etapa for aprovada:
 
 ## Serviços externos planejados
 
-| Serviço             | Papel                                 | Estado atual                  |
-| ------------------- | ------------------------------------- | ----------------------------- |
-| Cloudflare Workers  | preview e hospedagem estática inicial | preview ativo                 |
-| Cloudflare          | DNS, CDN, SSL e Turnstile futuro      | domínio não conectado ao site |
-| PostgreSQL/Supabase | persistência de leads                 | não conectado                 |
-| Provedor de e-mail  | notificações e e-mail corporativo     | não definido                  |
-| GitHub              | repositório privado e CI              | configurado e validado        |
-| Analytics           | métricas sem dados pessoais           | não configurado               |
+| Serviço             | Papel                                       | Estado atual                      |
+| ------------------- | ------------------------------------------- | --------------------------------- |
+| Cloudflare Workers  | preview e produção estática                 | ambos ativos                      |
+| Cloudflare          | DNS, CDN, SSL e Turnstile futuro            | domínio e redirecionamento ativos |
+| PostgreSQL/Supabase | persistência de leads                       | não conectado                     |
+| Provedor de e-mail  | roteamento e autenticação do e-mail público | MX, SPF, DKIM e DMARC ativos      |
+| GitHub              | repositório privado e CI                    | configurado e validado            |
+| Analytics           | métricas sem dados pessoais                 | não configurado                   |
 
-A Vercel Hobby não faz parte da infraestrutura porque não permite uso comercial. Nenhum outro serviço deverá ser tratado como ativo antes de sua configuração e validação explícitas.
+A Vercel Hobby não faz parte da infraestrutura porque não permite uso comercial. Banco, formulários, analytics, notificações da aplicação e outros serviços não deverão ser tratados como ativos antes de sua configuração e validação explícitas.
 
 ## Dados de desenvolvimento
 

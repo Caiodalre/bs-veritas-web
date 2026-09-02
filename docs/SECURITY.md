@@ -2,7 +2,7 @@
 
 Este documento define os princípios, limites e controles de segurança do site da **B&S VERITAS CORRETORA DE SEGUROS LTDA**.
 
-Ele não declara que todos os controles descritos já estão ativos. Cada seção distingue regras obrigatórias de mecanismos que ainda serão implementados e verificados antes da produção.
+Ele não declara que todos os controles descritos já estão ativos. A produção estática inicial não coleta dados; cada seção distingue os controles já verificados dos mecanismos exigidos antes da ativação de formulários e serviços dinâmicos.
 
 ## Escopo
 
@@ -49,6 +49,7 @@ Já existem no repositório:
 - `.gitignore` gerado para evitar o versionamento normal de arquivos locais de ambiente;
 - regras de desenvolvimento em `AGENTS.md`;
 - preview estático na Cloudflare Workers sem dados reais;
+- produção estática no domínio oficial, sem banco ou coleta de dados;
 - HTTPS, proteção contra framing, `nosniff`, política de referência e política de permissões;
 - Content Security Policy compatível com a exportação estática do Next.js;
 - HSTS restrito aos hosts oficiais, sem incluir subdomínios ainda não auditados;
@@ -61,7 +62,6 @@ Ainda não estão configurados:
 - formulários públicos funcionais;
 - rate limiting;
 - Cloudflare Turnstile;
-- validação da CSP e do HSTS no domínio de produção;
 - provedor de notificação;
 - analytics;
 - monitoramento e alertas de produção.
@@ -98,7 +98,7 @@ O site não deverá solicitar no V1:
 - dados de dependentes;
 - informações completas de apólices.
 
-O campo de mensagem deverá orientar o visitante a não enviar dados sensíveis. A política de retenção dos leads precisa ser definida antes da produção.
+O campo de mensagem deverá orientar o visitante a não enviar dados sensíveis. A política de retenção dos leads precisa ser definida antes da ativação de qualquer formulário público.
 
 ## Formulários públicos
 
@@ -125,7 +125,7 @@ Regras:
 - não revelar qual camada de proteção rejeitou uma requisição;
 - definir timeouts para serviços externos.
 
-Os limites numéricos serão estabelecidos com base no ambiente real e testados antes do lançamento.
+Os limites numéricos serão estabelecidos com base no ambiente real e testados antes da ativação dos formulários.
 
 ## Banco de dados
 
@@ -134,7 +134,7 @@ Os limites numéricos serão estabelecidos com base no ambiente real e testados 
 - o usuário do banco terá apenas as permissões necessárias;
 - ambientes não compartilharão credenciais;
 - migrations serão versionadas e revisadas;
-- backups e restauração serão validados antes da produção;
+- backups e restauração serão validados antes da conexão do banco à aplicação;
 - consultas deverão ser feitas por APIs seguras do ORM, sem concatenação manual de entrada externa;
 - dados reais não serão copiados para testes locais ou previews.
 
@@ -187,7 +187,7 @@ As respostas JSON geradas pelo Worker aplicam seus próprios cabeçalhos defensi
 
 A Content Security Policy foi construída a partir dos recursos atuais. A exportação estática do Next.js exige scripts e estilos inline; migrar para nonces exigiria renderização dinâmica e uma decisão arquitetural separada. Não serão liberadas novas origens por conveniência sem justificativa.
 
-Antes do lançamento, CSP e HSTS ainda deverão ser verificados no domínio final.
+CSP e HSTS foram verificados no domínio final durante a publicação inicial de 2026-09-01 e deverão ser revalidados após mudanças relevantes.
 
 ## Autenticação administrativa
 
@@ -227,7 +227,7 @@ local
 - mudanças chegarão à produção por código versionado;
 - não haverá edição manual de arquivos publicados;
 - deploys deverão permitir identificação da revisão implantada;
-- uma estratégia de reversão será documentada antes do lançamento.
+- a estratégia de reversão documentada deverá ser mantida e testada proporcionalmente ao risco de cada mudança.
 
 ## E-mail e domínio
 
@@ -257,11 +257,11 @@ Não se deve apagar evidências ou publicar detalhes do incidente sem coordenaç
 
 ## Comunicação de vulnerabilidades
 
-O canal público de segurança ainda não foi definido. Antes do lançamento, deverá existir um endereço corporativo apropriado e um procedimento interno para receber, classificar e responder relatos.
+O canal público de segurança ainda não foi definido e permanece pendente após a publicação estática inicial. Antes de ativar coleta de dados, deverá existir um endereço corporativo apropriado e um procedimento interno para receber, classificar e responder relatos.
 
 Dados de vulnerabilidade não devem ser enviados para formulários comerciais comuns quando o canal oficial estiver disponível.
 
-## Checklist mínimo antes da produção
+## Checklist mínimo antes de formulários e coleta de dados
 
 - [ ] schemas de entrada e testes de casos inválidos;
 - [ ] honeypot, rate limiting e Turnstile verificados;
@@ -269,14 +269,14 @@ Dados de vulnerabilidade não devem ser enviados para formulários comerciais co
 - [ ] política de retenção aprovada;
 - [ ] backups e restauração testados;
 - [ ] secrets separados por ambiente;
-- [ ] headers HTTP avaliados no domínio final;
+- [x] headers HTTP avaliados no domínio final;
 - [ ] logs revisados contra exposição de dados pessoais;
-- [ ] previews fora dos buscadores;
-- [ ] SPF, DKIM e DMARC do provedor de e-mail;
+- [x] previews fora dos buscadores;
+- [x] SPF, DKIM e DMARC do provedor de e-mail;
 - [ ] MFA nas plataformas administrativas;
-- [ ] dependências e scripts de instalação revisados;
-- [ ] testes, lint e build aprovados;
-- [ ] estratégia de rollback documentada;
+- [x] dependências e scripts de instalação revisados;
+- [x] testes, lint e build aprovados;
+- [x] estratégia de rollback documentada;
 - [ ] canal de incidente e vulnerabilidade definido.
 
 Nenhum item deve ser marcado como concluído sem evidência verificável.
