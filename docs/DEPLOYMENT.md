@@ -2,7 +2,7 @@
 
 Este documento descreve o processo planejado de preview, publicação, validação e rollback do site da **B&S VERITAS CORRETORA DE SEGUROS LTDA**.
 
-O repositório privado, o CI e um preview estático na Cloudflare Workers estão configurados. O domínio de produção, o banco remoto, os formulários e as integrações comerciais ainda não estão ativos.
+O repositório privado, o CI, o preview e a produção estática na Cloudflare Workers estão ativos. Banco remoto, formulários e integrações comerciais da aplicação ainda não estão ativos.
 
 ## Objetivos
 
@@ -13,7 +13,7 @@ O repositório privado, o CI e um preview estático na Cloudflare Workers estão
 - validar aplicação, domínio e integrações após cada publicação;
 - evitar alterações manuais em arquivos de produção.
 
-## Arquitetura planejada de publicação
+## Arquitetura inicial de publicação
 
 ```text
 Registro.br
@@ -35,7 +35,7 @@ O e-mail corporativo utilizará o mesmo domínio, mas permanecerá independente 
 
 ## Domínios
 
-Configuração planejada:
+Configuração atual:
 
 | Endereço                       | Comportamento esperado                              |
 | ------------------------------ | --------------------------------------------------- |
@@ -44,15 +44,15 @@ Configuração planejada:
 | HTTP                           | redirecionamento para HTTPS                         |
 | URLs de preview                | homologação, sem indexação                          |
 
-Os registros DNS do site somente serão alterados quando a conexão do domínio for aprovada. Nenhum IP, CNAME ou token deverá ser inventado antecipadamente.
+Os registros DNS do site foram alterados individualmente após aprovação, com preservação e nova validação dos registros de e-mail.
 
 ### Redirecionamento canônico
 
-O redirecionamento de `www` será implementado como uma **Single Redirect** na zona Cloudflare, recurso disponível no plano gratuito. A regra será executada na borda, antes do Worker.
+O redirecionamento de `www` está implementado como uma **Single Redirect** na zona Cloudflare, recurso disponível no plano gratuito. A regra é executada na borda, antes do Worker.
 
 Não será usado o arquivo `_redirects`, pois os redirects de Static Assets não aceitam correspondência por domínio. Também não será alterado `run_worker_first` para todas as páginas, evitando invocações e latência desnecessárias no site estático.
 
-Configuração planejada:
+Configuração ativa:
 
 | Campo                  | Valor                            |
 | ---------------------- | -------------------------------- |
@@ -62,16 +62,16 @@ Configuração planejada:
 | status                 | `301`                            |
 | preservar query string | sim                              |
 
-Pré-condições:
+Validação concluída em 2026-09-01:
 
-- ambos os hosts conectados e com certificados válidos;
-- registros DNS correspondentes em modo proxy pela Cloudflare;
-- domínio principal respondendo com a revisão aprovada;
-- valor anterior de qualquer regra conflitante registrado antes da mudança.
+- ambos os hosts respondem com certificados válidos;
+- `www` utiliza registro originless `AAAA 100::` em modo proxy;
+- o domínio principal responde com a revisão aprovada;
+- não existiam regra ou registro `www` conflitantes antes da mudança;
+- HTTP e HTTPS retornam um único `301`, sem loop;
+- caminho e query string são preservados.
 
-Após a ativação, deverão ser verificados caminho, query string, resposta única `301`, ausência de loop e permanência do domínio principal sem redirecionamento.
-
-A regra permanece apenas planejada e não será criada sem aprovação explícita da alteração na Cloudflare.
+A regra ativa usa a referência estável `redirect_www_to_apex`. Mudanças futuras continuam exigindo aprovação explícita da alteração na Cloudflare.
 
 ## Ambientes
 
@@ -93,9 +93,9 @@ Criado a partir de uma branch ou revisão candidata.
 
 Criado somente a partir da revisão aprovada na `main`.
 
-- domínio oficial;
-- credenciais exclusivas;
-- banco de produção;
+- domínio oficial ativo;
+- aplicação estática sem credenciais ou banco de produção;
+- serviços dinâmicos desativados até aprovação específica;
 - logs e monitoramento restritos;
 - estratégia de rollback disponível.
 
@@ -118,16 +118,16 @@ Uma passagem entre etapas depende da validação da etapa anterior. Um preview b
 
 Antes de conectar serviços externos:
 
-- [ ] domínio sob titularidade e controle da empresa;
+- [x] domínio sob titularidade e controle autorizado;
 - [x] repositório remoto privado definido;
 - [ ] responsáveis administrativos identificados;
 - [ ] MFA habilitada nas contas administrativas;
 - [x] preview Cloudflare Workers criado e validado;
-- [ ] titularidade administrativa da zona Cloudflare confirmada para produção;
+- [x] titularidade administrativa da zona Cloudflare confirmada para produção;
 - [ ] ambientes e responsáveis pelo PostgreSQL definidos;
 - [ ] política de segredos aprovada;
-- [ ] contatos e conteúdo mínimo de produção confirmados;
-- [ ] procedimento de recuperação registrado.
+- [x] contatos e conteúdo mínimo de produção confirmados;
+- [x] procedimento de recuperação registrado.
 
 Nenhuma credencial deve ser compartilhada por mensagem, issue ou arquivo versionado.
 
@@ -156,36 +156,40 @@ Também devem ser revisados:
 - impacto em schema e migrations;
 - comportamento em desktop e mobile.
 
-## Configuração atual da Cloudflare Workers
+## Configuração atual da Cloudflare
 
-O preview atual:
+A implantação atual:
 
 - usa Cloudflare Workers Static Assets no plano gratuito;
 - publica a pasta `out` gerada pelo Next.js;
 - executa o build com `pnpm build`;
-- permanece no endereço `workers.dev` sem domínio personalizado ativo;
-- declara `bsveritas.com.br` como Custom Domain no `wrangler.jsonc`, pendente de merge e deploy autorizados;
+- mantém `workers.dev` ativo como preview;
+- serve `bsveritas.com.br` como Custom Domain do Worker;
+- redireciona `www` para o domínio principal por Single Redirect;
 - envia `X-Robots-Tag: noindex` no preview;
 - aplica uma Content Security Policy compatível com a exportação estática;
 - mantém HSTS versionado somente para os hosts oficiais, sem `includeSubDomains` ou `preload`;
 - protege diretamente as respostas da API, que não recebem as regras do arquivo `_headers`;
-- mantém o `robots.txt` canônico preparado para permitir rastreamento somente quando o domínio oficial for conectado;
+- publica `robots.txt` e sitemap canônicos no domínio oficial;
 - não possui bindings, banco, variáveis ou segredos de produção;
-- foi validado por smoke tests HTTP e navegação automatizada.
+- foi validado por testes automatizados no preview e smoke tests HTTP em produção.
 
 A publicação ainda é manual. Automatizar deploys exigirá uma etapa separada, com credencial de escopo mínimo e aprovação explícita.
 
-## Configuração planejada do domínio Cloudflare
+## Estado do domínio Cloudflare
 
-Quando aprovada, a configuração deverá:
+A configuração atual:
 
-- administrar o DNS autoritativo do domínio;
-- preservar os registros necessários ao provedor de e-mail;
-- habilitar DNSSEC após validação da cadeia completa;
-- conectar o domínio diretamente ao Worker aprovado;
-- forçar HTTPS sem criar loop de redirecionamento;
-- configurar Turnstile somente quando os formulários existirem;
-- validar cache, CSP e HSTS no domínio final antes da ativação pública.
+- usa o DNS autoritativo da Cloudflare;
+- preserva os registros necessários ao e-mail corporativo;
+- conecta o domínio principal diretamente ao Worker aprovado;
+- força HTTPS sem loop de redirecionamento;
+- mantém certificados, CSP e HSTS validados no domínio final.
+
+Permanecem pendentes:
+
+- concluir a cadeia DNSSEC com a publicação do registro DS no domínio pai;
+- configurar Turnstile somente quando os formulários públicos forem ativados.
 
 Alterações DNS serão feitas uma por vez, com registro do valor anterior e teste após cada mudança.
 
@@ -322,22 +326,52 @@ Cada publicação de produção deverá registrar:
 - problemas conhecidos;
 - rollback, quando ocorrido.
 
-O formato definitivo será estabelecido antes do primeiro lançamento.
+### Produção inicial — 2026-09-01
+
+| Campo                | Valor                                                                   |
+| -------------------- | ----------------------------------------------------------------------- |
+| commit implantado    | `70feb0caf759e62901376875bd1d2248f4e5118a`                              |
+| versão Cloudflare    | `7268ae1e-433d-4ee3-ae63-030801a74ec1`                                  |
+| responsável          | publicação autorizada pelo responsável pelo repositório e pela zona DNS |
+| migrations aplicadas | nenhuma                                                                 |
+| rollback executado   | não                                                                     |
+
+Resumo:
+
+- produção estática publicada em `https://bsveritas.com.br`;
+- preview `workers.dev` preservado e protegido com `noindex`;
+- redirecionamento `www` ativado e validado separadamente;
+- banco, formulários, analytics e notificações da aplicação permaneceram desativados.
+
+Smoke tests:
+
+- domínio principal e páginas públicas retornaram `200` em HTTPS;
+- `www` retornou `301` preservando caminho e query string em HTTP e HTTPS;
+- preview retornou `200` e rota inexistente retornou `404`;
+- `robots.txt` e sitemap retornaram `200`;
+- CSP, HSTS e `X-Robots-Tag` foram verificados nos hosts correspondentes;
+- MX, SPF, DKIM e DMARC permaneceram publicados.
+
+Pendências conhecidas:
+
+- a zona publica DNSKEY, mas a cadeia DNSSEC ainda não possui DS no domínio pai;
+- monitoramento e alertas de produção ainda não estão configurados;
+- serviços dinâmicos permanecem desativados.
 
 ## Estado atual da implantação
 
-| Componente            | Estado                     |
-| --------------------- | -------------------------- |
-| build local           | configurado e validado     |
-| testes locais         | configurados e validados   |
-| repositório Git local | configurado                |
-| GitHub remoto         | privado e configurado      |
-| CI                    | ativo e validado no GitHub |
-| Cloudflare Workers    | preview estático ativo     |
-| Vercel                | excluída do plano gratuito |
-| domínio no projeto    | configuração preparada     |
-| PostgreSQL remoto     | não conectado              |
-| notificações          | não configuradas           |
-| produção              | inexistente                |
+| Componente            | Estado                                        |
+| --------------------- | --------------------------------------------- |
+| build local           | configurado e validado                        |
+| testes locais         | configurados e validados                      |
+| repositório Git local | configurado                                   |
+| GitHub remoto         | privado e configurado                         |
+| CI                    | ativo e validado no GitHub                    |
+| Cloudflare Workers    | preview e produção estática ativos            |
+| Vercel                | excluída do plano gratuito                    |
+| domínio no projeto    | apex ativo e `www` com redirecionamento `301` |
+| PostgreSQL remoto     | não conectado                                 |
+| notificações          | não configuradas                              |
+| produção              | ativa no commit `70feb0c`                     |
 
 Qualquer mudança desse estado deverá ser feita como uma etapa separada, aprovada e validada.

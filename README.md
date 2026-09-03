@@ -2,13 +2,13 @@
 
 Site institucional e comercial da **B&S VERITAS CORRETORA DE SEGUROS LTDA**.
 
-O projeto tem como objetivos transmitir confiança, apresentar a corretora e seus seguros e gerar oportunidades comerciais por meio de cotação, contato e WhatsApp. O domínio planejado para produção é `bsveritas.com.br`.
+O projeto tem como objetivos transmitir confiança, apresentar a corretora e seus seguros e gerar oportunidades comerciais por meio de cotação, contato e WhatsApp. O domínio público é `bsveritas.com.br`.
 
 ## Estado atual
 
-O projeto está na construção da experiência pública. O repositório privado e a integração contínua estão ativos, e uma versão de preview está publicada na Cloudflare Workers Static Assets.
+A experiência pública inicial está online. O repositório privado e a integração contínua estão ativos, e a Cloudflare Workers Static Assets mantém ambientes públicos de preview e produção.
 
-O domínio de produção ainda não foi conectado. A aplicação não coleta dados, não possui banco remoto e não utiliza credenciais de produção.
+A produção está disponível em [https://bsveritas.com.br](https://bsveritas.com.br), com redirecionamento permanente de `www`. A aplicação ainda não coleta dados, não possui banco remoto e não utiliza credenciais de aplicação em produção.
 
 Já estão configurados:
 
@@ -20,7 +20,8 @@ Já estão configurados:
 - fundação do Drizzle ORM para PostgreSQL;
 - ESLint, Prettier e pnpm;
 - repositório privado no GitHub e CI remoto ativo;
-- exportação estática e preview público com `noindex` na Cloudflare Workers;
+- exportação estática, preview público com `noindex` e produção na Cloudflare Workers;
+- domínio canônico com HTTPS e redirecionamento `301` de `www` para o domínio principal;
 - página inicial institucional responsiva;
 - página Sobre com propósito, princípios e forma de atendimento;
 - catálogo de seguros e páginas estáticas das modalidades atendidas;
@@ -112,11 +113,11 @@ As regras completas de desenvolvimento estão em [`AGENTS.md`](./AGENTS.md).
 
 ## Infraestrutura atual e planejada
 
-- Cloudflare Workers Static Assets para preview e hospedagem inicial;
+- Cloudflare Workers Static Assets para preview e produção estática;
 - Cloudflare para DNS, CDN, SSL e Turnstile quando os formulários existirem;
 - PostgreSQL, inicialmente por infraestrutura Supabase;
 - GitHub para repositório e integração contínua.
 
-O GitHub, o CI e o preview da Cloudflare já estão configurados. O domínio, o banco, os formulários e os serviços de notificação continuam pendentes e serão tratados em etapas separadas.
+O GitHub, o CI, o preview e o domínio de produção na Cloudflare estão configurados. Banco remoto, formulários públicos, analytics e notificações da aplicação continuam pendentes e serão tratados em etapas separadas.
 
 O plano gratuito Hobby da Vercel não será utilizado porque restringe o uso a projetos pessoais e não comerciais. Qualquer futura mudança de hospedagem exigirá compatibilidade com uso empresarial sem custo ou aprovação explícita de um plano pago.

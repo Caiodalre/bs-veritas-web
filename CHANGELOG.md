@@ -2,9 +2,9 @@
 
 Este arquivo registra mudanças relevantes do **B&S Veritas Web**.
 
-O projeto possui um preview público não indexável, mas ainda não possui domínio conectado nem lançamento de produção. Até o primeiro lançamento, as mudanças permanecerão na seção **Não lançado** e os marcos internos serão identificados explicitamente.
+O projeto possui produção estática no domínio oficial e um preview público não indexável. Serviços dinâmicos e coleta de dados permanecem desativados.
 
-## Não lançado
+## Lançamento público inicial — 2026-09-01
 
 ### Adicionado
 
@@ -20,8 +20,8 @@ O projeto possui um preview público não indexável, mas ainda não possui dom�
 - testes de interface e de jornada para a experiência pública;
 - cobertura E2E de todas as páginas de modalidades e de suas entradas no sitemap;
 - política CSP para páginas estáticas, HSTS restrito aos hosts oficiais e cabeçalhos defensivos na API;
-- procedimento de redirecionamento canônico de `www` para o domínio principal por regra gratuita da Cloudflare;
-- configuração versionada do domínio principal como Custom Domain do Worker, ainda sem ativação;
+- redirecionamento canônico ativo de `www` para o domínio principal por regra gratuita da Cloudflare;
+- domínio principal ativo como Custom Domain do Worker;
 - documentação inicial do propósito, escopo, stack e execução no `README.md`;
 - arquitetura e limites do V1 em `docs/ARCHITECTURE.md`;
 - política e checklist de segurança em `docs/SECURITY.md`;
@@ -50,10 +50,15 @@ O projeto possui um preview público não indexável, mas ainda não possui dom�
 
 ### Observações
 
-- o projeto permanece sem lançamento de produção; a URL `workers.dev` é somente preview;
+- a produção está disponível em `https://bsveritas.com.br` no commit `70feb0c`;
+- a versão Cloudflare da publicação inicial é `7268ae1e-433d-4ee3-ae63-030801a74ec1`;
+- a URL `workers.dev` permanece somente como preview com `noindex`;
 - ESLint `10.9.1` foi avaliado e rejeitado porque os plugins atuais do Next.js ainda exigem ESLint 9; a versão compatível `9.39.5` permanece fixada;
-- GitHub, CI e Cloudflare Workers estão ativos sem credenciais versionadas;
-- domínio personalizado, banco, formulários e integrações de produção ainda não estão configurados;
+- GitHub, CI, Cloudflare Workers e domínio personalizado estão ativos sem credenciais versionadas;
+- banco, formulários, analytics e integrações dinâmicas de produção ainda não estão configurados;
+- nenhuma migration foi aplicada na publicação inicial;
+- smoke tests confirmaram produção `200`, preview `200`, `www` com `301`, `robots.txt`, sitemap e registros de e-mail preservados;
+- a cadeia DNSSEC ainda depende da publicação do registro DS no domínio pai;
 - a Vercel Hobby foi excluída da arquitetura gratuita por restringir o uso a projetos pessoais e não comerciais.
 
 ## Fundação técnica — 2026-08-25
