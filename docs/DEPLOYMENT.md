@@ -184,11 +184,11 @@ A configuração atual:
 - preserva os registros necessários ao e-mail corporativo;
 - conecta o domínio principal diretamente ao Worker aprovado;
 - força HTTPS sem loop de redirecionamento;
+- mantém a cadeia DNSSEC completa, com o DS publicado no Registro.br;
 - mantém certificados, CSP e HSTS validados no domínio final.
 
 Permanecem pendentes:
 
-- concluir a cadeia DNSSEC com a publicação do registro DS no domínio pai;
 - configurar Turnstile somente quando os formulários públicos forem ativados.
 
 Alterações DNS serão feitas uma por vez, com registro do valor anterior e teste após cada mudança.
@@ -354,9 +354,17 @@ Smoke tests:
 
 Pendências conhecidas:
 
-- a zona publica DNSKEY, mas a cadeia DNSSEC ainda não possui DS no domínio pai;
+- a cadeia DNSSEC, pendente no lançamento inicial, foi concluída em 2026-09-07;
 - monitoramento e alertas de produção ainda não estão configurados;
 - serviços dinâmicos permanecem desativados.
+
+### Ativação do DNSSEC — 2026-09-07
+
+- DS `2371 13 2 639BF1A3C7C5ADB282C17F0583CB9BE16F1D134E59023ED41A2C37BF04C4554E` publicado no Registro.br;
+- Cloudflare DNS e Google Public DNS retornaram o mesmo DS com validação autenticada (`AD=true`);
+- consultas `A` e `MX` retornaram respostas autenticadas (`AD=true`);
+- domínio principal permaneceu com resposta `200` e `www` com redirecionamento `301` preservando caminho e query string;
+- MX, SPF, DKIM e DMARC permaneceram publicados.
 
 ## Estado atual da implantação
 

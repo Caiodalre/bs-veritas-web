@@ -4,6 +4,15 @@ Este arquivo registra mudanças relevantes do **B&S Veritas Web**.
 
 O projeto possui produção estática no domínio oficial e um preview público não indexável. Serviços dinâmicos e coleta de dados permanecem desativados.
 
+## Proteção DNSSEC — 2026-09-07
+
+### Segurança
+
+- registro DS da Cloudflare publicado no Registro.br;
+- cadeia DNSSEC validada pelo Cloudflare DNS e pelo Google Public DNS;
+- respostas `A` e `MX` autenticadas com `AD=true`;
+- site, redirecionamento `www` e registros MX, SPF, DKIM e DMARC preservados após a ativação.
+
 ## Lançamento público inicial — 2026-09-01
 
 ### Adicionado
@@ -58,7 +67,7 @@ O projeto possui produção estática no domínio oficial e um preview público 
 - banco, formulários, analytics e integrações dinâmicas de produção ainda não estão configurados;
 - nenhuma migration foi aplicada na publicação inicial;
 - smoke tests confirmaram produção `200`, preview `200`, `www` com `301`, `robots.txt`, sitemap e registros de e-mail preservados;
-- a cadeia DNSSEC ainda depende da publicação do registro DS no domínio pai;
+- a cadeia DNSSEC foi concluída em 2026-09-07 com a publicação do DS no Registro.br;
 - a Vercel Hobby foi excluída da arquitetura gratuita por restringir o uso a projetos pessoais e não comerciais.
 
 ## Fundação técnica — 2026-08-25

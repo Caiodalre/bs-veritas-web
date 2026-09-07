@@ -53,6 +53,7 @@ Já existem no repositório:
 - HTTPS, proteção contra framing, `nosniff`, política de referência e política de permissões;
 - Content Security Policy compatível com a exportação estática do Next.js;
 - HSTS restrito aos hosts oficiais, sem incluir subdomínios ainda não auditados;
+- DNSSEC com cadeia de confiança validada até o Registro.br;
 - cabeçalhos defensivos aplicados diretamente às respostas JSON da API;
 - cabeçalho `X-Robots-Tag: noindex` no endereço `workers.dev`.
 
@@ -231,12 +232,12 @@ local
 
 ## E-mail e domínio
 
-Quando o provedor for definido, o domínio deverá utilizar:
+O domínio utiliza:
 
 - SPF;
 - DKIM;
 - DMARC com implantação gradual e monitorada;
-- DNSSEC quando compatível com a configuração final;
+- DNSSEC ativo, com DS publicado no Registro.br e respostas autenticadas em resolvedores públicos;
 - acesso administrativo protegido por MFA.
 
 O site não deve enviar e-mail fingindo usar um domínio ainda não autorizado pelos registros correspondentes.
