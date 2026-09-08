@@ -237,8 +237,9 @@ O domínio utiliza:
 - SPF;
 - DKIM;
 - DMARC com implantação gradual e monitorada;
-- DNSSEC ativo, com DS publicado no Registro.br e respostas autenticadas em resolvedores públicos;
-- acesso administrativo protegido por MFA.
+- DNSSEC ativo, com DS publicado no Registro.br e respostas autenticadas em resolvedores públicos.
+
+A MFA das plataformas administrativas continua pendente e não deve ser tratada como ativa antes de validação verificável.
 
 O site não deve enviar e-mail fingindo usar um domínio ainda não autorizado pelos registros correspondentes.
 
