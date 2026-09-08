@@ -4,6 +4,15 @@ Este arquivo registra mudanças relevantes do **B&S Veritas Web**.
 
 O projeto possui produção estática no domínio oficial e um preview público não indexável. Serviços dinâmicos e coleta de dados permanecem desativados.
 
+## Dados estruturados para buscadores — 2026-09-08
+
+### Adicionado
+
+- JSON-LD do tipo `Organization` com identificação e canais oficiais já exibidos no site;
+- JSON-LD do tipo `WebSite` associado à organização;
+- serialização que neutraliza caracteres capazes de encerrar a tag `script`;
+- testes dos dados publicados e da proteção da serialização.
+
 ## Monitoramento automático — 2026-09-07
 
 ### Adicionado
