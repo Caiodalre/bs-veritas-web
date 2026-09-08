@@ -6,6 +6,11 @@ export const siteConfig = {
   url: "https://bsveritas.com.br",
   cnpj: "68.711.730/0001-34",
   location: "São Paulo - SP",
+  address: {
+    locality: "São Paulo",
+    region: "SP",
+    country: "BR",
+  },
   contact: {
     email: "contato@bsveritas.com.br",
     phone: "+55 11 98526-9641",

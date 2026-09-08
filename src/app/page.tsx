@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { buttonStyles } from "@/components/ui/button";
 import { insuranceCatalog } from "@/features/insurance/catalog";
 import { InsuranceIcon } from "@/features/insurance/components/insurance-icon";
+import { homeStructuredData, serializeStructuredData } from "@/lib/structured-data";
 
 const trustItems = [
   { label: "Atendimento personalizado", icon: UsersRound },
@@ -42,6 +43,10 @@ const quoteSteps = [
 export default function Home() {
   return (
     <div className="min-h-screen bg-background">
+      <script
+        dangerouslySetInnerHTML={{ __html: serializeStructuredData(homeStructuredData) }}
+        type="application/ld+json"
+      />
       <SiteHeader />
 
       <main id="conteudo">
