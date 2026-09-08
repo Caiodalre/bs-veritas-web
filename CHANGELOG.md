@@ -4,6 +4,22 @@ Este arquivo registra mudanças relevantes do **B&S Veritas Web**.
 
 O projeto possui produção estática no domínio oficial e um preview público não indexável. Serviços dinâmicos e coleta de dados permanecem desativados.
 
+## Monitoramento automático — 2026-09-07
+
+### Adicionado
+
+- workflow `Production monitor` preparado para execução a cada seis horas, no minuto 17, e sob demanda;
+- verificações das páginas públicas, `robots.txt`, sitemap, cabeçalhos de segurança, redirecionamento `www` e proteção do preview;
+- validação da cadeia DNSSEC por dois resolvedores e dos registros MX, SPF, DKIM e DMARC;
+- tentativas controladas, timeout e relatório agregado das falhas;
+- execução sem segredos e sem dependências adicionais.
+
+### Operação
+
+- o agendamento passa a valer somente após entrada na branch padrão;
+- alertas de falha dependem das preferências de notificação do GitHub;
+- para assegurar custo zero, a conta deve bloquear uso pago do GitHub Actions ao atingir o limite gratuito.
+
 ## Proteção DNSSEC — 2026-09-07
 
 ### Segurança
