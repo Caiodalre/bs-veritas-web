@@ -41,7 +41,8 @@ Usado exclusivamente pelo domínio público aprovado e ativo.
 - aplicação estática sem banco, variáveis ou segredos de aplicação;
 - logs sem dados pessoais;
 - rollback disponível pelas versões anteriores do Worker;
-- monitoramento de produção ainda pendente;
+- monitoramento automatizado configurado no GitHub Actions para execução a cada seis horas;
+- alertas seguem as preferências da conta e o uso pago do Actions deve permanecer bloqueado;
 - alterações somente por código versionado e fluxo de implantação aprovado.
 
 ## Ambiente local validado

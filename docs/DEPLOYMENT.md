@@ -355,7 +355,9 @@ Smoke tests:
 Pendências conhecidas:
 
 - a cadeia DNSSEC, pendente no lançamento inicial, foi concluída em 2026-09-07;
-- monitoramento e alertas de produção ainda não estão configurados;
+- o monitoramento automático está programado no GitHub Actions para execução a cada seis horas;
+- a entrega dos alertas depende das preferências de notificação da conta GitHub;
+- o uso pago do GitHub Actions deve permanecer bloqueado para garantir custo zero;
 - serviços dinâmicos permanecem desativados.
 
 ### Ativação do DNSSEC — 2026-09-07
@@ -365,6 +367,17 @@ Pendências conhecidas:
 - consultas `A` e `MX` retornaram respostas autenticadas (`AD=true`);
 - domínio principal permaneceu com resposta `200` e `www` com redirecionamento `301` preservando caminho e query string;
 - MX, SPF, DKIM e DMARC permaneceram publicados.
+
+### Monitor de produção — 2026-09-07
+
+- workflow em `.github/workflows/production-monitor.yml` com execução agendada e manual;
+- frequência de quatro execuções por dia, sempre no minuto 17 para evitar o pico do início da hora;
+- cinco páginas públicas, `robots.txt`, sitemap e cabeçalhos de segurança verificados;
+- redirecionamento canônico de `www` e proteção `noindex` do preview verificados;
+- DS e resolução `A` autenticados por DNSSEC no Cloudflare DNS e no Google Public DNS;
+- MX, SPF, DKIM e DMARC verificados no Cloudflare DNS;
+- três tentativas por consulta, timeout de 15 segundos e falha do workflow quando qualquer verificação não passa;
+- nenhum segredo, banco ou dado pessoal utilizado.
 
 ## Estado atual da implantação
 
@@ -378,8 +391,9 @@ Pendências conhecidas:
 | Cloudflare Workers    | preview e produção estática ativos            |
 | Vercel                | excluída do plano gratuito                    |
 | domínio no projeto    | apex ativo e `www` com redirecionamento `301` |
+| monitoramento         | agendado no GitHub Actions a cada seis horas  |
 | PostgreSQL remoto     | não conectado                                 |
-| notificações          | não configuradas                              |
+| notificações          | dependem das preferências da conta GitHub     |
 | produção              | ativa no commit `70feb0c`                     |
 
 Qualquer mudança desse estado deverá ser feita como uma etapa separada, aprovada e validada.
