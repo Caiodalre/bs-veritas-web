@@ -379,6 +379,15 @@ Pendências conhecidas:
 - três tentativas por consulta, timeout de 15 segundos e falha do workflow quando qualquer verificação não passa;
 - nenhum segredo, banco ou dado pessoal utilizado.
 
+### Dados estruturados em produção — 2026-09-09
+
+- publicação às 20:28 BRT (23:28 UTC);
+- commit d4e2b13508037bde83cbd3218c69e162f5d544a0;
+- versão Cloudflare 973fba95-a92b-47c4-96ce-801411a87ca1 em 100% do tráfego;
+- versão anterior 7268ae1e-433d-4ee3-ae63-030801a74ec1 preservada para rollback;
+- sete rotas, redirecionamento www, cabeçalhos e JSON-LD validados;
+- nenhuma migration ou serviço dinâmico ativado.
+
 ## Estado atual da implantação
 
 | Componente            | Estado                                        |
@@ -394,6 +403,7 @@ Pendências conhecidas:
 | monitoramento         | agendado no GitHub Actions a cada seis horas  |
 | PostgreSQL remoto     | não conectado                                 |
 | notificações          | dependem das preferências da conta GitHub     |
-| produção              | ativa no commit `70feb0c`                     |
+| versão Cloudflare     | `973fba95-a92b-47c4-96ce-801411a87ca1`        |
+| produção              | ativa no commit `d4e2b13`                     |
 
 Qualquer mudança desse estado deverá ser feita como uma etapa separada, aprovada e validada.
