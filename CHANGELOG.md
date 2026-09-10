@@ -4,6 +4,14 @@ Este arquivo registra mudanças relevantes do **B&S Veritas Web**.
 
 O projeto possui produção estática no domínio oficial e um preview público não indexável. Serviços dinâmicos e coleta de dados permanecem desativados.
 
+## Publicação dos dados estruturados — 2026-09-09
+
+- commit d4e2b13508037bde83cbd3218c69e162f5d544a0 promovido para produção;
+- versão Cloudflare 973fba95-a92b-47c4-96ce-801411a87ca1 direcionada para 100% do tráfego;
+- JSON-LD Organization e WebSite validado no domínio canônico;
+- sete rotas públicas, redirecionamento www e cabeçalhos de segurança aprovados;
+- nenhuma migration, credencial, banco ou serviço pago foi adicionado.
+
 ## Dados estruturados para buscadores — 2026-09-08
 
 ### Adicionado
