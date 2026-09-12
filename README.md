@@ -28,6 +28,7 @@ Já estão configurados:
 - página de Sinistros com primeiros cuidados, limites e orientação segura;
 - página de Contato com canais públicos e sem formulário ou coleta direta de dados;
 - sitemap e `robots.txt` canônicos, além de página 404 personalizada.
+- propriedade de domínio verificada no Google Search Console, com sitemap processado e página inicial encaminhada para indexação;
 
 ## Documentação
 

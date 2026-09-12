@@ -4,6 +4,13 @@ Este arquivo registra mudanças relevantes do **B&S Veritas Web**.
 
 O projeto possui produção estática no domínio oficial e um preview público não indexável. Serviços dinâmicos e coleta de dados permanecem desativados.
 
+## Cadastro no Google Search Console — 2026-09-12
+
+- propriedade de domínio `bsveritas.com.br` verificada por registro DNS;
+- sitemap canônico `https://bsveritas.com.br/sitemap.xml` enviado e processado;
+- página inicial aprovada no teste em tempo real e encaminhada para indexação;
+- nenhuma ferramenta de analytics, cookie ou serviço pago foi ativado.
+
 ## Publicação dos dados estruturados — 2026-09-09
 
 - commit d4e2b13508037bde83cbd3218c69e162f5d544a0 promovido para produção;
