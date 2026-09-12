@@ -4,6 +4,14 @@ Este arquivo registra mudanças relevantes do **B&S Veritas Web**.
 
 O projeto possui produção estática no domínio oficial e um preview público não indexável. Serviços dinâmicos e coleta de dados permanecem desativados.
 
+## Não lançado
+
+### Adicionado
+
+- Política de Privacidade com identificação do controlador, práticas atuais, finalidades, bases legais, critérios de retenção, compartilhamentos, direitos dos titulares e canal de atendimento;
+- link institucional no rodapé e inclusão da nova rota no sitemap;
+- testes da página, do canal de privacidade, do sitemap e do layout mobile.
+
 ## Cadastro no Google Search Console — 2026-09-12
 
 - propriedade de domínio `bsveritas.com.br` verificada por registro DNS;
