@@ -31,8 +31,12 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden lg:block">
-          <Link className={buttonStyles({ size: "sm" })} href="/contato">
-            Cotar agora
+          <Link
+            aria-label="Fale conosco por e-mail ou telefone"
+            className={buttonStyles({ size: "sm" })}
+            href="/contato"
+          >
+            Fale conosco
           </Link>
         </div>
 
@@ -56,10 +60,11 @@ export function SiteHeader() {
               </Link>
             ))}
             <Link
+              aria-label="Fale conosco por e-mail ou telefone"
               className={buttonStyles({ className: "mt-2 w-full", size: "sm" })}
               href="/contato"
             >
-              Cotar agora
+              Fale conosco
             </Link>
           </nav>
         </details>
