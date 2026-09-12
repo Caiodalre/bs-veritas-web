@@ -6,6 +6,9 @@ test("exibe a pagina inicial", async ({ page }) => {
 
   await expect(page).toHaveTitle(/B&S Veritas/);
   await expect(
+    page.getByRole("link", { name: "Fale conosco por e-mail ou telefone" }),
+  ).toHaveAttribute("href", "/contato");
+  await expect(
     page.getByRole("heading", { level: 1, name: "Proteção para o que realmente importa." }),
   ).toBeVisible();
 
@@ -71,7 +74,15 @@ test("publica os canais oficiais de contato sem formulario", async ({ page }) =>
     page.getByRole("heading", { level: 1, name: "Fale com a B&S Veritas" }),
   ).toBeVisible();
   await expect(page.getByRole("link", { name: "Conversar pelo WhatsApp" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Ligar agora" })).toHaveAttribute(
+    "href",
+    "tel:+5511985269641",
+  );
   await expect(page.getByRole("link", { name: "Enviar e-mail" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Enviar e-mail" })).toHaveAttribute(
+    "href",
+    "mailto:contato@bsveritas.com.br",
+  );
   await expect(page.getByRole("heading", { name: "Proteja suas informações" })).toBeVisible();
 });
 
@@ -135,6 +146,9 @@ test.describe("layout mobile", () => {
     await page.locator("summary").click();
     await expect(page.getByRole("navigation", { name: "Navegação móvel" })).toBeVisible();
     await expect(page.getByRole("link", { name: "Seguros", exact: true }).last()).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "Fale conosco por e-mail ou telefone" }),
+    ).toHaveAttribute("href", "/contato");
 
     const hasHorizontalOverflow = await page.evaluate(
       () => document.documentElement.scrollWidth > document.documentElement.clientWidth,

@@ -12,6 +12,11 @@ O projeto possui produção estática no domínio oficial e um preview público 
 - link institucional no rodapé e inclusão da nova rota no sitemap;
 - testes da página, do canal de privacidade, do sitemap e do layout mobile.
 
+### Alterado
+
+- botão principal do cabeçalho renomeado para “Fale conosco”, com acesso à página que reúne e-mail e telefone acionáveis;
+- testes de jornada ampliados para validar o botão e os destinos oficiais de e-mail e telefone.
+
 ## Cadastro no Google Search Console — 2026-09-12
 
 - propriedade de domínio `bsveritas.com.br` verificada por registro DNS;
