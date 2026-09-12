@@ -19,9 +19,20 @@ export function SiteFooter() {
           <p>
             © {new Date().getFullYear()} {siteConfig.name}.
           </p>
-          <Link className="font-semibold text-aqua-700 hover:text-navy-900" href="/contato">
-            Contato
-          </Link>
+          <nav
+            aria-label="Links institucionais"
+            className="mt-1 flex flex-wrap gap-x-4 gap-y-1 sm:justify-end"
+          >
+            <Link
+              className="font-semibold text-aqua-700 hover:text-navy-900"
+              href="/politica-de-privacidade"
+            >
+              Privacidade
+            </Link>
+            <Link className="font-semibold text-aqua-700 hover:text-navy-900" href="/contato">
+              Contato
+            </Link>
+          </nav>
         </div>
       </Container>
     </footer>

@@ -10,6 +10,7 @@ const publicRoutes = [
   { path: "/seguros", changeFrequency: "monthly", priority: 0.9 },
   { path: "/sinistros", changeFrequency: "monthly", priority: 0.8 },
   { path: "/contato", changeFrequency: "monthly", priority: 0.8 },
+  { path: "/politica-de-privacidade", changeFrequency: "yearly", priority: 0.4 },
 ] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {
