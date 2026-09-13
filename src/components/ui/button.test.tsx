@@ -15,4 +15,14 @@ describe("Button", () => {
     expect(classes).toContain("px-8");
     expect(classes).not.toContain("px-4");
   });
+
+  it("distingue contornos para fundos claros e escuros", () => {
+    const onLight = buttonStyles({ variant: "outlineLight" });
+    const onDark = buttonStyles({ variant: "outlineDark" });
+
+    expect(onLight).toContain("text-navy-950");
+    expect(onLight).toContain("bg-white");
+    expect(onDark).toContain("text-white");
+    expect(onDark).toContain("hover:bg-white/10");
+  });
 });

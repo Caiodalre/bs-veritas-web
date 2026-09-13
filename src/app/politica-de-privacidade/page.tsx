@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 };
 
 const currentPractices = [
-  "O site não possui formulário, cadastro, área autenticada ou pagamento online.",
+  "WhatsApp, telefone e e-mail são os canais disponíveis para iniciar o atendimento.",
   "Não utilizamos analytics, publicidade comportamental ou cookies de marketing.",
   "O contato é iniciado pelo visitante nos canais externos publicados no site.",
 ] as const;
@@ -173,8 +173,8 @@ export default function PrivacyPolicyPage() {
                 aplicáveis, os dados são eliminados ou anonimizados quando cabível.
               </p>
               <p className="mt-4">
-                Antes da ativação de qualquer formulário no site, uma regra específica de retenção
-                será aprovada e esta política será atualizada.
+                Dúvidas sobre retenção de informações recebidas pelos canais de atendimento podem
+                ser encaminhadas ao e-mail de privacidade indicado nesta página.
               </p>
             </section>
 
@@ -208,10 +208,10 @@ export default function PrivacyPolicyPage() {
                 7. Cookies e serviços externos
               </h2>
               <p className="mt-4">
-                Nesta versão, a aplicação não instala cookies de analytics, publicidade,
-                personalização ou marketing. Por isso, não há um banner de consentimento para
-                cookies não essenciais. Prestadores de infraestrutura podem utilizar mecanismos
-                estritamente necessários à entrega e à segurança das páginas.
+                O site não instala cookies de analytics, publicidade, personalização ou marketing.
+                Por isso, não há um banner de consentimento para cookies não essenciais. Prestadores
+                de infraestrutura podem utilizar mecanismos estritamente necessários à entrega e à
+                segurança das páginas.
               </p>
               <p className="mt-4">
                 Se novas tecnologias de rastreamento forem propostas, esta política e os controles
@@ -256,7 +256,7 @@ export default function PrivacyPolicyPage() {
             </p>
           </div>
           <a
-            className={buttonStyles({ size: "lg", variant: "outline" })}
+            className={buttonStyles({ size: "lg", variant: "outlineDark" })}
             href={`mailto:${siteConfig.contact.email}?subject=Privacidade`}
           >
             <Mail aria-hidden="true" size={18} />

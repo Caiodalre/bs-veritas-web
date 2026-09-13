@@ -119,9 +119,12 @@ export default function AboutPage() {
               O que orienta cada atendimento
             </h2>
           </div>
-          <div className="mt-12 grid gap-5 md:grid-cols-3">
+          <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {principles.map(({ icon: Icon, text, title }) => (
-              <article className="rounded-xl border border-aqua-200 bg-white p-7" key={title}>
+              <article
+                className="rounded-xl border border-aqua-200 bg-white p-7 md:last:col-span-2 lg:last:col-span-1"
+                key={title}
+              >
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-aqua-100 text-aqua-700">
                   <Icon aria-hidden="true" size={25} strokeWidth={1.7} />
                 </div>
@@ -143,9 +146,12 @@ export default function AboutPage() {
               Presença em diferentes momentos
             </h2>
           </div>
-          <ol className="mt-12 grid gap-5 md:grid-cols-3">
+          <ol className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {serviceMoments.map(({ icon: Icon, text, title }, index) => (
-              <li className="rounded-xl border border-white/10 bg-white/[0.045] p-7" key={title}>
+              <li
+                className="rounded-xl border border-white/10 bg-white/[0.045] p-7 md:last:col-span-2 lg:last:col-span-1"
+                key={title}
+              >
                 <div className="flex items-center justify-between">
                   <Icon aria-hidden="true" className="text-aqua-300" size={25} strokeWidth={1.7} />
                   <span className="text-xs font-bold tracking-[0.18em] text-aqua-300">

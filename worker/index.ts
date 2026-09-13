@@ -1,11 +1,11 @@
 const quoteEndpoint = "/api/quote";
-
-interface AssetsBinding {
-  fetch(request: Request): Promise<Response>;
-}
+const rscPagePayloadSuffix = ".__PAGE__.txt";
+const rscPagePayloadMarker = "/__next.";
 
 export interface WorkerEnv {
-  ASSETS: AssetsBinding;
+  ASSETS: {
+    fetch(input: Request): Promise<Response>;
+  };
 }
 
 const apiSecurityHeaders = {
@@ -27,12 +27,37 @@ function jsonResponse(body: unknown, status: number, headers?: HeadersInit) {
   });
 }
 
+export function createRscAssetRequest(request: Request) {
+  const url = new URL(request.url);
+  const markerIndex = url.pathname.lastIndexOf(rscPagePayloadMarker);
+
+  if (markerIndex < 0 || !url.pathname.endsWith(rscPagePayloadSuffix)) {
+    return request;
+  }
+
+  const routeToken = url.pathname.slice(
+    markerIndex + rscPagePayloadMarker.length,
+    -rscPagePayloadSuffix.length,
+  );
+  const routeSegments = routeToken.split(".");
+
+  if (
+    routeSegments.length === 0 ||
+    routeSegments.some((segment) => !/^[A-Za-z0-9_$-]+$/.test(segment))
+  ) {
+    return request;
+  }
+
+  url.pathname = `${url.pathname.slice(0, markerIndex)}${rscPagePayloadMarker}${routeSegments.join("/")}/__PAGE__.txt`;
+  return new Request(url, request);
+}
+
 export const worker = {
   async fetch(request: Request, env: WorkerEnv): Promise<Response> {
     const { pathname } = new URL(request.url);
 
     if (pathname !== quoteEndpoint) {
-      return env.ASSETS.fetch(request);
+      return env.ASSETS.fetch(createRscAssetRequest(request));
     }
 
     if (request.method !== "POST") {
@@ -54,6 +79,6 @@ export const worker = {
       { "retry-after": "86400" },
     );
   },
-};
+} satisfies ExportedHandler<Env>;
 
 export default worker;

@@ -13,6 +13,7 @@ import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { SiteShell } from "@/components/layout/site-shell";
 import { buttonStyles } from "@/components/ui/button";
+import { createWhatsAppHref, whatsappMessages } from "@/features/contact/whatsapp";
 
 export const metadata: Metadata = {
   title: "Orientação sobre sinistros",
@@ -93,6 +94,18 @@ export default function ClaimsPage() {
             O primeiro passo é preservar a segurança e usar os canais oficiais da seguradora. A
             corretora pode apoiar a compreensão do processo, sempre respeitando as condições da
             apólice.
+          </p>
+          <a
+            className={buttonStyles({ className: "mt-8", size: "lg" })}
+            href={createWhatsAppHref(whatsappMessages.claimsSupport)}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Pedir apoio da corretora
+            <MessageCircle aria-hidden="true" size={18} />
+          </a>
+          <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-400">
+            Este contato não substitui o aviso de sinistro nem os canais de emergência.
           </p>
         </Container>
       </section>
@@ -214,11 +227,17 @@ export default function ClaimsPage() {
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Link className={buttonStyles({ size: "lg", variant: "outline" })} href="/">
-              Voltar ao início
-            </Link>
-            <Link className={buttonStyles({ size: "lg" })} href="/seguros">
-              Conhecer seguros
+            <a
+              className={buttonStyles({ size: "lg" })}
+              href={createWhatsAppHref(whatsappMessages.claimsSupport)}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Falar com a corretora
+              <MessageCircle aria-hidden="true" size={18} />
+            </a>
+            <Link className={buttonStyles({ size: "lg", variant: "outlineLight" })} href="/contato">
+              Outros canais
               <ArrowRight aria-hidden="true" size={18} />
             </Link>
           </div>

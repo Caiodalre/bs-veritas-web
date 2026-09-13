@@ -111,10 +111,9 @@ export default function CookiePolicyPage() {
                 2. Inventário atual
               </h2>
               <p className="mt-4">
-                Na versão atual, o código do site não cria cookies próprios e não integra
-                ferramentas de analytics, publicidade, rastreamento, personalização ou conteúdo
-                incorporado. A navegação normal também não depende de conta, sessão autenticada ou
-                carrinho.
+                O site institucional não cria cookies próprios nem integra ferramentas de analytics,
+                publicidade, rastreamento, personalização ou conteúdo incorporado. A navegação
+                também não depende de conta, sessão autenticada ou carrinho.
               </p>
               <div className="mt-5 overflow-hidden rounded-2xl border border-slate-200">
                 <div className="grid gap-2 bg-slate-100 px-5 py-4 font-semibold text-navy-950 sm:grid-cols-[0.8fr_1.2fr_auto]">
@@ -245,7 +244,7 @@ export default function CookiePolicyPage() {
             </p>
           </div>
           <a
-            className={buttonStyles({ size: "lg", variant: "outline" })}
+            className={buttonStyles({ size: "lg", variant: "outlineDark" })}
             href={`mailto:${siteConfig.contact.email}?subject=Cookies`}
           >
             <Mail aria-hidden="true" size={18} />

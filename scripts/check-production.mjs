@@ -64,9 +64,23 @@ async function checkHtmlPage(path) {
       /B(?:&amp;|&)S VERITAS/i.test(body),
       "A página inicial não contém a identificação da empresa",
     );
+    assert(
+      !body.includes("static.cloudflareinsights.com"),
+      "A Cloudflare injetou o Web Analytics apesar de a política declarar analytics desativado",
+    );
   } else {
     await response.body?.cancel();
   }
+}
+
+async function checkRscNavigationPayload() {
+  const path = "/sobre/__next.sobre.__PAGE__.txt?_rsc=monitor";
+  const url = new URL(path, productionOrigin);
+  const response = await fetchWithRetry(url, { redirect: "follow" });
+  const body = await response.text();
+
+  assert(response.status === 200, `${url} respondeu ${response.status}`);
+  assert(body.includes("Confiança se constrói"), `${url} não retornou o payload esperado`);
 }
 
 async function checkTextResource(path, expectedText) {
@@ -202,6 +216,7 @@ const checks = [
   ["catálogo de seguros", () => checkHtmlPage("/seguros")],
   ["página de sinistros", () => checkHtmlPage("/sinistros")],
   ["página de contato", () => checkHtmlPage("/contato")],
+  ["payload de navegação do Next.js", checkRscNavigationPayload],
   ["robots.txt", () => checkTextResource("/robots.txt", "Sitemap:")],
   ["sitemap", () => checkTextResource("/sitemap.xml", "<urlset")],
   ["cabeçalhos de segurança", checkSecurityHeaders],

@@ -2,11 +2,15 @@ import type { ButtonHTMLAttributes } from "react";
 import { cn } from "@/lib/cn";
 
 const buttonVariants = {
-  primary: "bg-aqua-400 text-navy-950 shadow-[0_12px_30px_rgba(38,198,183,0.18)] hover:bg-aqua-300",
-  secondary: "bg-white text-navy-950 hover:bg-aqua-100",
-  outline:
-    "border border-white/35 bg-transparent text-white hover:border-aqua-300 hover:text-aqua-200",
-  subtle: "border border-border bg-white text-navy-900 hover:border-aqua-500 hover:bg-aqua-50",
+  primary:
+    "bg-aqua-400 text-navy-950 shadow-[0_12px_30px_rgba(38,198,183,0.18)] hover:bg-aqua-300 focus-visible:ring-aqua-500",
+  secondary: "bg-white text-navy-950 hover:bg-aqua-100 focus-visible:ring-aqua-300",
+  outlineDark:
+    "border border-white/45 bg-transparent text-white hover:border-aqua-300 hover:bg-white/10 hover:text-aqua-200 focus-visible:ring-aqua-300",
+  outlineLight:
+    "border border-navy-700/40 bg-white text-navy-950 hover:border-aqua-700 hover:bg-aqua-50 hover:text-navy-950 focus-visible:ring-aqua-700",
+  subtle:
+    "border border-border bg-white text-navy-900 hover:border-aqua-500 hover:bg-aqua-50 focus-visible:ring-aqua-700",
 } as const;
 
 const buttonSizes = {
@@ -30,7 +34,7 @@ export function buttonStyles({
   className,
 }: ButtonStyleOptions = {}) {
   return cn(
-    "inline-flex items-center justify-center gap-2 rounded-md font-semibold tracking-[-0.01em] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-aqua-300/60 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-55",
+    "inline-flex items-center justify-center gap-2 rounded-md font-semibold tracking-[-0.01em] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-55",
     buttonVariants[variant],
     buttonSizes[size],
     className,

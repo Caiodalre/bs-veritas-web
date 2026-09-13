@@ -1,9 +1,10 @@
-import { Menu } from "lucide-react";
+import { Menu, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { Wordmark } from "@/components/brand/wordmark";
 import { Container } from "@/components/layout/container";
 import { buttonStyles } from "@/components/ui/button";
 import { mainNavigation } from "@/config/site";
+import { createWhatsAppHref, whatsappMessages } from "@/features/contact/whatsapp";
 
 export function SiteHeader() {
   return (
@@ -15,7 +16,7 @@ export function SiteHeader() {
         Ir para o conteúdo
       </a>
 
-      <Container className="flex min-h-20 items-center justify-between gap-6">
+      <Container className="flex min-h-20 items-center justify-between gap-2 sm:gap-4 lg:gap-6">
         <Wordmark inverted />
 
         <nav aria-label="Navegação principal" className="hidden items-center gap-7 lg:flex">
@@ -39,6 +40,16 @@ export function SiteHeader() {
             Fale conosco
           </Link>
         </div>
+
+        <a
+          aria-label="Conversar pelo WhatsApp"
+          className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md bg-aqua-400 text-navy-950 transition-colors hover:bg-aqua-300 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-aqua-300 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950 lg:hidden"
+          href={createWhatsAppHref(whatsappMessages.generalQuote)}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          <MessageCircle aria-hidden="true" size={21} strokeWidth={1.9} />
+        </a>
 
         <details className="relative lg:hidden">
           <summary className="flex min-h-11 min-w-11 cursor-pointer list-none items-center justify-center rounded-md border border-white/20 text-white transition-colors hover:border-aqua-300 hover:text-aqua-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-300">

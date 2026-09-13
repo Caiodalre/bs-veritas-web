@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowRight, CheckCircle2, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { SiteShell } from "@/components/layout/site-shell";
 import { buttonStyles } from "@/components/ui/button";
 import { insuranceCatalog } from "@/features/insurance/catalog";
 import { InsuranceIcon } from "@/features/insurance/components/insurance-icon";
+import { createWhatsAppHref, whatsappMessages } from "@/features/contact/whatsapp";
 
 export const metadata: Metadata = {
   title: "Seguros",
@@ -55,6 +56,15 @@ export default function InsuranceCatalogPage() {
             Conheça as modalidades atendidas e os principais pontos que ajudam a construir uma
             decisão clara, sem tratar seguro como uma solução pronta para todos.
           </p>
+          <a
+            className={buttonStyles({ className: "mt-8", size: "lg" })}
+            href={createWhatsAppHref(whatsappMessages.generalQuote)}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Pedir orientação no WhatsApp
+            <MessageCircle aria-hidden="true" size={18} />
+          </a>
         </Container>
       </section>
 
@@ -119,12 +129,12 @@ export default function InsuranceCatalogPage() {
           <div className="max-w-3xl">
             <h2 className="font-serif text-3xl font-bold">Ainda não sabe por onde começar?</h2>
             <p className="mt-4 leading-8 text-slate-300">
-              A jornada de cotação explica como será o primeiro contato. Nenhum dado é coletado na
-              versão atual do site.
+              Informe qual bem, pessoa ou atividade deseja proteger. A equipe ajuda a identificar a
+              modalidade e os pontos que merecem comparação.
             </p>
           </div>
           <Link className={buttonStyles({ size: "lg" })} href="/contato">
-            Ver jornada de cotação
+            Ver todos os canais
             <ArrowRight aria-hidden="true" size={18} />
           </Link>
         </Container>

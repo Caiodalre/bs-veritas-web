@@ -1,5 +1,16 @@
 # Implantação do B&S Veritas Web
 
+## Coerência de medição antes da próxima publicação
+
+O código e as políticas públicas declaram que analytics de navegador não está ativo. Antes de
+promover a próxima versão, a injeção automática do Cloudflare Web Analytics deve permanecer
+desativada em **Web Analytics > Manage site > Disable**. A CSP não deve ser relaxada para permitir o
+beacon enquanto essa decisão estiver vigente.
+
+Após a alteração da configuração e a publicação do código, `scripts/check-production.mjs` verifica
+que o HTML não contém `static.cloudflareinsights.com` e que o payload RSC usado na navegação do
+Next.js responde sem erro.
+
 Este documento descreve o processo planejado de preview, publicação, validação e rollback do site da **B&S VERITAS CORRETORA DE SEGUROS LTDA**.
 
 O repositório privado, o CI, o preview e a produção estática na Cloudflare Workers estão ativos. Banco remoto, formulários e integrações comerciais da aplicação ainda não estão ativos.

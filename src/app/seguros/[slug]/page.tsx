@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ArrowLeft, ArrowRight, CheckCircle2, Info } from "lucide-react";
+import { ArrowLeft, CheckCircle2, ExternalLink, Info, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/layout/container";
@@ -7,6 +7,7 @@ import { SiteShell } from "@/components/layout/site-shell";
 import { buttonStyles } from "@/components/ui/button";
 import { getInsuranceBySlug, insuranceCatalog } from "@/features/insurance/catalog";
 import { InsuranceIcon } from "@/features/insurance/components/insurance-icon";
+import { createWhatsAppHref } from "@/features/contact/whatsapp";
 
 type InsurancePageProps = {
   params: Promise<{ slug: string }>;
@@ -78,10 +79,15 @@ export default async function InsurancePage({ params }: InsurancePageProps) {
                 {insurance.introduction}
               </p>
             </div>
-            <Link className={buttonStyles({ size: "lg" })} href="/contato">
-              Solicitar orientação
-              <ArrowRight aria-hidden="true" size={18} />
-            </Link>
+            <a
+              className={buttonStyles({ size: "lg" })}
+              href={createWhatsAppHref(insurance.whatsappMessage)}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Cotar pelo WhatsApp
+              <MessageCircle aria-hidden="true" size={18} />
+            </a>
           </div>
         </Container>
       </section>
@@ -128,6 +134,33 @@ export default async function InsurancePage({ params }: InsurancePageProps) {
         </Container>
       </section>
 
+      <section className="bg-navy-950 py-20 text-white sm:py-24">
+        <Container>
+          <div className="max-w-3xl">
+            <p className="text-sm font-bold uppercase tracking-[0.18em] text-aqua-300">
+              Prepare a conversa
+            </p>
+            <h2 className="mt-4 font-serif text-3xl font-bold tracking-[-0.025em] sm:text-4xl">
+              Perguntas práticas para começar
+            </h2>
+            <p className="mt-5 leading-8 text-slate-300">
+              Você não precisa enviar documentos no primeiro contato. Estas perguntas ajudam a
+              organizar a necessidade antes de comparar propostas.
+            </p>
+          </div>
+          <ol className="mt-10 grid gap-5 md:grid-cols-3">
+            {insurance.practicalQuestions.map((question, index) => (
+              <li className="rounded-xl border border-white/10 bg-white/[0.045] p-6" key={question}>
+                <span className="text-sm font-bold tracking-[0.18em] text-aqua-300">
+                  0{index + 1}
+                </span>
+                <p className="mt-4 leading-7 text-slate-100">{question}</p>
+              </li>
+            ))}
+          </ol>
+        </Container>
+      </section>
+
       <section className="border-y border-aqua-200 bg-aqua-50 py-16 sm:py-20">
         <Container>
           <div className="flex gap-4 rounded-xl border border-aqua-200 bg-white p-6 sm:p-8">
@@ -142,6 +175,37 @@ export default async function InsurancePage({ params }: InsurancePageProps) {
                 contratuais e da aceitação do risco. A orientação não substitui a leitura desses
                 documentos.
               </p>
+              <a
+                className="mt-4 inline-flex items-center gap-2 font-semibold text-aqua-700 hover:text-navy-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-700"
+                href={insurance.referenceUrl}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                Consultar orientação da SUSEP
+                <ExternalLink aria-hidden="true" size={16} />
+              </a>
+            </div>
+          </div>
+
+          <div className="mt-14 max-w-4xl">
+            <p className="text-sm font-bold uppercase tracking-[0.18em] text-aqua-700">
+              Perguntas frequentes
+            </p>
+            <h2 className="mt-4 font-serif text-3xl font-bold tracking-[-0.025em] text-navy-950">
+              O que vale esclarecer antes de contratar
+            </h2>
+            <div className="mt-8 space-y-3">
+              {insurance.faqs.map((faq) => (
+                <details
+                  className="group rounded-xl border border-aqua-200 bg-white px-5 py-4 open:shadow-sm"
+                  key={faq.question}
+                >
+                  <summary className="cursor-pointer pr-4 font-semibold text-navy-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-700">
+                    {faq.question}
+                  </summary>
+                  <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-600">{faq.answer}</p>
+                </details>
+              ))}
             </div>
           </div>
 
@@ -153,9 +217,15 @@ export default async function InsurancePage({ params }: InsurancePageProps) {
               <ArrowLeft aria-hidden="true" size={18} />
               Ver todos os seguros
             </Link>
-            <Link className={buttonStyles({ variant: "subtle" })} href="/contato">
-              Conhecer a jornada de cotação
-            </Link>
+            <a
+              className={buttonStyles({ variant: "subtle" })}
+              href={createWhatsAppHref(insurance.whatsappMessage)}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Conversar sobre {insurance.shortName}
+              <MessageCircle aria-hidden="true" size={18} />
+            </a>
           </div>
         </Container>
       </section>

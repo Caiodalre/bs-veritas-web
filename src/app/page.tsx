@@ -1,4 +1,4 @@
-import { ArrowRight, BadgeCheck, CheckCircle2, Headphones, Scale, UsersRound } from "lucide-react";
+import { ArrowRight, CheckCircle2, MessageCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
@@ -8,20 +8,13 @@ import { buttonStyles } from "@/components/ui/button";
 import { insuranceCatalog } from "@/features/insurance/catalog";
 import { InsuranceIcon } from "@/features/insurance/components/insurance-icon";
 import { partnerCatalog } from "@/features/partners/catalog";
+import { createWhatsAppHref, whatsappMessages } from "@/features/contact/whatsapp";
 import { homeStructuredData, serializeStructuredData } from "@/lib/structured-data";
 
 const trustItems = [
-  { label: "Atendimento personalizado", icon: UsersRound },
-  { label: "Análise consultiva", icon: Scale },
-  { label: "Experiência e confiança", icon: BadgeCheck },
-  { label: "Suporte em todas as etapas", icon: Headphones },
-] as const;
-
-const differentiators = [
   "Atendimento humano e próximo",
-  "Análise adequada ao perfil de cada cliente",
-  "Comparação responsável de alternativas",
-  "Acompanhamento da contratação à renovação",
+  "Comparação com critérios claros",
+  "Apoio também depois da contratação",
 ] as const;
 
 const quoteSteps = [
@@ -71,17 +64,26 @@ export default function Home() {
                 Proteção para o que realmente <span className="text-aqua-300">importa.</span>
               </h1>
               <p className="mt-7 max-w-2xl text-base leading-8 text-slate-200 sm:text-lg">
-                Soluções em seguros para pessoas, famílias e empresas, com atendimento próximo,
-                transparente e personalizado.
+                Entenda coberturas, limites e diferenças antes de contratar. A B&S Veritas organiza
+                as opções e acompanha sua decisão com clareza.
               </p>
 
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-                <Link className={buttonStyles({ size: "lg" })} href="/contato">
-                  Solicitar cotação
+                <a
+                  className={buttonStyles({ size: "lg" })}
+                  href={createWhatsAppHref(whatsappMessages.generalQuote)}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  Pedir cotação no WhatsApp
+                  <MessageCircle aria-hidden="true" size={18} />
+                </a>
+                <Link
+                  className={buttonStyles({ size: "lg", variant: "outlineDark" })}
+                  href="#seguros"
+                >
+                  Ver modalidades
                   <ArrowRight aria-hidden="true" size={18} />
-                </Link>
-                <Link className={buttonStyles({ size: "lg", variant: "outline" })} href="#seguros">
-                  Conheça os seguros
                 </Link>
               </div>
             </div>
@@ -122,17 +124,17 @@ export default function Home() {
           aria-label="Compromissos da B&S Veritas"
           className="relative z-10 -mt-1 bg-navy-900 text-white"
         >
-          <Container className="grid divide-y divide-white/10 md:grid-cols-2 md:divide-x md:divide-y-0 xl:grid-cols-4">
-            {trustItems.map(({ icon: Icon, label }) => (
+          <Container className="grid divide-y divide-white/10 md:grid-cols-3 md:divide-x md:divide-y-0">
+            {trustItems.map((label) => (
               <div
                 className="flex min-h-24 items-center gap-4 px-1 py-5 md:px-6 first:md:pl-0"
                 key={label}
               >
-                <Icon
+                <CheckCircle2
                   aria-hidden="true"
                   className="shrink-0 text-aqua-300"
-                  size={28}
-                  strokeWidth={1.6}
+                  size={24}
+                  strokeWidth={1.8}
                 />
                 <span className="text-sm font-semibold leading-6 text-slate-100">{label}</span>
               </div>
@@ -187,65 +189,34 @@ export default function Home() {
         </section>
 
         <section className="scroll-mt-24 bg-navy-950 py-20 text-white sm:py-24" id="diferenciais">
-          <Container className="grid gap-14 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
+          <Container>
             <div>
               <p className="text-sm font-bold uppercase tracking-[0.18em] text-aqua-300">
-                Por que a B&S Veritas?
+                Como ajudamos
               </p>
               <h2 className="mt-4 max-w-xl font-serif text-3xl leading-tight font-bold tracking-[-0.025em] sm:text-4xl">
-                Compromisso que gera confiança
+                Da necessidade à escolha, sem atalhos
               </h2>
               <p className="mt-6 max-w-xl text-base leading-8 text-slate-300">
-                Seguro é uma decisão importante. Por isso, a relação precisa ser próxima,
-                transparente e acompanhada também depois da contratação.
+                A conversa organiza o que precisa de proteção e os critérios que realmente importam
+                antes da comparação de propostas.
               </p>
             </div>
 
-            <ul className="grid gap-4 sm:grid-cols-2">
-              {differentiators.map((item) => (
+            <ol className="mt-12 grid gap-5 md:grid-cols-3">
+              {quoteSteps.map((step) => (
                 <li
-                  className="flex min-h-28 gap-4 rounded-xl border border-white/10 bg-white/[0.045] p-5"
-                  key={item}
+                  className="rounded-xl border border-white/10 bg-white/[0.045] p-6"
+                  key={step.number}
                 >
-                  <CheckCircle2
-                    aria-hidden="true"
-                    className="mt-0.5 shrink-0 text-aqua-300"
-                    size={22}
-                  />
-                  <span className="text-sm font-semibold leading-6 text-slate-100">{item}</span>
+                  <span className="text-sm font-bold tracking-[0.18em] text-aqua-300">
+                    {step.number}
+                  </span>
+                  <h3 className="mt-5 font-serif text-xl font-bold">{step.title}</h3>
+                  <p className="mt-3 text-sm leading-7 text-slate-300">{step.text}</p>
                 </li>
               ))}
-            </ul>
-          </Container>
-        </section>
-
-        <section className="scroll-mt-24 bg-white py-20 sm:py-24" id="sobre">
-          <Container className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
-            <div>
-              <p className="text-sm font-bold uppercase tracking-[0.18em] text-aqua-700">
-                A B&S Veritas
-              </p>
-              <h2 className="mt-4 font-serif text-3xl leading-tight font-bold tracking-[-0.025em] text-navy-950 sm:text-4xl">
-                Relacionamentos construídos com confiança
-              </h2>
-            </div>
-            <div className="grid gap-6 text-base leading-8 text-slate-600 sm:grid-cols-2">
-              <p>
-                A B&S Veritas nasce com o propósito de tornar a relação com o mercado segurador mais
-                próxima, transparente e consultiva.
-              </p>
-              <p>
-                Cada atendimento parte da realidade do cliente, com explicações claras e
-                acompanhamento nos momentos em que a proteção precisa fazer diferença.
-              </p>
-              <Link
-                className="inline-flex items-center gap-2 font-semibold text-aqua-700 hover:text-navy-900 sm:col-span-2"
-                href="/sobre"
-              >
-                Conheça nossa forma de trabalhar
-                <ArrowRight aria-hidden="true" size={17} />
-              </Link>
-            </div>
+            </ol>
           </Container>
         </section>
 
@@ -316,59 +287,39 @@ export default function Home() {
                 titulares.
               </p>
             </div>
-
-            <div className="mx-auto mt-12 grid max-w-5xl gap-5 md:grid-cols-3">
-              {["Coberturas adequadas", "Condições transparentes", "Suporte compatível"].map(
-                (item, index) => (
-                  <div
-                    className="rounded-xl border border-aqua-200 bg-white p-6 text-center"
-                    key={item}
-                  >
-                    <span className="text-xs font-bold tracking-[0.18em] text-aqua-700">
-                      0{index + 1}
-                    </span>
-                    <p className="mt-3 font-serif text-lg font-bold text-navy-950">{item}</p>
-                  </div>
-                ),
-              )}
-            </div>
           </Container>
         </section>
 
         <section className="scroll-mt-24 bg-navy-900 py-20 text-white sm:py-24" id="cotacao">
-          <Container>
-            <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
-              <div>
-                <p className="text-sm font-bold uppercase tracking-[0.18em] text-aqua-300">
-                  Jornada de cotação
-                </p>
-                <h2 className="mt-4 font-serif text-3xl leading-tight font-bold tracking-[-0.025em] sm:text-4xl">
-                  Proteção começa com uma boa conversa
-                </h2>
-                <p className="mt-6 text-base leading-8 text-slate-300">
-                  O formulário digital será ativado somente após a conexão segura do banco e das
-                  camadas anti-spam. Nenhum dado está sendo coletado nesta versão.
-                </p>
-                <Link className={buttonStyles({ className: "mt-8", size: "lg" })} href="/contato">
-                  Falar com a corretora
-                  <ArrowRight aria-hidden="true" size={18} />
-                </Link>
-              </div>
-
-              <ol className="grid gap-5 md:grid-cols-3">
-                {quoteSteps.map((step) => (
-                  <li
-                    className="rounded-xl border border-white/10 bg-white/[0.045] p-6"
-                    key={step.number}
-                  >
-                    <span className="text-sm font-bold tracking-[0.18em] text-aqua-300">
-                      {step.number}
-                    </span>
-                    <h3 className="mt-5 font-serif text-xl font-bold">{step.title}</h3>
-                    <p className="mt-3 text-sm leading-7 text-slate-300">{step.text}</p>
-                  </li>
-                ))}
-              </ol>
+          <Container className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div className="max-w-3xl">
+              <p className="text-sm font-bold uppercase tracking-[0.18em] text-aqua-300">
+                Próximo passo
+              </p>
+              <h2 className="mt-4 font-serif text-3xl leading-tight font-bold tracking-[-0.025em] sm:text-4xl">
+                Conte o que você quer proteger
+              </h2>
+              <p className="mt-5 text-base leading-8 text-slate-300">
+                Inicie pelo WhatsApp ou escolha telefone e e-mail. No primeiro contato, basta
+                informar a modalidade de interesse e sua dúvida principal.
+              </p>
+            </div>
+            <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
+              <a
+                className={buttonStyles({ size: "lg" })}
+                href={createWhatsAppHref(whatsappMessages.generalQuote)}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                Conversar pelo WhatsApp
+                <MessageCircle aria-hidden="true" size={18} />
+              </a>
+              <Link
+                className={buttonStyles({ size: "lg", variant: "outlineDark" })}
+                href="/contato"
+              >
+                Ver outros canais
+              </Link>
             </div>
           </Container>
         </section>

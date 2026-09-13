@@ -5,6 +5,7 @@ import { Container } from "@/components/layout/container";
 import { SiteShell } from "@/components/layout/site-shell";
 import { buttonStyles } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
+import { createWhatsAppHref, whatsappMessages } from "@/features/contact/whatsapp";
 
 export const metadata: Metadata = {
   title: "Contato",
@@ -19,7 +20,7 @@ const contactChannels = [
     title: "WhatsApp",
     description: "Inicie uma conversa pelo canal oficial da corretora.",
     action: "Conversar pelo WhatsApp",
-    href: siteConfig.contact.whatsappHref,
+    href: createWhatsAppHref(whatsappMessages.generalQuote),
     icon: MessageCircle,
     external: true,
   },
@@ -84,7 +85,7 @@ export default function ContactPage() {
                   {description}
                 </p>
                 <a
-                  className={buttonStyles({ className: "mt-6 w-full", variant: "outline" })}
+                  className={buttonStyles({ className: "mt-6 w-full", variant: "outlineLight" })}
                   href={href}
                   rel={external ? "noopener noreferrer" : undefined}
                   target={external ? "_blank" : undefined}
@@ -94,6 +95,11 @@ export default function ContactPage() {
               </article>
             ))}
           </div>
+
+          <p className="mt-5 text-center text-sm leading-6 text-slate-600">
+            No WhatsApp, a mensagem inicial será apenas preenchida. Você poderá revisar o texto
+            antes de enviá-lo.
+          </p>
 
           <div className="mt-12 grid gap-5 md:grid-cols-2">
             <div className="rounded-xl border border-aqua-200 bg-aqua-50 p-6">
@@ -127,7 +133,7 @@ export default function ContactPage() {
               atendimento com segurança.
             </p>
           </div>
-          <Link className={buttonStyles({ size: "lg", variant: "outline" })} href="/sinistros">
+          <Link className={buttonStyles({ size: "lg", variant: "outlineDark" })} href="/sinistros">
             Orientação sobre sinistros
           </Link>
         </Container>

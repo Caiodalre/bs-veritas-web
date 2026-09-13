@@ -180,8 +180,8 @@ export default function TermsOfUsePage() {
                 >
                   Política de Privacidade
                 </Link>
-                . Nesta versão, o site não possui formulário, cadastro, analytics ou cookies de
-                marketing.
+                . O atendimento comercial pode ser iniciado por WhatsApp, telefone ou e-mail. O site
+                não utiliza analytics nem cookies de marketing.
               </p>
             </section>
 
@@ -234,7 +234,7 @@ export default function TermsOfUsePage() {
             </p>
           </div>
           <a
-            className={buttonStyles({ size: "lg", variant: "outline" })}
+            className={buttonStyles({ size: "lg", variant: "outlineDark" })}
             href={`mailto:${siteConfig.contact.email}?subject=Termos%20de%20Uso`}
           >
             <Mail aria-hidden="true" size={18} />
