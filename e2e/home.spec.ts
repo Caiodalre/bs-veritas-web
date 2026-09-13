@@ -99,6 +99,19 @@ test("publica a politica de privacidade e o canal do titular", async ({ page }) 
   );
 });
 
+test("publica os termos de uso e o canal de contato", async ({ page }) => {
+  await page.goto("/termos-de-uso");
+
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Regras para uso deste site" }),
+  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "3. Seguros e atendimento" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Falar sobre os termos" })).toHaveAttribute(
+    "href",
+    "mailto:contato@bsveritas.com.br?subject=Termos%20de%20Uso",
+  );
+});
+
 test("publica sitemap com as rotas atuais", async ({ request }) => {
   const response = await request.get("/sitemap.xml");
   const body = await response.text();
@@ -109,6 +122,7 @@ test("publica sitemap com as rotas atuais", async ({ request }) => {
   expect(body).toContain("<loc>https://bsveritas.com.br/sinistros</loc>");
   expect(body).toContain("<loc>https://bsveritas.com.br/contato</loc>");
   expect(body).toContain("<loc>https://bsveritas.com.br/politica-de-privacidade</loc>");
+  expect(body).toContain("<loc>https://bsveritas.com.br/termos-de-uso</loc>");
 
   for (const insurance of insuranceCatalog) {
     expect(body).toContain(`<loc>https://bsveritas.com.br/seguros/${insurance.slug}</loc>`);
@@ -163,6 +177,7 @@ test.describe("layout mobile", () => {
       "/sinistros",
       "/contato",
       "/politica-de-privacidade",
+      "/termos-de-uso",
     ]) {
       await page.goto(path);
 
