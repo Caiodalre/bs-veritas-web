@@ -388,6 +388,17 @@ Pendências conhecidas:
 - sete rotas, redirecionamento www, cabeçalhos e JSON-LD validados;
 - nenhuma migration ou serviço dinâmico ativado.
 
+### Política de Privacidade e contato em produção — 2026-09-13
+
+- publicação às 01:47 BRT (04:47 UTC);
+- commit `53e3043f85602434da99f637357a925f3bce0017`;
+- versão Cloudflare `604177f0-48c8-4121-b39e-0592ba5ae72f` em 100% do tráfego;
+- versão anterior `973fba95-a92b-47c4-96ce-801411a87ca1` preservada para rollback;
+- página inicial, contato, Política de Privacidade e sitemap retornaram `200`;
+- links oficiais de e-mail e telefone foram validados na página de contato;
+- preview permaneceu protegido com `noindex` e a produção permaneceu indexável;
+- nenhuma migration, credencial, banco ou serviço pago foi adicionado.
+
 ## Estado atual da implantação
 
 | Componente            | Estado                                        |
@@ -403,7 +414,7 @@ Pendências conhecidas:
 | monitoramento         | agendado no GitHub Actions a cada seis horas  |
 | PostgreSQL remoto     | não conectado                                 |
 | notificações          | dependem das preferências da conta GitHub     |
-| versão Cloudflare     | `973fba95-a92b-47c4-96ce-801411a87ca1`        |
-| produção              | ativa no commit `d4e2b13`                     |
+| versão Cloudflare     | `604177f0-48c8-4121-b39e-0592ba5ae72f`        |
+| produção              | ativa no commit `53e3043`                     |
 
 Qualquer mudança desse estado deverá ser feita como uma etapa separada, aprovada e validada.
