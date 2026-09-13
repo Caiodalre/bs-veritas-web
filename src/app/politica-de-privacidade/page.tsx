@@ -217,6 +217,12 @@ export default function PrivacyPolicyPage() {
                 Se novas tecnologias de rastreamento forem propostas, esta política e os controles
                 de escolha serão revistos antes da ativação.
               </p>
+              <Link
+                className="mt-4 inline-flex font-semibold text-aqua-700 hover:text-navy-900"
+                href="/politica-de-cookies"
+              >
+                Consulte o inventário atual na Política de Cookies
+              </Link>
             </section>
 
             <section aria-labelledby="seguranca">

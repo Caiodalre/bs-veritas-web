@@ -11,6 +11,7 @@ const publicRoutes = [
   { path: "/sinistros", changeFrequency: "monthly", priority: 0.8 },
   { path: "/contato", changeFrequency: "monthly", priority: 0.8 },
   { path: "/politica-de-privacidade", changeFrequency: "yearly", priority: 0.4 },
+  { path: "/politica-de-cookies", changeFrequency: "yearly", priority: 0.4 },
   { path: "/termos-de-uso", changeFrequency: "yearly", priority: 0.4 },
 ] as const;
 
