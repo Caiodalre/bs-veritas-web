@@ -29,6 +29,9 @@ export function SiteFooter() {
             >
               Privacidade
             </Link>
+            <Link className="font-semibold text-aqua-700 hover:text-navy-900" href="/termos-de-uso">
+              Termos de Uso
+            </Link>
             <Link className="font-semibold text-aqua-700 hover:text-navy-900" href="/contato">
               Contato
             </Link>

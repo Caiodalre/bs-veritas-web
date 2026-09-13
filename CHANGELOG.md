@@ -6,7 +6,16 @@ O projeto possui produção estática no domínio oficial e um preview público 
 
 ## Não lançado
 
-Nenhuma alteração pendente.
+### Adicionado
+
+- página de Termos de Uso com finalidade institucional, limites do conteúdo, condições gerais de atendimento, uso adequado, privacidade e preservação dos direitos do consumidor;
+- link para os termos no rodapé e inclusão da rota no sitemap;
+- testes da página, do canal de contato, do sitemap e do layout mobile.
+
+### Observações
+
+- a redação deve passar por revisão jurídica antes da publicação em produção;
+- nenhuma coleta de dados, dependência, serviço externo ou custo foi adicionado.
 
 ## Publicação da política e contato — 2026-09-13
 
