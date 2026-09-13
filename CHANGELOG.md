@@ -6,6 +6,10 @@ O projeto possui produção estática no domínio oficial e um preview público 
 
 ## Não lançado
 
+Nenhuma alteração pendente.
+
+## Publicação dos Termos de Uso — 2026-09-13
+
 ### Adicionado
 
 - página de Termos de Uso com finalidade institucional, limites do conteúdo, condições gerais de atendimento, uso adequado, privacidade e preservação dos direitos do consumidor;
@@ -14,8 +18,16 @@ O projeto possui produção estática no domínio oficial e um preview público 
 
 ### Observações
 
-- a redação deve passar por revisão jurídica antes da publicação em produção;
+- a revisão jurídica independente da redação continua recomendada;
 - nenhuma coleta de dados, dependência, serviço externo ou custo foi adicionado.
+
+### Publicação
+
+- commit `84c86d7b5fda42319ea5dc6e54645a072f55530f` promovido para produção;
+- versão Cloudflare `1491f9cb-47cc-4aa9-bd78-7576b180cc19` direcionada para 100% do tráfego;
+- página inicial, contato, Política de Privacidade, Termos de Uso e sitemap aprovados nos smoke tests HTTP;
+- preview permaneceu protegido com `noindex` e a produção permaneceu indexável;
+- versão anterior preservada para rollback.
 
 ## Publicação da política e contato — 2026-09-13
 
