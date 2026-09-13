@@ -319,6 +319,9 @@ test.describe("layout mobile", () => {
       "/termos-de-uso",
     ]) {
       await page.goto(path);
+      await page.evaluate(async () => {
+        await document.fonts.ready;
+      });
 
       const routeHasHorizontalOverflow = await page.evaluate(
         () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
@@ -336,6 +339,9 @@ test("valida páginas principais em 360, 390, 768 e 1440 pixels", async ({ brows
     for (const path of ["/", "/contato", "/seguros", "/seguros/auto", "/sinistros", "/sobre"]) {
       const response = await page.goto(path);
       expect(response?.ok(), `${path} em ${width}px`).toBe(true);
+      await page.evaluate(async () => {
+        await document.fonts.ready;
+      });
       expect(
         await page.evaluate(
           () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
