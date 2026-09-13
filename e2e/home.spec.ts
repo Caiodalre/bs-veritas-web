@@ -112,6 +112,20 @@ test("publica os termos de uso e o canal de contato", async ({ page }) => {
   );
 });
 
+test("publica a politica de cookies e o inventario atual", async ({ page }) => {
+  await page.goto("/politica-de-cookies");
+
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Como este site utiliza cookies" }),
+  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "2. Inventário atual" })).toBeVisible();
+  await expect(page.getByText("Não utilizada")).toHaveCount(4);
+  await expect(page.getByRole("link", { name: "Falar sobre cookies" })).toHaveAttribute(
+    "href",
+    "mailto:contato@bsveritas.com.br?subject=Cookies",
+  );
+});
+
 test("publica sitemap com as rotas atuais", async ({ request }) => {
   const response = await request.get("/sitemap.xml");
   const body = await response.text();
@@ -122,6 +136,7 @@ test("publica sitemap com as rotas atuais", async ({ request }) => {
   expect(body).toContain("<loc>https://bsveritas.com.br/sinistros</loc>");
   expect(body).toContain("<loc>https://bsveritas.com.br/contato</loc>");
   expect(body).toContain("<loc>https://bsveritas.com.br/politica-de-privacidade</loc>");
+  expect(body).toContain("<loc>https://bsveritas.com.br/politica-de-cookies</loc>");
   expect(body).toContain("<loc>https://bsveritas.com.br/termos-de-uso</loc>");
 
   for (const insurance of insuranceCatalog) {
@@ -177,6 +192,7 @@ test.describe("layout mobile", () => {
       "/sinistros",
       "/contato",
       "/politica-de-privacidade",
+      "/politica-de-cookies",
       "/termos-de-uso",
     ]) {
       await page.goto(path);

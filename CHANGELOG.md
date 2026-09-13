@@ -6,7 +6,17 @@ O projeto possui produção estática no domínio oficial e um preview público 
 
 ## Não lançado
 
-Nenhuma alteração pendente.
+### Adicionado
+
+- página de Política de Cookies com inventário atual, categorias não utilizadas, transparência sobre mecanismos necessários da infraestrutura e regras para futuras escolhas;
+- link para a política no rodapé, referência cruzada na Política de Privacidade e inclusão da rota no sitemap;
+- testes da página, do inventário, do canal de contato, do sitemap e do layout mobile.
+
+### Observações
+
+- a implementação foi confrontada com o código e com a resposta HTTP normal de produção, que não define cookies atualmente;
+- a revisão jurídica independente da redação continua recomendada;
+- nenhum banner, cookie, analytics, dependência, serviço externo ou custo foi adicionado.
 
 ## Publicação dos Termos de Uso — 2026-09-13
 
