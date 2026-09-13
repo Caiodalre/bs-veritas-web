@@ -4,6 +4,19 @@ Este arquivo registra mudanças relevantes do **B&S Veritas Web**.
 
 O projeto possui produção estática no domínio oficial e um preview público não indexável. Serviços dinâmicos e coleta de dados permanecem desativados.
 
+## Não lançado
+
+### Adicionado
+
+- carrossel acessível e responsivo com Porto Seguro, Petlove e Icatu como parceiros comerciais confirmados;
+- logotipos oficiais hospedados localmente, sem requisições ou rastreamento pelos sites das marcas;
+- atalhos de navegação, texto de atribuição e cobertura E2E das três marcas.
+
+### Observações
+
+- a disponibilidade de produtos permanece condicionada ao perfil, à região e às regras de cada empresa;
+- nenhuma dependência, integração externa, coleta de dados ou custo foi adicionado.
+
 ## Publicação da Política de Cookies — 2026-09-13
 
 ### Adicionado

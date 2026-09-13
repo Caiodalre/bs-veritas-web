@@ -1,4 +1,5 @@
 import { ArrowRight, BadgeCheck, CheckCircle2, Headphones, Scale, UsersRound } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { SiteFooter } from "@/components/layout/site-footer";
@@ -6,6 +7,7 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { buttonStyles } from "@/components/ui/button";
 import { insuranceCatalog } from "@/features/insurance/catalog";
 import { InsuranceIcon } from "@/features/insurance/components/insurance-icon";
+import { partnerCatalog } from "@/features/partners/catalog";
 import { homeStructuredData, serializeStructuredData } from "@/lib/structured-data";
 
 const trustItems = [
@@ -262,6 +264,56 @@ export default function Home() {
               <p className="mt-6 text-base leading-8 text-slate-600">
                 A análise considera coberturas, assistências, condições e adequação ao perfil. As
                 opções disponíveis são apresentadas de forma responsável durante o atendimento.
+              </p>
+            </div>
+
+            <div className="mx-auto mt-12 max-w-5xl">
+              <div
+                aria-label="Seguradoras e plataformas parceiras"
+                aria-roledescription="carrossel"
+                className="overflow-x-auto scroll-smooth pb-4 focus-visible:rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-700 focus-visible:ring-offset-4"
+                role="region"
+                tabIndex={0}
+              >
+                <ul className="flex snap-x snap-mandatory gap-4 px-1">
+                  {partnerCatalog.map((partner) => (
+                    <li
+                      className="flex min-h-36 w-[78vw] max-w-80 flex-none scroll-mt-24 snap-center items-center justify-center rounded-xl border border-aqua-200 bg-white px-8 py-7 shadow-sm sm:w-80 lg:w-[calc((100%-2rem)/3)] lg:max-w-none"
+                      id={`parceira-${partner.slug}`}
+                      key={partner.slug}
+                    >
+                      <Image
+                        alt={`Logotipo ${partner.name}`}
+                        className="h-10 w-auto max-w-full object-contain"
+                        height={partner.logoHeight}
+                        src={partner.logoSrc}
+                        unoptimized
+                        width={partner.logoWidth}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <nav
+                aria-label="Selecionar marca parceira no carrossel"
+                className="mt-5 flex flex-wrap justify-center gap-2"
+              >
+                {partnerCatalog.map((partner) => (
+                  <a
+                    className="rounded-full border border-aqua-200 bg-white px-4 py-2 text-sm font-semibold text-aqua-700 transition-colors hover:border-aqua-600 hover:text-navy-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-700"
+                    href={`#parceira-${partner.slug}`}
+                    key={partner.slug}
+                  >
+                    {partner.name}
+                  </a>
+                ))}
+              </nav>
+
+              <p className="mt-5 text-center text-sm leading-6 text-slate-500">
+                Parcerias comerciais confirmadas. A disponibilidade de produtos depende do perfil,
+                da região e das condições de cada empresa. As marcas pertencem aos respectivos
+                titulares.
               </p>
             </div>
 

@@ -12,6 +12,15 @@ test("exibe a pagina inicial", async ({ page }) => {
     page.getByRole("heading", { level: 1, name: "Proteção para o que realmente importa." }),
   ).toBeVisible();
 
+  const partnerCarousel = page.getByRole("region", {
+    name: "Seguradoras e plataformas parceiras",
+  });
+
+  await expect(partnerCarousel).toBeVisible();
+  await expect(page.getByRole("img", { name: "Logotipo Porto Seguro" })).toBeVisible();
+  await expect(page.getByRole("img", { name: "Logotipo Petlove" })).toBeVisible();
+  await expect(page.getByRole("img", { name: "Logotipo Icatu" })).toBeVisible();
+
   await page.getByRole("link", { name: "Conheça os seguros" }).click();
   await expect(
     page.getByRole("heading", { name: "Seguros para diferentes fases da sua vida" }),
@@ -178,6 +187,16 @@ test.describe("layout mobile", () => {
     await expect(
       page.getByRole("link", { name: "Fale conosco por e-mail ou telefone" }),
     ).toHaveAttribute("href", "/contato");
+    await page.locator("summary").click();
+
+    const partnerCarousel = page.getByRole("region", {
+      name: "Seguradoras e plataformas parceiras",
+    });
+
+    await page.getByRole("link", { name: "Icatu", exact: true }).click();
+    await expect
+      .poll(() => partnerCarousel.evaluate((element) => element.scrollLeft))
+      .toBeGreaterThan(0);
 
     const hasHorizontalOverflow = await page.evaluate(
       () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
