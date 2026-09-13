@@ -399,6 +399,18 @@ Pendências conhecidas:
 - preview permaneceu protegido com `noindex` e a produção permaneceu indexável;
 - nenhuma migration, credencial, banco ou serviço pago foi adicionado.
 
+### Termos de Uso em produção — 2026-09-13
+
+- publicação às 10:01 BRT (13:01 UTC);
+- commit `84c86d7b5fda42319ea5dc6e54645a072f55530f`;
+- versão Cloudflare `1491f9cb-47cc-4aa9-bd78-7576b180cc19` em 100% do tráfego;
+- versão anterior `604177f0-48c8-4121-b39e-0592ba5ae72f` preservada para rollback;
+- página inicial, contato, Política de Privacidade, Termos de Uso e sitemap retornaram `200`;
+- links legais, canal de contato e inclusão dos termos no sitemap foram validados;
+- preview permaneceu protegido com `noindex` e a produção permaneceu indexável;
+- nenhuma migration, credencial, banco ou serviço pago foi adicionado;
+- a revisão jurídica independente da redação continua recomendada.
+
 ## Estado atual da implantação
 
 | Componente            | Estado                                        |
@@ -414,7 +426,7 @@ Pendências conhecidas:
 | monitoramento         | agendado no GitHub Actions a cada seis horas  |
 | PostgreSQL remoto     | não conectado                                 |
 | notificações          | dependem das preferências da conta GitHub     |
-| versão Cloudflare     | `604177f0-48c8-4121-b39e-0592ba5ae72f`        |
-| produção              | ativa no commit `53e3043`                     |
+| versão Cloudflare     | `1491f9cb-47cc-4aa9-bd78-7576b180cc19`        |
+| produção              | ativa no commit `84c86d7`                     |
 
 Qualquer mudança desse estado deverá ser feita como uma etapa separada, aprovada e validada.
