@@ -28,7 +28,10 @@ export default function NotFound() {
                 <ArrowLeft aria-hidden="true" size={18} />
                 Voltar ao início
               </Link>
-              <Link className={buttonStyles({ size: "lg", variant: "outline" })} href="/seguros">
+              <Link
+                className={buttonStyles({ size: "lg", variant: "outlineDark" })}
+                href="/seguros"
+              >
                 Ver seguros
               </Link>
             </div>

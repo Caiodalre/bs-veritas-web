@@ -1,11 +1,14 @@
 /** @vitest-environment node */
 
 import { describe, expect, it, vi } from "vitest";
-import { worker } from "../worker/index";
+import { createRscAssetRequest, worker } from "../worker/index";
 
 function createAssetsBinding() {
   return {
-    fetch: vi.fn(async () => new Response("asset", { status: 200 })),
+    fetch: vi.fn(async (input: Request) => {
+      void input;
+      return new Response("asset", { status: 200 });
+    }),
   };
 }
 
@@ -31,6 +34,27 @@ describe("quote worker", () => {
 
     expect(response.status).toBe(200);
     expect(assets.fetch).toHaveBeenCalledWith(request);
+  });
+
+  it("mapeia payloads RSC estáticos para a estrutura gerada pelo Next.js", async () => {
+    const assets = createAssetsBinding();
+    const request = new Request(
+      "https://example.test/seguros/auto/__next.seguros.$d$slug.__PAGE__.txt?_rsc=teste",
+    );
+
+    await worker.fetch(request, { ASSETS: assets });
+
+    const forwardedRequest = assets.fetch.mock.calls[0]?.[0];
+    expect(forwardedRequest).toBeInstanceOf(Request);
+    expect((forwardedRequest as Request).url).toBe(
+      "https://example.test/seguros/auto/__next.seguros/$d$slug/__PAGE__.txt?_rsc=teste",
+    );
+  });
+
+  it("não reescreve caminhos que não sejam payloads RSC conhecidos", () => {
+    const request = new Request("https://example.test/seguros/auto");
+
+    expect(createRscAssetRequest(request)).toBe(request);
   });
 
   it("rejeita métodos diferentes de POST", async () => {
