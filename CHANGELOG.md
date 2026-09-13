@@ -4,7 +4,7 @@ Este arquivo registra mudanças relevantes do **B&S Veritas Web**.
 
 O projeto possui produção estática no domínio oficial e um preview público não indexável. Serviços dinâmicos e coleta de dados permanecem desativados.
 
-## Não lançado
+## Publicação da Política de Cookies — 2026-09-13
 
 ### Adicionado
 
@@ -17,6 +17,14 @@ O projeto possui produção estática no domínio oficial e um preview público 
 - a implementação foi confrontada com o código e com a resposta HTTP normal de produção, que não define cookies atualmente;
 - a revisão jurídica independente da redação continua recomendada;
 - nenhum banner, cookie, analytics, dependência, serviço externo ou custo foi adicionado.
+
+### Publicação
+
+- commit `e10d5d7ac419cda82f6102803a7397a595ab25d7` promovido para produção;
+- versão Cloudflare `c8e5eea2-047c-4273-b0df-09205cb0bc44` direcionada para 100% do tráfego;
+- página inicial, Política de Cookies, Política de Privacidade, sitemap e redirecionamento `www` aprovados nos smoke tests HTTP;
+- produção permaneceu indexável e sem cabeçalho `Set-Cookie` nas respostas verificadas;
+- versão anterior `1491f9cb-47cc-4aa9-bd78-7576b180cc19` preservada para rollback.
 
 ## Publicação dos Termos de Uso — 2026-09-13
 
