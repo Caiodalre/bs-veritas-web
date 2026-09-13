@@ -6,6 +6,10 @@ O projeto possui produção estática no domínio oficial e um preview público 
 
 ## Não lançado
 
+Nenhuma alteração pendente.
+
+## Publicação da política e contato — 2026-09-13
+
 ### Adicionado
 
 - Política de Privacidade com identificação do controlador, práticas atuais, finalidades, bases legais, critérios de retenção, compartilhamentos, direitos dos titulares e canal de atendimento;
@@ -16,6 +20,14 @@ O projeto possui produção estática no domínio oficial e um preview público 
 
 - botão principal do cabeçalho renomeado para “Fale conosco”, com acesso à página que reúne e-mail e telefone acionáveis;
 - testes de jornada ampliados para validar o botão e os destinos oficiais de e-mail e telefone.
+
+### Publicação
+
+- commit `53e3043f85602434da99f637357a925f3bce0017` promovido para produção;
+- versão Cloudflare `604177f0-48c8-4121-b39e-0592ba5ae72f` direcionada para 100% do tráfego;
+- página inicial, contato, Política de Privacidade e sitemap aprovados nos smoke tests HTTP;
+- preview permaneceu protegido com `noindex` e a produção permaneceu indexável;
+- nenhuma migration, credencial, banco ou serviço pago foi adicionado.
 
 ## Cadastro no Google Search Console — 2026-09-12
 
