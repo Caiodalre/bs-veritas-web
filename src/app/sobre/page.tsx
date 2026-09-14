@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { ArrowRight, Eye, Handshake, MessageCircle, Scale, Search } from "lucide-react";
+import { ArrowRight, Eye, Handshake, MessageCircle, Scale, Search, UserRound } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
@@ -167,19 +167,45 @@ export default function AboutPage() {
       </section>
 
       <section className="bg-white py-16 sm:py-20">
-        <Container className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-          <div className="max-w-3xl">
-            <h2 className="font-serif text-3xl font-bold text-navy-950">
-              Conheça as soluções atendidas
-            </h2>
-            <p className="mt-4 leading-8 text-slate-600">
-              O catálogo apresenta as modalidades e os pontos considerados na orientação.
-            </p>
+        <Container>
+          <div className="grid gap-8 rounded-2xl border border-aqua-200 bg-aqua-50 p-7 sm:p-9 md:grid-cols-[1.15fr_0.85fr] md:items-center">
+            <div className="max-w-2xl">
+              <p className="text-sm font-bold uppercase tracking-[0.18em] text-aqua-700">
+                Atendimento
+              </p>
+              <h2 className="mt-4 font-serif text-3xl font-bold text-navy-950">
+                Quem acompanha sua cotação
+              </h2>
+              <p className="mt-4 leading-8 text-slate-600">
+                Para assuntos relacionados à cotação, este é o responsável informado pela B&S
+                Veritas.
+              </p>
+            </div>
+            <div className="rounded-xl border border-aqua-200 bg-white p-6">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-aqua-100 text-aqua-700">
+                <UserRound aria-hidden="true" size={25} strokeWidth={1.7} />
+              </div>
+              <p className="mt-5 font-serif text-2xl font-bold text-navy-950">
+                Alexandre Marcelo Baez
+              </p>
+              <p className="mt-2 text-sm leading-7 text-slate-600">Responsável pela cotação</p>
+            </div>
           </div>
-          <Link className={buttonStyles({ size: "lg" })} href="/seguros">
-            Ver seguros
-            <ArrowRight aria-hidden="true" size={18} />
-          </Link>
+
+          <div className="mt-16 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+            <div className="max-w-3xl">
+              <h2 className="font-serif text-3xl font-bold text-navy-950">
+                Conheça as soluções atendidas
+              </h2>
+              <p className="mt-4 leading-8 text-slate-600">
+                O catálogo apresenta as modalidades e os pontos considerados na orientação.
+              </p>
+            </div>
+            <Link className={buttonStyles({ size: "lg" })} href="/seguros">
+              Ver seguros
+              <ArrowRight aria-hidden="true" size={18} />
+            </Link>
+          </div>
         </Container>
       </section>
     </SiteShell>

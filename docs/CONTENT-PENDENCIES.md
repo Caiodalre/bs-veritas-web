@@ -5,7 +5,8 @@ desses dados deve ser inferido ou publicado como provisório.
 
 ## Equipe
 
-- nomes e cargos que podem ser divulgados;
+- responsável pela cotação confirmado: Alexandre Marcelo Baez;
+- nomes e cargos das demais pessoas que podem ser divulgados;
 - breve apresentação profissional aprovada de cada pessoa;
 - identificação do responsável técnico e credenciais regulatórias, se a empresa decidir publicá-las;
 - autorização individual para uso de nome, biografia e imagem.
