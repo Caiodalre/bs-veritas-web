@@ -98,6 +98,8 @@ test("exibe a pagina institucional sobre", async ({ page }) => {
     }),
   ).toBeVisible();
   await expect(page.getByRole("heading", { name: "O que orienta cada atendimento" })).toBeVisible();
+  await expect(page.getByText("Alexandre Marcelo Baez")).toBeVisible();
+  await expect(page.getByText("Responsável pela cotação")).toBeVisible();
   await expect(page.getByRole("link", { name: "Ver seguros" })).toHaveAttribute("href", "/seguros");
 });
 
