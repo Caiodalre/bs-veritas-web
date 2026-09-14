@@ -265,8 +265,10 @@ Dados de vulnerabilidade não devem ser enviados para formulários comerciais co
 
 ## Checklist mínimo antes de formulários e coleta de dados
 
-- [ ] schemas de entrada e testes de casos inválidos;
-- [ ] honeypot, rate limiting e Turnstile verificados;
+- [x] schemas de entrada e testes de casos inválidos;
+- [x] honeypot verificado na camada local de validação;
+- [ ] rate limiting definido e verificado no ambiente de execução;
+- [ ] Turnstile integrado e verificado antes da coleta pública;
 - [ ] permissões mínimas do banco;
 - [ ] política de retenção aprovada;
 - [ ] backups e restauração testados;
