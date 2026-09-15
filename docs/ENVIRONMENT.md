@@ -199,6 +199,9 @@ O Drizzle possui schema de cotação e migration inicial versionados. Ainda não
 - banco conectado à aplicação.
 
 A migration gerada em `drizzle/0000_quote_requests.sql` não foi aplicada a nenhum ambiente.
+A migration `drizzle/0001_quote_request_permissions.sql` prepara o papel sem login
+`bs_veritas_quote_writer`, limitado a inserir solicitações e ler somente o UUID retornado. Ela não
+cria usuário com login, senha ou conexão. As duas migrations continuam sem aplicação em banco real.
 
 Quando essa etapa for aprovada:
 
@@ -206,6 +209,10 @@ Quando essa etapa for aprovada:
 - o navegador não receberá a string de conexão;
 - preview não utilizará dados de produção;
 - migrations serão geradas, revisadas e testadas antes da aplicação;
+- o usuário de conexão será criado via SQL, fora do repositório, sem herdar `neon_superuser`,
+  e receberá somente o papel `bs_veritas_quote_writer`;
+- antes de conectar a aplicação, serão verificados os privilégios efetivos do usuário e testados
+  `INSERT ... RETURNING id`, além da recusa de leitura dos demais campos, `UPDATE` e `DELETE`;
 - a restauração de backup será validada antes do lançamento.
 
 ## Serviços externos planejados
