@@ -46,6 +46,7 @@ Já existem no repositório:
 - fundação do Drizzle ORM sem credenciais reais;
 - schema local, validação Zod, normalização e honeypot para cotação;
 - serviço local de cotação atrás de um contrato de repositório, sem persistência ativa;
+- política de retenção de cinco anos formalizada para futuras solicitações do formulário;
 - `.gitignore` gerado para evitar o versionamento normal de arquivos locais de ambiente;
 - regras de desenvolvimento em `AGENTS.md`;
 - preview estático na Cloudflare Workers sem dados reais;
@@ -270,7 +271,7 @@ Dados de vulnerabilidade não devem ser enviados para formulários comerciais co
 - [ ] rate limiting definido e verificado no ambiente de execução;
 - [ ] Turnstile integrado e verificado antes da coleta pública;
 - [ ] permissões mínimas do banco;
-- [ ] política de retenção aprovada;
+- [x] política de retenção de cinco anos aprovada;
 - [ ] backups e restauração testados;
 - [ ] secrets separados por ambiente;
 - [x] headers HTTP avaliados no domínio final;
