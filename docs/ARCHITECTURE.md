@@ -95,7 +95,7 @@ A fundação local valida e normaliza os campos com Zod, restringe modalidades a
 
 ### Serviços
 
-O serviço local de cotação já define o caso de uso de registrar um pedido validado. Ele exige a versão da política e a data de expiração da retenção, sem fixar esses valores enquanto as decisões correspondentes estiverem pendentes. Serviços não dependem de componentes React nem conhecem detalhes visuais.
+O serviço local de cotação já define o caso de uso de registrar um pedido validado. A política da cotação usa a versão `1.1` e calcula a expiração em cinco anos corridos a partir do recebimento, conforme a decisão de retenção aprovada. Serviços não dependem de componentes React nem conhecem detalhes visuais.
 
 ### Repositórios
 
@@ -248,7 +248,6 @@ Não haverá edição manual de arquivos em produção.
 - provedor definitivo de e-mail e notificações;
 - criação do projeto Neon, credenciais e binding Hyperdrive;
 - estratégia e valores de rate limiting;
-- política de retenção dos leads;
 - conteúdo jurídico revisado;
 - contatos corporativos reais;
 - seguradoras parceiras confirmadas;
