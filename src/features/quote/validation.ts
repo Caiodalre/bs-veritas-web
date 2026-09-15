@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { insuranceCatalog, type InsuranceSlug } from "@/features/insurance/catalog";
+import { turnstileTokenMaximumLength } from "@/features/quote/turnstile-verification";
 
 const insuranceSlugs = new Set<string>(insuranceCatalog.map(({ slug }) => slug));
 
@@ -40,17 +41,36 @@ const quoteRequestFieldsSchema = z
   })
   .strict();
 
-export const quoteRequestInputSchema = quoteRequestFieldsSchema.transform((value) => ({
-  fullName: value.fullName,
-  phone: value.phone,
-  email: value.email,
-  insuranceType: value.insuranceType,
-  city: value.city,
-  message: value.message,
-}));
+function toQuoteRequestInput(value: z.output<typeof quoteRequestFieldsSchema>) {
+  return {
+    fullName: value.fullName,
+    phone: value.phone,
+    email: value.email,
+    insuranceType: value.insuranceType,
+    city: value.city,
+    message: value.message,
+  };
+}
+
+export const quoteRequestInputSchema = quoteRequestFieldsSchema.transform(toQuoteRequestInput);
+
+export const quoteSubmissionInputSchema = quoteRequestFieldsSchema
+  .extend({
+    turnstileToken: z.string().trim().min(1).max(turnstileTokenMaximumLength),
+  })
+  .strict()
+  .transform((value) => ({
+    quoteRequest: toQuoteRequestInput(value),
+    turnstileToken: value.turnstileToken,
+  }));
 
 export type QuoteRequestInput = z.output<typeof quoteRequestInputSchema>;
+export type QuoteSubmissionInput = z.output<typeof quoteSubmissionInputSchema>;
 
 export function parseQuoteRequest(input: unknown) {
   return quoteRequestInputSchema.safeParse(input);
+}
+
+export function parseQuoteSubmission(input: unknown) {
+  return quoteSubmissionInputSchema.safeParse(input);
 }

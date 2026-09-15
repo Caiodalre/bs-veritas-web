@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseQuoteRequest } from "./validation";
+import { parseQuoteRequest, parseQuoteSubmission } from "./validation";
 
 const validInput = {
   fullName: "  Pessoa   Exemplo  ",
@@ -60,5 +60,45 @@ describe("parseQuoteRequest", () => {
     expect(parseQuoteRequest({ ...validInput, phone: "123" }).success).toBe(false);
     expect(parseQuoteRequest({ ...validInput, email: "email-inválido" }).success).toBe(false);
     expect(parseQuoteRequest({ ...validInput, message: "x".repeat(1001) }).success).toBe(false);
+  });
+});
+
+describe("parseQuoteSubmission", () => {
+  it("separa o token antiabuso dos dados comerciais normalizados", () => {
+    const result = parseQuoteSubmission({ ...validInput, turnstileToken: "  test-token  " });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+
+    expect(result.data).toEqual({
+      quoteRequest: {
+        fullName: "Pessoa Exemplo",
+        phone: "11999990000",
+        email: "pessoa@example.invalid",
+        insuranceType: "auto",
+        city: "Cidade Exemplo",
+        message: "Mensagem inteiramente fictícia.",
+      },
+      turnstileToken: "test-token",
+    });
+    expect(result.data.quoteRequest).not.toHaveProperty("website");
+    expect(result.data.quoteRequest).not.toHaveProperty("turnstileToken");
+  });
+
+  it.each([undefined, "", " ", "x".repeat(2049)])(
+    "rejeita token antiabuso ausente, vazio ou acima do limite",
+    (turnstileToken) => {
+      expect(parseQuoteSubmission({ ...validInput, turnstileToken }).success).toBe(false);
+    },
+  );
+
+  it("rejeita campos adicionais na submissão", () => {
+    const result = parseQuoteSubmission({
+      ...validInput,
+      turnstileToken: "test-token",
+      unexpected: "não aceitar",
+    });
+
+    expect(result.success).toBe(false);
   });
 });

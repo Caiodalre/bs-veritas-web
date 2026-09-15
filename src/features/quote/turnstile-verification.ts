@@ -1,5 +1,5 @@
 const siteverifyUrl = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
-const maximumTokenLength = 2048;
+export const turnstileTokenMaximumLength = 2048;
 const defaultTimeoutMs = 3000;
 const maximumTimeoutMs = 10_000;
 
@@ -56,7 +56,7 @@ export async function verifyTurnstileToken(
 ): Promise<TurnstileVerificationResult> {
   const token = input.token.trim();
 
-  if (!token || token.length > maximumTokenLength) {
+  if (!token || token.length > turnstileTokenMaximumLength) {
     return { valid: false, reason: "invalid-token" };
   }
 
