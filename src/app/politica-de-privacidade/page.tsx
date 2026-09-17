@@ -17,8 +17,9 @@ export const metadata: Metadata = {
 
 const currentPractices = [
   "WhatsApp, telefone e e-mail são os canais disponíveis para iniciar o atendimento.",
+  "O formulário só recebe um pedido quando está habilitado e você o envia.",
   "Não utilizamos analytics, publicidade comportamental ou cookies de marketing.",
-  "O contato é iniciado pelo visitante nos canais externos publicados no site.",
+  "O atendimento começa quando você escolhe entrar em contato.",
 ] as const;
 
 const dataPurposes = [
@@ -62,7 +63,7 @@ export default function PrivacyPolicyPage() {
             oficiais.
           </p>
           <p className="mt-6 text-sm font-semibold text-aqua-200">
-            Versão 1.0 · Atualizada em 12 de setembro de 2026
+            Versão 1.1 · Atualizada em 15 de setembro de 2026
           </p>
         </Container>
       </section>
@@ -107,9 +108,14 @@ export default function PrivacyPolicyPage() {
                 2. Informações tratadas
               </h2>
               <p className="mt-4">
-                O site não coleta solicitações diretamente. Quando você decide falar conosco por
-                telefone, e-mail ou WhatsApp, podemos receber os dados que escolher compartilhar,
-                como nome, contato e informações necessárias para compreender sua solicitação.
+                Quando você decide falar conosco por telefone, e-mail ou WhatsApp, podemos receber
+                os dados que escolher compartilhar, como nome, contato e informações necessárias
+                para compreender sua solicitação.
+              </p>
+              <p className="mt-4">
+                Se o formulário de cotação estiver habilitado no site e você optar por enviá-lo, ele
+                pedirá nome, telefone, e-mail e modalidade de seguro; cidade e mensagem serão
+                opcionais. Sem formulário habilitado, não há envio de pedido por esse canal.
               </p>
               <p className="mt-4">
                 Para disponibilizar e proteger as páginas, prestadores de infraestrutura podem
@@ -171,6 +177,14 @@ export default function PrivacyPolicyPage() {
                 solicitação, conduzir uma relação pré-contratual ou contratual, cumprir obrigações
                 legais e regulatórias ou exercer direitos. Encerradas essas finalidades e os prazos
                 aplicáveis, os dados são eliminados ou anonimizados quando cabível.
+              </p>
+              <p className="mt-4">
+                Cada solicitação recebida por um formulário de cotação habilitado terá prazo de
+                armazenamento de cinco anos corridos, contado do recebimento. No vencimento, o
+                registro deverá ser eliminado ou anonimizado, ressalvadas as hipóteses de
+                conservação previstas na LGPD e as obrigações legais ou regulatórias aplicáveis.
+                Esse prazo específico não é atribuído automaticamente às conversas iniciadas por
+                WhatsApp, telefone ou e-mail.
               </p>
               <p className="mt-4">
                 Dúvidas sobre retenção de informações recebidas pelos canais de atendimento podem

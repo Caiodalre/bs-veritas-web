@@ -15,6 +15,13 @@
       "when": 1789435678640,
       "tag": "0001_quote_request_permissions",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789602869807,
+      "tag": "0002_quote_request_constraints",
+      "breakpoints": true
     }
   ]
 }
