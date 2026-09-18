@@ -1,11 +1,11 @@
 # ADR 0002 — Proteção contra abuso nas solicitações de cotação
 
-- Status: proposto
+- Status: aceito; ativação pública pendente
 - Data: 2026-09-14
 
 ## Contexto
 
-O endpoint `/api/quote` permanece desativado e ainda não coleta dados. Antes de sua ativação, a
+O endpoint `/api/quote` ainda não está publicado e não coleta dados. Antes de sua ativação, a
 aplicação precisa reduzir envios automatizados e picos de requisições sem introduzir custo fixo ou
 enfraquecer a experiência de pessoas legítimas.
 
@@ -14,14 +14,14 @@ substituem proteção na borda nem a validação de um desafio no servidor.
 
 ## Proposta
 
-Quando o formulário for aprovado para implementação:
+O fluxo aprovado deve:
 
 1. criar uma regra de rate limiting da Cloudflare limitada ao caminho `/api/quote`;
 2. iniciar com um limite conservador de 5 requisições em 10 segundos por origem e revisar o valor
    com tráfego real, sem tratar o contador como mecanismo preciso de auditoria;
 3. usar um widget Cloudflare Turnstile no modo Managed, com hostnames permitidos explicitamente;
 4. separar widgets e credenciais de preview e produção;
-5. validar cada token no Worker pelo Siteverify antes de validar ou persistir os dados da cotação;
+5. validar cada token no Worker pelo Siteverify antes de persistir os dados da cotação;
 6. exigir `hostname` e `action` compatíveis com o ambiente e a ação `quote`;
 7. rejeitar tokens ausentes, inválidos, expirados ou reutilizados com resposta genérica;
 8. aplicar timeout curto e falhar de modo seguro se o Siteverify estiver indisponível;
@@ -55,9 +55,13 @@ Antes da ativação:
 
 ## Estado atual
 
-Esta proposta não cria regra WAF, widget, segredo, binding ou endpoint ativo. A implementação
-continua bloqueada pela política de retenção, revisão jurídica, banco e permissões mínimas ainda
-pendentes.
+O repositório contém o formulário condicionado à chave pública, o endpoint, a validação Siteverify,
+o binding de rate limiting, o Hyperdrive, a CSP mínima e testes das falhas relevantes. As migrations
+foram aplicadas ao Aiven de teste e o papel de aplicação foi verificado com menor privilégio.
+
+A ativação pública continua bloqueada até que widgets Managed e segredos separados sejam criados
+para preview e produção, os hostnames sejam limitados, o fluxo seja homologado em preview e a
+recuperação de backup seja confirmada. Nenhuma chave real é mantida no repositório.
 
 ## Referências
 

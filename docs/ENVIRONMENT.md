@@ -161,7 +161,9 @@ Uma nova solicitação de build script deverá ser analisada pelo nome do pacote
 
 ## Variáveis de ambiente
 
-Na fundação atual, a aplicação não exige variável de ambiente específica para iniciar, testar ou gerar o build.
+O build público do formulário usa `NEXT_PUBLIC_TURNSTILE_SITE_KEY`. A chave é pública e identifica
+o widget; ela não substitui o segredo `TURNSTILE_SECRET_KEY`, que existe somente no Worker. Quando a
+chave pública não está presente no build, a página mantém os canais oficiais e não exibe o formulário.
 
 Quando integrações forem implementadas, cada variável deverá ser classificada como:
 
@@ -188,45 +190,39 @@ Regras:
 - novas variáveis exigirão validação centralizada;
 - variáveis obsoletas deverão ser removidas da plataforma e da documentação.
 
-O arquivo `.env.example` ainda não será criado porque nenhuma integração que exija variáveis foi implementada.
+Como `.env*` é ignorado integralmente, a configuração local deve ser criada apenas na máquina do
+desenvolvedor. Valores de preview e produção são administrados separadamente na Cloudflare.
 
 ## Banco de dados
 
-O Drizzle possui schema de cotação e migration inicial versionados. Ainda não existem:
+O schema e as três migrations de cotação foram aplicados ao serviço PostgreSQL de teste da Aiven. O
+usuário de aplicação `bs_veritas_app` recebe o papel `bs_veritas_quote_writer`, limitado a inserir
+solicitações e ler somente o UUID retornado. A conexão do Worker é intermediada pelo Hyperdrive; a
+string de conexão e a senha não são enviadas ao navegador nem versionadas.
 
-- URL real de PostgreSQL;
-- credenciais locais, de preview ou produção;
-- banco conectado à aplicação.
-
-A migration gerada em `drizzle/0000_quote_requests.sql` não foi aplicada a nenhum ambiente.
-A migration `drizzle/0001_quote_request_permissions.sql` prepara o papel sem login
-`bs_veritas_quote_writer`, limitado a inserir solicitações e ler somente o UUID retornado. Ela não
-cria usuário com login, senha ou conexão. As duas migrations continuam sem aplicação em banco real.
-
-Quando essa etapa for aprovada:
+Antes da ativação pública:
 
 - cada ambiente terá seu próprio banco ou isolamento equivalente;
 - o navegador não receberá a string de conexão;
 - preview não utilizará dados de produção;
 - migrations serão geradas, revisadas e testadas antes da aplicação;
-- o usuário de conexão será criado via SQL, fora do repositório, sem herdar `neon_superuser`,
-  e receberá somente o papel `bs_veritas_quote_writer`;
-- antes de conectar a aplicação, serão verificados os privilégios efetivos do usuário e testados
-  `INSERT ... RETURNING id`, além da recusa de leitura dos demais campos, `UPDATE` e `DELETE`;
 - a restauração de backup será validada antes do lançamento.
 
 ## Serviços externos planejados
 
-| Serviço             | Papel                                       | Estado atual                      |
-| ------------------- | ------------------------------------------- | --------------------------------- |
-| Cloudflare Workers  | preview e produção estática                 | ambos ativos                      |
-| Cloudflare          | DNS, CDN, SSL e Turnstile futuro            | domínio e redirecionamento ativos |
-| PostgreSQL/Supabase | persistência de leads                       | não conectado                     |
-| Provedor de e-mail  | roteamento e autenticação do e-mail público | MX, SPF, DKIM e DMARC ativos      |
-| GitHub              | repositório privado e CI                    | configurado e validado            |
-| Analytics           | métricas sem dados pessoais                 | não configurado                   |
+| Serviço               | Papel                                       | Estado atual                                      |
+| --------------------- | ------------------------------------------- | ------------------------------------------------- |
+| Cloudflare Workers    | site, endpoint e assets                     | produção estática ativa; nova API não publicada   |
+| Cloudflare Hyperdrive | conexão protegida com PostgreSQL            | configuração criada e cache desativado            |
+| Cloudflare Turnstile  | verificação antiabuso                       | código integrado; widgets e segredos pendentes    |
+| PostgreSQL/Aiven      | persistência de leads                       | serviço de teste migrado e permissões verificadas |
+| Provedor de e-mail    | roteamento e autenticação do e-mail público | MX, SPF, DKIM e DMARC ativos                      |
+| GitHub                | repositório privado e CI                    | configurado e validado                            |
+| Analytics             | métricas sem dados pessoais                 | não configurado                                   |
 
-A Vercel Hobby não faz parte da infraestrutura porque não permite uso comercial. Banco, formulários, analytics, notificações da aplicação e outros serviços não deverão ser tratados como ativos antes de sua configuração e validação explícitas.
+A Vercel Hobby não faz parte da infraestrutura porque não permite uso comercial. O formulário não
+deverá ser tratado como ativo antes da configuração dos widgets, segredos e validação explícita em
+preview.
 
 ## Dados de desenvolvimento
 

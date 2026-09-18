@@ -12,6 +12,14 @@ describe("security headers", () => {
     expect(headersFile).toContain("object-src 'none'");
   });
 
+  it("autoriza somente os recursos necessários do Turnstile", () => {
+    expect(headersFile).toContain("frame-src https://challenges.cloudflare.com");
+    expect(headersFile).toContain(
+      "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com",
+    );
+    expect(headersFile).not.toContain("https://*.cloudflare.com");
+  });
+
   it("não amplia HSTS para subdomínios não auditados", () => {
     expect(headersFile).toContain("Strict-Transport-Security: max-age=31536000");
     expect(headersFile).not.toContain("includeSubDomains");

@@ -4,6 +4,11 @@ import { handleQuoteRequest, type QuoteEndpointDependencies } from "./quote-endp
 const quoteEndpoint = "/api/quote";
 const rscPagePayloadSuffix = ".__PAGE__.txt";
 const rscPagePayloadMarker = "/__next.";
+const rateLimitRetryAfterSeconds = "10";
+
+function getRateLimitKey(request: Request) {
+  return request.headers.get("cf-connecting-ip")?.trim() || "unknown-origin";
+}
 
 export function createRscAssetRequest(request: Request) {
   const url = new URL(request.url);
@@ -46,6 +51,38 @@ export async function handleWorkerRequest(
       { error: { code: "method_not_allowed", message: "Método não permitido." } },
       405,
       { allow: "POST" },
+    );
+  }
+
+  let rateLimitOutcome: RateLimitOutcome;
+
+  try {
+    rateLimitOutcome = await env.QUOTE_RATE_LIMITER.limit({
+      key: getRateLimitKey(request),
+    });
+  } catch {
+    return jsonApiResponse(
+      {
+        error: {
+          code: "rate_limit_unavailable",
+          message: "O serviço está temporariamente indisponível. Tente novamente.",
+        },
+      },
+      503,
+      { "retry-after": rateLimitRetryAfterSeconds },
+    );
+  }
+
+  if (!rateLimitOutcome.success) {
+    return jsonApiResponse(
+      {
+        error: {
+          code: "rate_limit_exceeded",
+          message: "Muitas solicitações em sequência. Aguarde e tente novamente.",
+        },
+      },
+      429,
+      { "retry-after": rateLimitRetryAfterSeconds },
     );
   }
 

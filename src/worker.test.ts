@@ -46,10 +46,17 @@ function createHyperdriveBinding(): Env["HYPERDRIVE"] {
   };
 }
 
+function createRateLimitBinding(success = true): Env["QUOTE_RATE_LIMITER"] {
+  return {
+    limit: vi.fn<Env["QUOTE_RATE_LIMITER"]["limit"]>(async () => ({ success })),
+  };
+}
+
 function createWorkerEnv(assets = createAssetsBinding()): Env {
   return {
     ASSETS: assets,
     HYPERDRIVE: createHyperdriveBinding(),
+    QUOTE_RATE_LIMITER: createRateLimitBinding(),
     QUOTE_EXPECTED_HOSTNAME: "bsveritas.com.br",
     TURNSTILE_SECRET_KEY: "test-secret",
   };
@@ -178,6 +185,41 @@ describe("quote worker", () => {
       retentionExpiresAt: new Date("2035-01-15T14:30:45.123Z"),
     });
     expect(assets.fetch).not.toHaveBeenCalled();
+  });
+
+  it("limita solicitações por origem antes de chamar Turnstile e banco", async () => {
+    const assets = createAssetsBinding();
+    const env = createWorkerEnv(assets);
+    env.QUOTE_RATE_LIMITER = createRateLimitBinding(false);
+    const { dependencies, createRepository, fetcher } = createQuoteDependencies();
+    const request = createQuoteRequest();
+    request.headers.set("cf-connecting-ip", "203.0.113.9");
+
+    const response = await handleWorkerRequest(request, env, dependencies);
+
+    expect(response.status).toBe(429);
+    expect(response.headers.get("retry-after")).toBe("10");
+    expectApiSecurityHeaders(response);
+    expect(env.QUOTE_RATE_LIMITER.limit).toHaveBeenCalledWith({ key: "203.0.113.9" });
+    expect(createRepository).not.toHaveBeenCalled();
+    expect(fetcher).not.toHaveBeenCalled();
+  });
+
+  it("falha de forma fechada quando o rate limiter está indisponível", async () => {
+    const assets = createAssetsBinding();
+    const env = createWorkerEnv(assets);
+    vi.mocked(env.QUOTE_RATE_LIMITER.limit).mockRejectedValueOnce(
+      new Error("Rate limiter unavailable."),
+    );
+    const { dependencies, createRepository, fetcher } = createQuoteDependencies();
+
+    const response = await handleWorkerRequest(createQuoteRequest(), env, dependencies);
+
+    expect(response.status).toBe(503);
+    expect(response.headers.get("retry-after")).toBe("10");
+    expectApiSecurityHeaders(response);
+    expect(createRepository).not.toHaveBeenCalled();
+    expect(fetcher).not.toHaveBeenCalled();
   });
 
   it("rejeita mídia incompatível antes de chamar serviços externos", async () => {
