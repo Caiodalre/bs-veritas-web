@@ -6,6 +6,7 @@ import { SiteShell } from "@/components/layout/site-shell";
 import { buttonStyles } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import { createWhatsAppHref, whatsappMessages } from "@/features/contact/whatsapp";
+import { QuoteForm } from "@/features/quote/components/quote-form";
 
 export const metadata: Metadata = {
   title: "Contato",
@@ -43,6 +44,8 @@ const contactChannels = [
 ] as const;
 
 export default function ContactPage() {
+  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim();
+
   return (
     <SiteShell>
       <section className="bg-navy-950 py-16 text-white sm:py-20">
@@ -121,6 +124,34 @@ export default function ContactPage() {
           </div>
         </Container>
       </section>
+
+      {turnstileSiteKey ? (
+        <section aria-labelledby="quote-form-title" className="bg-aqua-50 py-20 sm:py-24">
+          <Container className="grid gap-10 lg:grid-cols-[0.72fr_1.28fr] lg:items-start">
+            <div>
+              <p className="text-sm font-bold uppercase tracking-[0.18em] text-aqua-700">
+                Solicitação de cotação
+              </p>
+              <h2
+                className="mt-4 font-serif text-3xl font-bold tracking-[-0.025em] text-navy-950 sm:text-4xl"
+                id="quote-form-title"
+              >
+                Conte o essencial para iniciarmos
+              </h2>
+              <p className="mt-5 leading-8 text-slate-700">
+                Envie seus dados de contato e a modalidade desejada. A equipe analisará a
+                solicitação e continuará o atendimento de forma humana, sem contratação automática.
+              </p>
+              <ul className="mt-7 space-y-3 text-sm leading-6 text-slate-700">
+                <li>• Você não precisa informar documentos nesta etapa.</li>
+                <li>• Coberturas e condições variam conforme produto e seguradora.</li>
+                <li>• O envio não representa proposta, contratação ou garantia de aceitação.</li>
+              </ul>
+            </div>
+            <QuoteForm siteKey={turnstileSiteKey} />
+          </Container>
+        </section>
+      ) : null}
 
       <section className="bg-navy-950 py-16 text-white sm:py-20">
         <Container className="grid gap-8 lg:grid-cols-[auto_1fr_auto] lg:items-center">

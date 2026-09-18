@@ -43,9 +43,10 @@ Já existem no repositório:
 - Prettier com verificação reproduzível;
 - testes unitários e E2E básicos;
 - repositório privado no GitHub e CI remoto validado;
-- fundação do Drizzle ORM sem credenciais reais;
+- Drizzle ORM conectado ao PostgreSQL por Hyperdrive, sem credenciais no repositório;
 - schema local, validação Zod, normalização e honeypot para cotação;
-- serviço local de cotação atrás de um contrato de repositório, sem persistência ativa;
+- endpoint de cotação com persistência, Turnstile e respostas sem dados pessoais versionado, ainda não publicado;
+- rate limiting de 5 solicitações em 10 segundos por origem configurado no Worker;
 - política de retenção de cinco anos formalizada para futuras solicitações do formulário;
 - `.gitignore` gerado para evitar o versionamento normal de arquivos locais de ambiente;
 - regras de desenvolvimento em `AGENTS.md`;
@@ -58,12 +59,10 @@ Já existem no repositório:
 - cabeçalhos defensivos aplicados diretamente às respostas JSON da API;
 - cabeçalho `X-Robots-Tag: noindex` no endereço `workers.dev`.
 
-Ainda não estão configurados:
+Ainda não estão configurados ou homologados:
 
-- banco de produção;
-- formulários públicos funcionais;
-- rate limiting;
-- Cloudflare Turnstile;
+- widget e segredo Turnstile separados para preview e produção;
+- formulário público em preview e produção;
 - provedor de notificação;
 - analytics;
 - monitoramento e alertas de produção.
@@ -108,13 +107,12 @@ O fluxo planejado terá as seguintes camadas:
 
 ```text
 requisição
-   -> limite de tamanho e formato
-      -> schema de validação no servidor
-         -> honeypot
-            -> rate limiting
-               -> verificação Turnstile
-                  -> normalização
-                     -> serviço de aplicação
+   -> rate limiting por origem
+      -> limite de tamanho e formato
+         -> schema de validação no servidor e honeypot
+            -> verificação Turnstile
+               -> normalização
+                  -> persistência com menor privilégio
 ```
 
 Regras:
@@ -140,7 +138,9 @@ Os limites numéricos serão estabelecidos com base no ambiente real e testados 
 - consultas deverão ser feitas por APIs seguras do ORM, sem concatenação manual de entrada externa;
 - dados reais não serão copiados para testes locais ou previews.
 
-O schema local de cotação existe, mas nenhuma migration foi aplicada e não existe conexão de produção configurada.
+As migrations foram aplicadas ao serviço Aiven de teste. O papel de conexão foi verificado com
+`INSERT ... RETURNING id` e sem permissão para ler os demais campos, alterar ou excluir registros. A
+ativação pública permanece condicionada à homologação do fluxo completo e da restauração de backup.
 
 ## Segredos e variáveis de ambiente
 
@@ -268,14 +268,14 @@ Dados de vulnerabilidade não devem ser enviados para formulários comerciais co
 
 - [x] schemas de entrada e testes de casos inválidos;
 - [x] honeypot verificado na camada local de validação;
-- [ ] rate limiting definido e verificado no ambiente de execução;
-- [ ] Turnstile integrado e verificado antes da coleta pública;
-- [ ] permissões mínimas do banco;
+- [x] rate limiting definido e coberto por testes do Worker;
+- [x] Turnstile integrado no cliente e validado no servidor;
+- [x] permissões mínimas do banco verificadas;
 - [x] política de retenção de cinco anos aprovada;
 - [ ] backups e restauração testados;
 - [ ] secrets separados por ambiente;
 - [x] headers HTTP avaliados no domínio final;
-- [ ] logs revisados contra exposição de dados pessoais;
+- [x] logs e respostas revisados contra exposição de dados pessoais;
 - [x] previews fora dos buscadores;
 - [x] SPF, DKIM e DMARC do provedor de e-mail;
 - [ ] MFA nas plataformas administrativas;
