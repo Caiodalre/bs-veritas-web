@@ -1,31 +1,9 @@
+import { jsonApiResponse } from "./api-response";
+import { handleQuoteRequest, type QuoteEndpointDependencies } from "./quote-endpoint";
+
 const quoteEndpoint = "/api/quote";
 const rscPagePayloadSuffix = ".__PAGE__.txt";
 const rscPagePayloadMarker = "/__next.";
-
-export interface WorkerEnv {
-  ASSETS: {
-    fetch(input: Request): Promise<Response>;
-  };
-}
-
-const apiSecurityHeaders = {
-  "content-security-policy": "default-src 'none'; frame-ancestors 'none'",
-  "permissions-policy": "camera=(), geolocation=(), microphone=()",
-  "referrer-policy": "no-referrer",
-  "x-content-type-options": "nosniff",
-  "x-frame-options": "DENY",
-} as const;
-
-function jsonResponse(body: unknown, status: number, headers?: HeadersInit) {
-  return Response.json(body, {
-    status,
-    headers: {
-      "cache-control": "no-store",
-      ...apiSecurityHeaders,
-      ...headers,
-    },
-  });
-}
 
 export function createRscAssetRequest(request: Request) {
   const url = new URL(request.url);
@@ -52,32 +30,31 @@ export function createRscAssetRequest(request: Request) {
   return new Request(url, request);
 }
 
-export const worker = {
-  async fetch(request: Request, env: WorkerEnv): Promise<Response> {
-    const { pathname } = new URL(request.url);
+export async function handleWorkerRequest(
+  request: Request,
+  env: Env,
+  quoteDependencies?: QuoteEndpointDependencies,
+): Promise<Response> {
+  const { pathname } = new URL(request.url);
 
-    if (pathname !== quoteEndpoint) {
-      return env.ASSETS.fetch(createRscAssetRequest(request));
-    }
+  if (pathname !== quoteEndpoint) {
+    return env.ASSETS.fetch(createRscAssetRequest(request));
+  }
 
-    if (request.method !== "POST") {
-      return jsonResponse(
-        { error: { code: "method_not_allowed", message: "Método não permitido." } },
-        405,
-        { allow: "POST" },
-      );
-    }
-
-    return jsonResponse(
-      {
-        error: {
-          code: "quote_unavailable",
-          message: "A solicitação de cotação ainda não está disponível.",
-        },
-      },
-      503,
-      { "retry-after": "86400" },
+  if (request.method !== "POST") {
+    return jsonApiResponse(
+      { error: { code: "method_not_allowed", message: "Método não permitido." } },
+      405,
+      { allow: "POST" },
     );
+  }
+
+  return handleQuoteRequest(request, env, quoteDependencies);
+}
+
+export const worker = {
+  async fetch(request: Request, env: Env): Promise<Response> {
+    return handleWorkerRequest(request, env);
   },
 } satisfies ExportedHandler<Env>;
 

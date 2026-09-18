@@ -16,6 +16,12 @@
     "command": "pnpm build",
     "watch_dir": ["src", "public", "next.config.ts", "worker"],
   },
+  "vars": {
+    "QUOTE_EXPECTED_HOSTNAME": "bsveritas.com.br",
+  },
+  "secrets": {
+    "required": ["TURNSTILE_SECRET_KEY"],
+  },
   "assets": {
     "directory": "./out",
     "binding": "ASSETS",
