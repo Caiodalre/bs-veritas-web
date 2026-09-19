@@ -1,6 +1,6 @@
 # ADR 0001 — Runtime e banco para solicitações de cotação
 
-- Status: aceito para preparação local
+- Status: substituído pelo ADR 0004
 - Data: 2026-08-30
 
 ## Contexto
@@ -17,6 +17,12 @@ O site usa exportação estática do Next.js em Cloudflare Workers Static Assets
 - manter `/api/quote` desativado até existirem banco, binding, retenção aprovada, proteção contra abuso e conteúdo jurídico revisado.
 
 Essa combinação preserva a stack PostgreSQL já aprovada e permite iniciar sem mensalidade. Nenhum projeto Neon, binding Hyperdrive, segredo ou banco foi criado nesta etapa.
+
+## Substituição
+
+A arquitetura de Worker, Drizzle e Hyperdrive foi preservada, mas o provedor PostgreSQL escolhido na
+implementação foi a Aiven. O estado operacional e o isolamento do preview estão registrados no
+[ADR 0004](0004-aiven-and-preview-isolation.md).
 
 ## Consequências
 

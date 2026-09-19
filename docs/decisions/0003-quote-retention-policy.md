@@ -1,6 +1,6 @@
 # ADR 0003 — Retenção das solicitações de cotação
 
-- Status: aprovado para implementação
+- Status: implementado em produção
 - Data: 2026-09-14
 
 ## Contexto
@@ -30,10 +30,11 @@ revisão jurídica independente da redação e do enquadramento regulatório.
 ## Consequências
 
 - o backend calculará `retention_expires_at` no recebimento, sem aceitar esse valor do navegador;
-- a política pública deverá ser atualizada para a versão `1.1` antes da ativação;
-- deverá existir rotina verificável de descarte antes do primeiro dado real;
+- a política pública utiliza a versão `1.1` aplicável ao formulário;
+- deverá ser implementada uma rotina verificável de descarte; até lá, o vencimento gravado permitirá
+  acompanhamento e tratamento operacional;
 - backups também deverão respeitar regras documentadas de expiração e restauração;
-- esta decisão, isoladamente, não ativa formulário, banco, segredo ou integração externa.
+- a rotina verificável de descarte e o tratamento correspondente dos backups continuam pendentes.
 
 ## Referências
 
