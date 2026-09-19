@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import Script from "next/script";
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { insuranceCatalog } from "@/features/insurance/catalog";
+import { resolveTurnstileSiteKey } from "@/features/quote/turnstile-site-key";
 
 const turnstileScriptUrl = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
 
@@ -37,6 +38,9 @@ const fieldClassName =
   "mt-2 min-h-12 w-full rounded-md border border-slate-300 bg-white px-4 text-base text-navy-950 shadow-sm outline-none transition placeholder:text-slate-500 hover:border-slate-400 focus:border-aqua-700 focus:ring-3 focus:ring-aqua-200 disabled:cursor-not-allowed disabled:bg-slate-100";
 
 const initialStatusMessage = "Preencha os dados abaixo. Os campos marcados com * são obrigatórios.";
+const subscribeToHostname = () => () => undefined;
+const getServerSiteKey = () => undefined;
+const getBrowserSiteKey = () => resolveTurnstileSiteKey(window.location.hostname);
 
 function getFailureMessage(status: number) {
   if (status === 429) {
@@ -50,10 +54,17 @@ function getFailureMessage(status: number) {
   return "Não foi possível registrar sua solicitação agora. Tente novamente ou use um dos canais oficiais acima.";
 }
 
-export function QuoteForm({ siteKey }: { siteKey?: string }) {
+export function QuoteForm({ siteKey: configuredSiteKey }: { siteKey?: string }) {
   const formRef = useRef<HTMLFormElement>(null);
   const turnstileContainerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | undefined>(undefined);
+  const hostnameSiteKey = useSyncExternalStore(
+    subscribeToHostname,
+    getBrowserSiteKey,
+    getServerSiteKey,
+  );
+  const siteKey =
+    configuredSiteKey === undefined ? hostnameSiteKey : configuredSiteKey.trim() || undefined;
   const [scriptReady, setScriptReady] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState("");
   const [turnstileMessage, setTurnstileMessage] = useState("");
@@ -163,25 +174,23 @@ export function QuoteForm({ siteKey }: { siteKey?: string }) {
     }
   }
 
-  if (!siteKey) {
-    return null;
-  }
-
   const fieldsDisabled = submissionState === "submitting";
 
   return (
     <>
-      <Script
-        id="cloudflare-turnstile"
-        onError={() =>
-          setTurnstileMessage(
-            "Não foi possível carregar a verificação de segurança. Atualize a página e tente novamente.",
-          )
-        }
-        onReady={() => setScriptReady(true)}
-        src={turnstileScriptUrl}
-        strategy="afterInteractive"
-      />
+      {siteKey ? (
+        <Script
+          id="cloudflare-turnstile"
+          onError={() =>
+            setTurnstileMessage(
+              "Não foi possível carregar a verificação de segurança. Atualize a página e tente novamente.",
+            )
+          }
+          onReady={() => setScriptReady(true)}
+          src={turnstileScriptUrl}
+          strategy="afterInteractive"
+        />
+      ) : null}
       <form
         className="rounded-2xl border border-border bg-white p-6 shadow-[0_18px_55px_rgba(7,24,39,0.07)] sm:p-8"
         onSubmit={handleSubmit}
@@ -307,7 +316,7 @@ export function QuoteForm({ siteKey }: { siteKey?: string }) {
         </div>
 
         <div className="mt-7 flex flex-col gap-4 sm:flex-row sm:items-center">
-          <Button disabled={fieldsDisabled} size="lg" type="submit">
+          <Button disabled={fieldsDisabled || !siteKey} size="lg" type="submit">
             {fieldsDisabled ? "Enviando…" : "Solicitar cotação"}
           </Button>
           <p
