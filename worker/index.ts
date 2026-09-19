@@ -5,6 +5,17 @@ const quoteEndpoint = "/api/quote";
 const rscPagePayloadSuffix = ".__PAGE__.txt";
 const rscPagePayloadMarker = "/__next.";
 const rateLimitRetryAfterSeconds = "10";
+const configurationRetryAfterSeconds = "60";
+
+type EnabledQuoteEnvironment = Env & {
+  HYPERDRIVE: Hyperdrive;
+  QUOTE_RATE_LIMITER: RateLimit;
+  TURNSTILE_SECRET_KEY: string;
+};
+
+function hasEnabledQuoteBindings(env: Env): env is EnabledQuoteEnvironment {
+  return Boolean(env.HYPERDRIVE && env.QUOTE_RATE_LIMITER && env.TURNSTILE_SECRET_KEY);
+}
 
 function getRateLimitKey(request: Request) {
   return request.headers.get("cf-connecting-ip")?.trim() || "unknown-origin";
@@ -52,6 +63,31 @@ export async function handleWorkerRequest(
       { error: { code: "method_not_allowed", message: "Método não permitido." } },
       405,
       { allow: "POST" },
+    );
+  }
+
+  if (env.QUOTE_SUBMISSION_ENABLED !== "true") {
+    return jsonApiResponse(
+      {
+        error: {
+          code: "quote_submission_disabled",
+          message: "Solicitações de cotação não estão disponíveis neste ambiente.",
+        },
+      },
+      503,
+    );
+  }
+
+  if (!hasEnabledQuoteBindings(env)) {
+    return jsonApiResponse(
+      {
+        error: {
+          code: "quote_unavailable",
+          message: "Não foi possível registrar a solicitação agora. Tente novamente.",
+        },
+      },
+      503,
+      { "retry-after": configurationRetryAfterSeconds },
     );
   }
 

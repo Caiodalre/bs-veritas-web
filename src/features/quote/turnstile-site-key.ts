@@ -1,5 +1,10 @@
 const productionHostname = "bsveritas.com.br";
 const previewHostname = "quote-preview-bs-veritas-web-preview.caio-dalre.workers.dev";
+const localHostnames = new Set(["localhost", "127.0.0.1", "[::1]"]);
+
+function normalizeHostname(hostname: string) {
+  return hostname.trim().toLowerCase().replace(/\.$/, "");
+}
 
 export const turnstileSiteKeys = {
   local: "1x00000000000000000000AA",
@@ -8,13 +13,9 @@ export const turnstileSiteKeys = {
 } as const;
 
 export function resolveTurnstileSiteKey(hostname: string) {
-  const normalizedHostname = hostname.trim().toLowerCase().replace(/\.$/, "");
+  const normalizedHostname = normalizeHostname(hostname);
 
-  if (
-    normalizedHostname === "localhost" ||
-    normalizedHostname === "127.0.0.1" ||
-    normalizedHostname === "[::1]"
-  ) {
+  if (localHostnames.has(normalizedHostname)) {
     return turnstileSiteKeys.local;
   }
 
@@ -30,4 +31,14 @@ export function resolveTurnstileSiteKey(hostname: string) {
   }
 
   return undefined;
+}
+
+export function isQuoteSubmissionEnabled(hostname: string) {
+  const normalizedHostname = normalizeHostname(hostname);
+
+  return (
+    localHostnames.has(normalizedHostname) ||
+    normalizedHostname === productionHostname ||
+    normalizedHostname === `www.${productionHostname}`
+  );
 }

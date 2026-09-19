@@ -5,7 +5,10 @@ import Script from "next/script";
 import { useEffect, useRef, useState, useSyncExternalStore, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { insuranceCatalog } from "@/features/insurance/catalog";
-import { resolveTurnstileSiteKey } from "@/features/quote/turnstile-site-key";
+import {
+  isQuoteSubmissionEnabled,
+  resolveTurnstileSiteKey,
+} from "@/features/quote/turnstile-site-key";
 
 const turnstileScriptUrl = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
 
@@ -41,6 +44,8 @@ const initialStatusMessage = "Preencha os dados abaixo. Os campos marcados com *
 const subscribeToHostname = () => () => undefined;
 const getServerSiteKey = () => undefined;
 const getBrowserSiteKey = () => resolveTurnstileSiteKey(window.location.hostname);
+const getServerSubmissionEnabled = () => false;
+const getBrowserSubmissionEnabled = () => isQuoteSubmissionEnabled(window.location.hostname);
 
 function getFailureMessage(status: number) {
   if (status === 429) {
@@ -65,6 +70,12 @@ export function QuoteForm({ siteKey: configuredSiteKey }: { siteKey?: string }) 
   );
   const siteKey =
     configuredSiteKey === undefined ? hostnameSiteKey : configuredSiteKey.trim() || undefined;
+  const hostnameSubmissionEnabled = useSyncExternalStore(
+    subscribeToHostname,
+    getBrowserSubmissionEnabled,
+    getServerSubmissionEnabled,
+  );
+  const submissionEnabled = configuredSiteKey === undefined ? hostnameSubmissionEnabled : true;
   const [scriptReady, setScriptReady] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState("");
   const [turnstileMessage, setTurnstileMessage] = useState("");
@@ -75,7 +86,14 @@ export function QuoteForm({ siteKey: configuredSiteKey }: { siteKey?: string }) 
     const container = turnstileContainerRef.current;
     const turnstile = window.turnstile;
 
-    if (!siteKey || !scriptReady || !container || !turnstile || widgetIdRef.current) {
+    if (
+      !submissionEnabled ||
+      !siteKey ||
+      !scriptReady ||
+      !container ||
+      !turnstile ||
+      widgetIdRef.current
+    ) {
       return;
     }
 
@@ -108,7 +126,7 @@ export function QuoteForm({ siteKey: configuredSiteKey }: { siteKey?: string }) 
         widgetIdRef.current = undefined;
       }
     };
-  }, [scriptReady, siteKey]);
+  }, [scriptReady, siteKey, submissionEnabled]);
 
   function resetTurnstile() {
     setTurnstileToken("");
@@ -121,6 +139,10 @@ export function QuoteForm({ siteKey: configuredSiteKey }: { siteKey?: string }) 
     event.preventDefault();
 
     if (submissionState === "submitting") {
+      return;
+    }
+
+    if (!submissionEnabled) {
       return;
     }
 
@@ -174,11 +196,15 @@ export function QuoteForm({ siteKey: configuredSiteKey }: { siteKey?: string }) 
     }
   }
 
-  const fieldsDisabled = submissionState === "submitting";
+  const isSubmitting = submissionState === "submitting";
+  const fieldsDisabled = isSubmitting || !submissionEnabled;
+  const displayedStatusMessage = submissionEnabled
+    ? statusMessage
+    : "Esta prévia não envia nem armazena solicitações. Use o site oficial para pedir uma cotação.";
 
   return (
     <>
-      {siteKey ? (
+      {siteKey && submissionEnabled ? (
         <Script
           id="cloudflare-turnstile"
           onError={() =>
@@ -301,30 +327,32 @@ export function QuoteForm({ siteKey: configuredSiteKey }: { siteKey?: string }) 
           , incluindo a retenção aplicável por até cinco anos.
         </p>
 
-        <div className="mt-6 max-w-full">
-          <div
-            aria-label="Verificação de segurança"
-            className="min-h-[65px] max-w-full rounded-md outline-none focus-visible:ring-3 focus-visible:ring-aqua-300"
-            ref={turnstileContainerRef}
-            tabIndex={-1}
-          />
-          {turnstileMessage ? (
-            <p className="mt-2 text-sm font-semibold text-red-700" role="alert">
-              {turnstileMessage}
-            </p>
-          ) : null}
-        </div>
+        {submissionEnabled ? (
+          <div className="mt-6 max-w-full">
+            <div
+              aria-label="Verificação de segurança"
+              className="min-h-[65px] max-w-full rounded-md outline-none focus-visible:ring-3 focus-visible:ring-aqua-300"
+              ref={turnstileContainerRef}
+              tabIndex={-1}
+            />
+            {turnstileMessage ? (
+              <p className="mt-2 text-sm font-semibold text-red-700" role="alert">
+                {turnstileMessage}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
 
         <div className="mt-7 flex flex-col gap-4 sm:flex-row sm:items-center">
           <Button disabled={fieldsDisabled || !siteKey} size="lg" type="submit">
-            {fieldsDisabled ? "Enviando…" : "Solicitar cotação"}
+            {isSubmitting ? "Enviando…" : "Solicitar cotação"}
           </Button>
           <p
             aria-live="polite"
             className={`text-sm leading-6 ${submissionState === "error" ? "font-semibold text-red-700" : "text-slate-600"}`}
             role="status"
           >
-            {statusMessage}
+            {displayedStatusMessage}
           </p>
         </div>
       </form>
