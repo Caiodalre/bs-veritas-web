@@ -5,11 +5,14 @@
 O código e as políticas públicas declaram que analytics de navegador não está ativo. Antes de
 promover a próxima versão, a injeção automática do Cloudflare Web Analytics deve permanecer
 desativada em **Web Analytics > Manage site > Disable**. A CSP não deve ser relaxada para permitir o
-beacon enquanto essa decisão estiver vigente.
+beacon enquanto essa decisão estiver vigente. Como defesa adicional contra divergência de painel,
+as regras de Static Assets acrescentam `Cache-Control: no-transform`, impedindo a injeção automática
+documentada pela Cloudflare. A regra específica dos arquivos versionados preserva o cache
+`max-age=31536000, immutable`.
 
 Após a alteração da configuração e a publicação do código, `scripts/check-production.mjs` verifica
-que o HTML não contém `static.cloudflareinsights.com` e que o payload RSC usado na navegação do
-Next.js responde sem erro.
+com um User-Agent de navegador que o HTML contém `no-transform`, não contém
+`static.cloudflareinsights.com` e que o payload RSC usado na navegação do Next.js responde sem erro.
 
 Este documento descreve o processo planejado de preview, publicação, validação e rollback do site da **B&S VERITAS CORRETORA DE SEGUROS LTDA**.
 
