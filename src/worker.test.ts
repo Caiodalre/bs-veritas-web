@@ -111,6 +111,7 @@ function createWorkerEnv(
     QUOTE_NOTIFICATION_EMAIL: emailBinding,
     QUOTE_NOTIFICATION_ENABLED: "false",
     QUOTE_NOTIFICATION_QUEUE: notificationQueue,
+    QUOTE_RETENTION_CLEANUP_ENABLED: "false",
     QUOTE_SUBMISSION_ENABLED: "true",
     QUOTE_RATE_LIMITER: createRateLimitBinding(),
     QUOTE_EXPECTED_HOSTNAME: "bsveritas.com.br",
@@ -271,6 +272,7 @@ describe("quote worker", () => {
       ASSETS: assets,
       QUOTE_EXPECTED_HOSTNAME: "bsveritas.com.br",
       QUOTE_NOTIFICATION_ENABLED: "false",
+      QUOTE_RETENTION_CLEANUP_ENABLED: "false",
       QUOTE_SUBMISSION_ENABLED: "true",
     };
 

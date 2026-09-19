@@ -19,7 +19,11 @@
   "vars": {
     "QUOTE_EXPECTED_HOSTNAME": "bsveritas.com.br",
     "QUOTE_NOTIFICATION_ENABLED": "true",
+    "QUOTE_RETENTION_CLEANUP_ENABLED": "true",
     "QUOTE_SUBMISSION_ENABLED": "true",
+  },
+  "triggers": {
+    "crons": ["17 6 * * *"],
   },
   "secrets": {
     "required": ["TURNSTILE_SECRET_KEY"],
@@ -77,9 +81,13 @@
       "workers_dev": true,
       "preview_urls": true,
       "routes": [],
+      "triggers": {
+        "crons": [],
+      },
       "vars": {
         "QUOTE_EXPECTED_HOSTNAME": "quote-preview-bs-veritas-web-preview.caio-dalre.workers.dev",
         "QUOTE_NOTIFICATION_ENABLED": "false",
+        "QUOTE_RETENTION_CLEANUP_ENABLED": "false",
         "QUOTE_SUBMISSION_ENABLED": "false",
       },
     },

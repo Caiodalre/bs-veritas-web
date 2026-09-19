@@ -4,6 +4,7 @@ import {
   type QuoteNotificationQueueMessage,
 } from "./quote-notification";
 import { handleQuoteRequest, type QuoteEndpointDependencies } from "./quote-endpoint";
+import { handleQuoteRetentionCleanup } from "./quote-retention";
 
 const quoteEndpoint = "/api/quote";
 const rscPagePayloadSuffix = ".__PAGE__.txt";
@@ -141,6 +142,9 @@ export const worker = {
   },
   async queue(batch: MessageBatch<unknown>, env: Env): Promise<void> {
     await handleQuoteNotificationBatch(batch, env);
+  },
+  async scheduled(controller: ScheduledController, env: Env): Promise<void> {
+    await handleQuoteRetentionCleanup(controller, env);
   },
 } satisfies ExportedHandler<Env>;
 
