@@ -52,10 +52,34 @@ function createRateLimitBinding(success = true): Env["QUOTE_RATE_LIMITER"] {
   };
 }
 
-function createWorkerEnv(assets = createAssetsBinding()): Env {
+class TestSendEmail implements SendEmail {
+  readonly messages: EmailMessageBuilder[] = [];
+  failure?: Error;
+
+  send(message: EmailMessage): Promise<EmailSendResult>;
+  send(message: EmailMessageBuilder): Promise<EmailSendResult>;
+  async send(message: EmailMessage | EmailMessageBuilder): Promise<EmailSendResult> {
+    if (this.failure) {
+      throw this.failure;
+    }
+
+    if ("subject" in message) {
+      this.messages.push(message);
+    }
+
+    return { messageId: "test-message-id" };
+  }
+}
+
+function createWorkerEnv(
+  assets = createAssetsBinding(),
+  emailBinding: SendEmail = new TestSendEmail(),
+): Env {
   return {
     ASSETS: assets,
     HYPERDRIVE: createHyperdriveBinding(),
+    QUOTE_NOTIFICATION_EMAIL: emailBinding,
+    QUOTE_NOTIFICATION_ENABLED: "false",
     QUOTE_RATE_LIMITER: createRateLimitBinding(),
     QUOTE_EXPECTED_HOSTNAME: "bsveritas.com.br",
     TURNSTILE_SECRET_KEY: "test-secret",
@@ -185,6 +209,56 @@ describe("quote worker", () => {
       retentionExpiresAt: new Date("2035-01-15T14:30:45.123Z"),
     });
     expect(assets.fetch).not.toHaveBeenCalled();
+  });
+
+  it("agenda uma notificação sem copiar dados pessoais para o e-mail", async () => {
+    const assets = createAssetsBinding();
+    const emailBinding = new TestSendEmail();
+    const env = createWorkerEnv(assets, emailBinding);
+    env.QUOTE_NOTIFICATION_ENABLED = "true";
+    const { dependencies } = createQuoteDependencies();
+    const waitUntil = vi.fn<(promise: Promise<unknown>) => void>();
+
+    const response = await handleWorkerRequest(createQuoteRequest(), env, dependencies, {
+      waitUntil,
+    });
+
+    expect(response.status).toBe(201);
+    expect(waitUntil).toHaveBeenCalledOnce();
+    await waitUntil.mock.calls[0]?.[0];
+    expect(emailBinding.messages).toEqual([
+      {
+        to: "bsveritascorretora@gmail.com",
+        from: { email: "contato@bsveritas.com.br", name: "B&S Veritas" },
+        subject: "Nova solicitação de cotação — B&S Veritas",
+        text: expect.stringContaining(createdQuoteId),
+      },
+    ]);
+
+    const notification = JSON.stringify(emailBinding.messages[0]);
+    expect(notification).not.toContain(validSubmission.fullName);
+    expect(notification).not.toContain(validSubmission.phone);
+    expect(notification).not.toContain(validSubmission.email);
+    expect(notification).not.toContain(validSubmission.city);
+    expect(notification).not.toContain(validSubmission.message);
+  });
+
+  it("mantém a cotação aceita quando a notificação falha", async () => {
+    const emailBinding = new TestSendEmail();
+    emailBinding.failure = new Error("Sensitive email provider detail.");
+    const env = createWorkerEnv(createAssetsBinding(), emailBinding);
+    env.QUOTE_NOTIFICATION_ENABLED = "true";
+    const { dependencies, logger } = createQuoteDependencies();
+
+    const response = await handleWorkerRequest(createQuoteRequest(), env, dependencies);
+
+    expect(response.status).toBe(201);
+    expect(logger.error).toHaveBeenCalledWith(
+      JSON.stringify({ event: "quote_notification_failed", errorType: "Error" }),
+    );
+    expect(String(logger.error.mock.calls[0]?.[0])).not.toContain(
+      "Sensitive email provider detail.",
+    );
   });
 
   it("limita solicitações por origem antes de chamar Turnstile e banco", async () => {

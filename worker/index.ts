@@ -39,6 +39,7 @@ export async function handleWorkerRequest(
   request: Request,
   env: Env,
   quoteDependencies?: QuoteEndpointDependencies,
+  executionContext?: Pick<ExecutionContext, "waitUntil">,
 ): Promise<Response> {
   const { pathname } = new URL(request.url);
 
@@ -86,12 +87,21 @@ export async function handleWorkerRequest(
     );
   }
 
-  return handleQuoteRequest(request, env, quoteDependencies);
+  const dependencies = executionContext
+    ? {
+        ...quoteDependencies,
+        schedule:
+          quoteDependencies?.schedule ??
+          ((promise: Promise<unknown>) => executionContext.waitUntil(promise)),
+      }
+    : quoteDependencies;
+
+  return handleQuoteRequest(request, env, dependencies);
 }
 
 export const worker = {
-  async fetch(request: Request, env: Env): Promise<Response> {
-    return handleWorkerRequest(request, env);
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    return handleWorkerRequest(request, env, undefined, ctx);
   },
 } satisfies ExportedHandler<Env>;
 
