@@ -1,4 +1,8 @@
 import { jsonApiResponse } from "./api-response";
+import {
+  handleQuoteNotificationBatch,
+  type QuoteNotificationQueueMessage,
+} from "./quote-notification";
 import { handleQuoteRequest, type QuoteEndpointDependencies } from "./quote-endpoint";
 
 const quoteEndpoint = "/api/quote";
@@ -9,12 +13,18 @@ const configurationRetryAfterSeconds = "60";
 
 type EnabledQuoteEnvironment = Env & {
   HYPERDRIVE: Hyperdrive;
+  QUOTE_NOTIFICATION_QUEUE: Queue<QuoteNotificationQueueMessage>;
   QUOTE_RATE_LIMITER: RateLimit;
   TURNSTILE_SECRET_KEY: string;
 };
 
 function hasEnabledQuoteBindings(env: Env): env is EnabledQuoteEnvironment {
-  return Boolean(env.HYPERDRIVE && env.QUOTE_RATE_LIMITER && env.TURNSTILE_SECRET_KEY);
+  return Boolean(
+    env.HYPERDRIVE &&
+    env.QUOTE_RATE_LIMITER &&
+    env.TURNSTILE_SECRET_KEY &&
+    (env.QUOTE_NOTIFICATION_ENABLED !== "true" || env.QUOTE_NOTIFICATION_QUEUE),
+  );
 }
 
 function getRateLimitKey(request: Request) {
@@ -50,7 +60,6 @@ export async function handleWorkerRequest(
   request: Request,
   env: Env,
   quoteDependencies?: QuoteEndpointDependencies,
-  executionContext?: Pick<ExecutionContext, "waitUntil">,
 ): Promise<Response> {
   const { pathname } = new URL(request.url);
 
@@ -123,21 +132,15 @@ export async function handleWorkerRequest(
     );
   }
 
-  const dependencies = executionContext
-    ? {
-        ...quoteDependencies,
-        schedule:
-          quoteDependencies?.schedule ??
-          ((promise: Promise<unknown>) => executionContext.waitUntil(promise)),
-      }
-    : quoteDependencies;
-
-  return handleQuoteRequest(request, env, dependencies);
+  return handleQuoteRequest(request, env, quoteDependencies);
 }
 
 export const worker = {
-  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-    return handleWorkerRequest(request, env, undefined, ctx);
+  async fetch(request: Request, env: Env): Promise<Response> {
+    return handleWorkerRequest(request, env);
+  },
+  async queue(batch: MessageBatch<unknown>, env: Env): Promise<void> {
+    await handleQuoteNotificationBatch(batch, env);
   },
 } satisfies ExportedHandler<Env>;
 

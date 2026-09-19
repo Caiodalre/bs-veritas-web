@@ -2,6 +2,10 @@
 
 import { describe, expect, it, vi } from "vitest";
 import { createRscAssetRequest, handleWorkerRequest } from "../worker/index";
+import {
+  handleQuoteNotificationBatch,
+  type QuoteNotificationQueueMessage,
+} from "../worker/quote-notification";
 import type { QuoteEndpointDependencies } from "../worker/quote-endpoint";
 import type { QuoteRequestRepository } from "@/features/quote/service";
 
@@ -34,6 +38,7 @@ function createAssetsBinding() {
 type TestEnv = Env & {
   HYPERDRIVE: Hyperdrive;
   QUOTE_NOTIFICATION_EMAIL: SendEmail;
+  QUOTE_NOTIFICATION_QUEUE: Queue<QuoteNotificationQueueMessage>;
   QUOTE_RATE_LIMITER: RateLimit;
   TURNSTILE_SECRET_KEY: string;
 };
@@ -59,6 +64,23 @@ function createRateLimitBinding(success = true): RateLimit {
   };
 }
 
+function createNotificationQueue(): Queue<QuoteNotificationQueueMessage> {
+  const metrics = {
+    backlogCount: 0,
+    backlogBytes: 0,
+  };
+
+  return {
+    metrics: vi.fn<Queue<QuoteNotificationQueueMessage>["metrics"]>(async () => metrics),
+    send: vi.fn<Queue<QuoteNotificationQueueMessage>["send"]>(async () => ({
+      metadata: { metrics },
+    })),
+    sendBatch: vi.fn<Queue<QuoteNotificationQueueMessage>["sendBatch"]>(async () => ({
+      metadata: { metrics },
+    })),
+  };
+}
+
 class TestSendEmail implements SendEmail {
   readonly messages: EmailMessageBuilder[] = [];
   failure?: Error;
@@ -81,16 +103,48 @@ class TestSendEmail implements SendEmail {
 function createWorkerEnv(
   assets = createAssetsBinding(),
   emailBinding: SendEmail = new TestSendEmail(),
+  notificationQueue = createNotificationQueue(),
 ): TestEnv {
   return {
     ASSETS: assets,
     HYPERDRIVE: createHyperdriveBinding(),
     QUOTE_NOTIFICATION_EMAIL: emailBinding,
     QUOTE_NOTIFICATION_ENABLED: "false",
+    QUOTE_NOTIFICATION_QUEUE: notificationQueue,
     QUOTE_SUBMISSION_ENABLED: "true",
     QUOTE_RATE_LIMITER: createRateLimitBinding(),
     QUOTE_EXPECTED_HOSTNAME: "bsveritas.com.br",
     TURNSTILE_SECRET_KEY: "test-secret",
+  };
+}
+
+function createQueueMessage(body: unknown, attempts = 1) {
+  const ack = vi.fn<Message<unknown>["ack"]>();
+  const retry = vi.fn<Message<unknown>["retry"]>();
+  const message = {
+    id: "queue-message-id",
+    timestamp: new Date("2030-01-15T14:31:00.000Z"),
+    body,
+    attempts,
+    ack,
+    retry,
+  } satisfies Message<unknown>;
+
+  return { ack, message, retry };
+}
+
+function createQueueBatch(messages: readonly Message<unknown>[]): MessageBatch<unknown> {
+  return {
+    messages,
+    queue: "bs-veritas-quote-notifications",
+    metadata: {
+      metrics: {
+        backlogCount: messages.length,
+        backlogBytes: 128,
+      },
+    },
+    ackAll: vi.fn(),
+    retryAll: vi.fn(),
   };
 }
 
@@ -228,6 +282,25 @@ describe("quote worker", () => {
     expect(assets.fetch).not.toHaveBeenCalled();
   });
 
+  it("falha antes do banco quando a notificação está ativa sem fila", async () => {
+    const assets = createAssetsBinding();
+    const completeEnv = createWorkerEnv(assets);
+    const env: Env = {
+      ...completeEnv,
+      QUOTE_NOTIFICATION_ENABLED: "true",
+      QUOTE_NOTIFICATION_QUEUE: undefined,
+    };
+    const { dependencies, createRepository, fetcher } = createQuoteDependencies();
+
+    const response = await handleWorkerRequest(createQuoteRequest(), env, dependencies);
+
+    expect(response.status).toBe(503);
+    expect(response.headers.get("retry-after")).toBe("60");
+    expect(createRepository).not.toHaveBeenCalled();
+    expect(fetcher).not.toHaveBeenCalled();
+    expect(assets.fetch).not.toHaveBeenCalled();
+  });
+
   it("registra uma solicitação validada pelo Turnstile usando o Hyperdrive", async () => {
     const assets = createAssetsBinding();
     const { dependencies, create, createRepository, fetcher } = createQuoteDependencies();
@@ -258,21 +331,64 @@ describe("quote worker", () => {
     expect(assets.fetch).not.toHaveBeenCalled();
   });
 
-  it("agenda uma notificação sem copiar dados pessoais para o e-mail", async () => {
+  it("enfileira somente o identificador da cotação", async () => {
     const assets = createAssetsBinding();
     const emailBinding = new TestSendEmail();
-    const env = createWorkerEnv(assets, emailBinding);
+    const notificationQueue = createNotificationQueue();
+    const env = createWorkerEnv(assets, emailBinding, notificationQueue);
     env.QUOTE_NOTIFICATION_ENABLED = "true";
     const { dependencies } = createQuoteDependencies();
-    const waitUntil = vi.fn<(promise: Promise<unknown>) => void>();
 
-    const response = await handleWorkerRequest(createQuoteRequest(), env, dependencies, {
-      waitUntil,
-    });
+    const response = await handleWorkerRequest(createQuoteRequest(), env, dependencies);
 
     expect(response.status).toBe(201);
-    expect(waitUntil).toHaveBeenCalledOnce();
-    await waitUntil.mock.calls[0]?.[0];
+    expect(notificationQueue.send).toHaveBeenCalledWith(
+      { quoteId: createdQuoteId },
+      { contentType: "json" },
+    );
+    expect(emailBinding.messages).toHaveLength(0);
+  });
+
+  it("mantém a cotação aceita quando o enfileiramento falha", async () => {
+    const notificationQueue = createNotificationQueue();
+    vi.mocked(notificationQueue.send).mockRejectedValueOnce(
+      new Error("Sensitive queue provider detail."),
+    );
+    const env = createWorkerEnv(createAssetsBinding(), new TestSendEmail(), notificationQueue);
+    env.QUOTE_NOTIFICATION_ENABLED = "true";
+    const { dependencies, logger } = createQuoteDependencies();
+
+    const response = await handleWorkerRequest(createQuoteRequest(), env, dependencies);
+
+    expect(response.status).toBe(201);
+    expect(logger.error).toHaveBeenCalledWith(
+      JSON.stringify({ event: "quote_notification_enqueue_failed", errorType: "Error" }),
+    );
+    expect(String(logger.error.mock.calls[0]?.[0])).not.toContain(
+      "Sensitive queue provider detail.",
+    );
+  });
+
+  it("envia a notificação consumida e confirma a mensagem", async () => {
+    const emailBinding = new TestSendEmail();
+    const { ack, message, retry } = createQueueMessage({ quoteId: createdQuoteId });
+    const logger = {
+      error: vi.fn(),
+      log: vi.fn(),
+      warn: vi.fn(),
+    };
+
+    await handleQuoteNotificationBatch(
+      createQueueBatch([message]),
+      {
+        QUOTE_NOTIFICATION_EMAIL: emailBinding,
+        QUOTE_NOTIFICATION_ENABLED: "true",
+      },
+      { logger },
+    );
+
+    expect(ack).toHaveBeenCalledOnce();
+    expect(retry).not.toHaveBeenCalled();
     expect(emailBinding.messages).toEqual([
       {
         to: "bsveritascorretora@gmail.com",
@@ -281,6 +397,9 @@ describe("quote worker", () => {
         text: expect.stringContaining(createdQuoteId),
       },
     ]);
+    expect(logger.log).toHaveBeenCalledWith(
+      JSON.stringify({ event: "quote_notification_sent", attempts: 1 }),
+    );
 
     const notification = JSON.stringify(emailBinding.messages[0]);
     expect(notification).not.toContain(validSubmission.fullName);
@@ -290,21 +409,91 @@ describe("quote worker", () => {
     expect(notification).not.toContain(validSubmission.message);
   });
 
-  it("mantém a cotação aceita quando a notificação falha", async () => {
+  it("reagenda a mensagem com atraso crescente quando o e-mail falha", async () => {
     const emailBinding = new TestSendEmail();
     emailBinding.failure = new Error("Sensitive email provider detail.");
-    const env = createWorkerEnv(createAssetsBinding(), emailBinding);
-    env.QUOTE_NOTIFICATION_ENABLED = "true";
-    const { dependencies, logger } = createQuoteDependencies();
+    const { ack, message, retry } = createQueueMessage({ quoteId: createdQuoteId }, 2);
+    const logger = {
+      error: vi.fn(),
+      log: vi.fn(),
+      warn: vi.fn(),
+    };
 
-    const response = await handleWorkerRequest(createQuoteRequest(), env, dependencies);
+    await handleQuoteNotificationBatch(
+      createQueueBatch([message]),
+      {
+        QUOTE_NOTIFICATION_EMAIL: emailBinding,
+        QUOTE_NOTIFICATION_ENABLED: "true",
+      },
+      { logger },
+    );
 
-    expect(response.status).toBe(201);
+    expect(ack).not.toHaveBeenCalled();
+    expect(retry).toHaveBeenCalledWith({ delaySeconds: 120 });
     expect(logger.error).toHaveBeenCalledWith(
-      JSON.stringify({ event: "quote_notification_failed", errorType: "Error" }),
+      JSON.stringify({
+        event: "quote_notification_failed",
+        errorType: "Error",
+        attempts: 2,
+      }),
     );
     expect(String(logger.error.mock.calls[0]?.[0])).not.toContain(
       "Sensitive email provider detail.",
+    );
+  });
+
+  it("reagenda a mensagem quando o binding de e-mail está ausente", async () => {
+    const { ack, message, retry } = createQueueMessage({ quoteId: createdQuoteId });
+    const logger = {
+      error: vi.fn(),
+      log: vi.fn(),
+      warn: vi.fn(),
+    };
+
+    await handleQuoteNotificationBatch(
+      createQueueBatch([message]),
+      {
+        QUOTE_NOTIFICATION_ENABLED: "true",
+      },
+      { logger },
+    );
+
+    expect(ack).not.toHaveBeenCalled();
+    expect(retry).toHaveBeenCalledWith({ delaySeconds: 60 });
+    expect(logger.error).toHaveBeenCalledWith(
+      JSON.stringify({
+        event: "quote_notification_binding_missing",
+        attempts: 1,
+      }),
+    );
+  });
+
+  it("descarta mensagens inválidas sem chamar o e-mail", async () => {
+    const emailBinding = new TestSendEmail();
+    const { ack, message, retry } = createQueueMessage({
+      quoteId: "identificador-inválido",
+      email: "dado-que-nao-deveria-estar-na-fila@example.invalid",
+    });
+    const logger = {
+      error: vi.fn(),
+      log: vi.fn(),
+      warn: vi.fn(),
+    };
+
+    await handleQuoteNotificationBatch(
+      createQueueBatch([message]),
+      {
+        QUOTE_NOTIFICATION_EMAIL: emailBinding,
+        QUOTE_NOTIFICATION_ENABLED: "true",
+      },
+      { logger },
+    );
+
+    expect(ack).toHaveBeenCalledOnce();
+    expect(retry).not.toHaveBeenCalled();
+    expect(emailBinding.messages).toHaveLength(0);
+    expect(logger.warn).toHaveBeenCalledWith(
+      JSON.stringify({ event: "quote_notification_invalid_message" }),
     );
   });
 

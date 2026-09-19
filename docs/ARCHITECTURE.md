@@ -58,6 +58,9 @@ Next.js com exportação estática
       PostgreSQL
            |
            v
+      fila de notificação
+           |
+           v
       notificação comercial
 ```
 
@@ -103,7 +106,7 @@ O contrato do repositório de cotação concentra a gravação do lead. O adapta
 
 ### Infraestrutura
 
-Inclui PostgreSQL, Drizzle ORM, notificações por e-mail, analytics e integrações externas. Cada fornecedor deverá ficar atrás de uma interface local quando houver possibilidade real de substituição.
+Inclui PostgreSQL, Drizzle ORM, Cloudflare Queues, notificações por e-mail, analytics e integrações externas. Cada fornecedor deverá ficar atrás de uma interface local quando houver possibilidade real de substituição.
 
 ## Domínios funcionais
 
@@ -161,10 +164,11 @@ receber solicitação
          -> normalizar dados
             -> gravar o lead
                -> confirmar a gravação
-                  -> solicitar notificação à equipe
+                  -> enfileirar identificador da cotação
+                     -> enviar notificação à equipe
 ```
 
-A indisponibilidade do serviço de e-mail não apaga um lead já registrado. A estratégia de nova tentativa automática da notificação continua pendente.
+A indisponibilidade do serviço de e-mail não apaga um lead já registrado. A fila transporta somente o UUID da cotação, tenta novamente com espera progressiva e encaminha falhas esgotadas para uma fila de mensagens mortas. A entrega é pelo menos uma vez; por isso, uma notificação duplicada é possível e pode ser reconhecida pelo mesmo UUID.
 
 ## Dados e privacidade
 
@@ -193,7 +197,7 @@ O schema registra somente os campos aprovados para cotação, a versão da polí
 - variáveis obrigatórias serão validadas ao iniciar a aplicação;
 - ambientes local, preview e produção terão configurações separadas;
 - a produção falha de forma fechada quando um binding obrigatório está ausente;
-- o preview não possui bindings de banco, e-mail, rate limiter nem segredo Turnstile.
+- o preview não possui bindings de banco, fila, e-mail, rate limiter nem segredo Turnstile.
 
 ## Segurança HTTP
 
@@ -248,9 +252,8 @@ Não haverá edição manual de arquivos em produção.
 
 - validar operacionalmente a restauração dos backups da Aiven;
 - definir rotina automatizada e verificável de descarte após o prazo de retenção;
-- definir estratégia de nova tentativa para falhas de notificação por e-mail;
+- homologar o consumo da fila e o tratamento da fila de mensagens mortas em produção;
 - concluir MFA e responsáveis administrativos nas plataformas;
 - definir um canal específico para incidentes e vulnerabilidades;
 - obter revisão jurídica independente do conteúdo publicado;
 - decidir se analytics sem dados pessoais será necessário; até lá, permanece desativado;
-- receber as informações institucionais listadas em [`CONTENT-PENDENCIES.md`](CONTENT-PENDENCIES.md).

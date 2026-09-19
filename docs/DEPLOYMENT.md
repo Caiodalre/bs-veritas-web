@@ -45,7 +45,7 @@ Next.js com exportação estática
    `--> /api/quote
            -> rate limiting, validação e Turnstile
            -> Hyperdrive -> PostgreSQL/Aiven
-           -> notificação comercial
+           -> Cloudflare Queue -> notificação comercial
 ```
 
 O preview publica os mesmos assets para revisão visual, mas não recebe os bindings da camada dinâmica e recusa o endpoint de cotação.
@@ -106,7 +106,7 @@ Criado a partir de uma branch ou revisão candidata.
 - dados exclusivamente fictícios;
 - `noindex` e bloqueio de indexação;
 - formulário visível, porém desativado;
-- sem Hyperdrive, e-mail, rate limiter ou segredo Turnstile;
+- sem Hyperdrive, fila, e-mail, rate limiter ou segredo Turnstile;
 - API de cotação recusada antes de qualquer integração;
 - URL utilizada para revisão visual, funcional e mobile.
 
@@ -116,7 +116,7 @@ Criado somente a partir da revisão aprovada na `main`.
 
 - domínio oficial ativo;
 - assets estáticos e API de cotação no mesmo Worker;
-- Hyperdrive, PostgreSQL, Turnstile, rate limiting e e-mail ativos;
+- Hyperdrive, PostgreSQL, Turnstile, rate limiting, fila e e-mail ativos;
 - logs e monitoramento restritos;
 - estratégia de rollback disponível.
 

@@ -2,7 +2,7 @@
 
 Este documento descreve como o projeto deve ser executado e configurado nos ambientes local, preview e produção.
 
-O GitHub, o CI, um preview sem indexação e a produção estão ativos. A produção possui os bindings privados necessários ao formulário de cotação; o preview não recebe acesso ao banco, e-mail, rate limiter nem ao segredo do Turnstile.
+O GitHub, o CI, um preview sem indexação e a produção estão ativos. A produção possui os bindings privados necessários ao formulário de cotação; o preview não recebe acesso ao banco, fila, e-mail, rate limiter nem ao segredo do Turnstile.
 
 ## Ambientes previstos
 
@@ -226,7 +226,8 @@ Regras operacionais:
 | Cloudflare Hyperdrive | conexão protegida com PostgreSQL            | ativo somente em produção; cache desativado        |
 | Cloudflare Turnstile  | verificação antiabuso                       | ativo em produção e validado no servidor           |
 | PostgreSQL/Aiven      | persistência de leads                       | migrations aplicadas e menor privilégio verificado |
-| Cloudflare Email      | notificação comercial após persistência     | ativo em produção                                  |
+| Cloudflare Queues     | tentativa assíncrona da notificação         | somente produção; mensagem contém apenas UUID      |
+| Cloudflare Email      | notificação comercial após persistência     | consumido pela fila em produção                    |
 | Provedor de e-mail    | roteamento e autenticação do e-mail público | MX, SPF, DKIM e DMARC ativos                       |
 | GitHub                | repositório privado e CI                    | configurado e validado                             |
 | Analytics             | métricas sem dados pessoais                 | não configurado                                    |

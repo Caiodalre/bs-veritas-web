@@ -30,14 +30,19 @@ indexável, sem acesso ao banco ou às integrações de produção.
 
 ### Adicionado
 
+- fila assíncrona de notificações comerciais com novas tentativas progressivas e fila de mensagens mortas;
+- mensagens da fila limitadas ao UUID da cotação, sem dados pessoais;
+- cobertura unitária de sucesso, falha, binding ausente e mensagem inválida no consumidor da fila;
 - carrossel acessível e responsivo com Porto Seguro, Petlove e Icatu como parceiros comerciais confirmados;
 - logotipos oficiais hospedados localmente, sem requisições ou rastreamento pelos sites das marcas;
 - atalhos de navegação, texto de atribuição e cobertura E2E das três marcas.
 
 ### Observações
 
+- o preview continua sem acesso a banco, fila, e-mail, rate limiter ou segredo Turnstile;
+- a entrega da fila é pelo menos uma vez e uma notificação duplicada pode ocorrer em caso de nova tentativa;
 - a disponibilidade de produtos permanece condicionada ao perfil, à região e às regras de cada empresa;
-- nenhuma dependência, integração externa, coleta de dados ou custo foi adicionado.
+- nenhuma dependência npm, coleta adicional de dados pessoais ou plano pago foi adicionado.
 
 ## Publicação da Política de Cookies — 2026-09-13
 
