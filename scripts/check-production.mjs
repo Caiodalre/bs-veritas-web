@@ -3,6 +3,8 @@ const previewOrigin = "https://bs-veritas-web.caio-dalre.workers.dev";
 const expectedDs = "2371 13 2 639BF1A3C7C5ADB282C17F0583CB9BE16F1D134E59023ED41A2C37BF04C4554E";
 const attempts = 3;
 const timeoutMs = 15_000;
+const browserUserAgent =
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36";
 
 const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
 
@@ -29,7 +31,7 @@ async function fetchWithRetry(url, options = {}) {
       const response = await fetch(url, {
         ...options,
         headers: {
-          "user-agent": "bs-veritas-production-monitor/1.0",
+          "user-agent": browserUserAgent,
           ...options.headers,
         },
         signal: AbortSignal.timeout(timeoutMs),
@@ -57,6 +59,10 @@ async function checkHtmlPage(path) {
 
   assert(response.status === 200, `${url} respondeu ${response.status}`);
   assert(response.headers.get("content-type")?.includes("text/html"), `${url} não retornou HTML`);
+  assert(
+    response.headers.get("cache-control")?.toLowerCase().includes("no-transform"),
+    `${url} não impede transformações automáticas do HTML`,
+  );
 
   if (path === "/") {
     const body = await response.text();
