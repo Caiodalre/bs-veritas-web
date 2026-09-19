@@ -31,9 +31,16 @@ function createAssetsBinding() {
   return { fetch, connect } satisfies Env["ASSETS"];
 }
 
-function createHyperdriveBinding(): Env["HYPERDRIVE"] {
+type TestEnv = Env & {
+  HYPERDRIVE: Hyperdrive;
+  QUOTE_NOTIFICATION_EMAIL: SendEmail;
+  QUOTE_RATE_LIMITER: RateLimit;
+  TURNSTILE_SECRET_KEY: string;
+};
+
+function createHyperdriveBinding(): Hyperdrive {
   return {
-    connect: vi.fn<Env["HYPERDRIVE"]["connect"]>(() => {
+    connect: vi.fn<Hyperdrive["connect"]>(() => {
       throw new Error("Hyperdrive sockets are not available in this test.");
     }),
     connectionString: "postgres://hyperdrive.invalid/database",
@@ -46,9 +53,9 @@ function createHyperdriveBinding(): Env["HYPERDRIVE"] {
   };
 }
 
-function createRateLimitBinding(success = true): Env["QUOTE_RATE_LIMITER"] {
+function createRateLimitBinding(success = true): RateLimit {
   return {
-    limit: vi.fn<Env["QUOTE_RATE_LIMITER"]["limit"]>(async () => ({ success })),
+    limit: vi.fn<RateLimit["limit"]>(async () => ({ success })),
   };
 }
 
@@ -74,12 +81,13 @@ class TestSendEmail implements SendEmail {
 function createWorkerEnv(
   assets = createAssetsBinding(),
   emailBinding: SendEmail = new TestSendEmail(),
-): Env {
+): TestEnv {
   return {
     ASSETS: assets,
     HYPERDRIVE: createHyperdriveBinding(),
     QUOTE_NOTIFICATION_EMAIL: emailBinding,
     QUOTE_NOTIFICATION_ENABLED: "false",
+    QUOTE_SUBMISSION_ENABLED: "true",
     QUOTE_RATE_LIMITER: createRateLimitBinding(),
     QUOTE_EXPECTED_HOSTNAME: "bsveritas.com.br",
     TURNSTILE_SECRET_KEY: "test-secret",
@@ -177,6 +185,45 @@ describe("quote worker", () => {
 
     expect(response.status).toBe(405);
     expect(response.headers.get("allow")).toBe("POST");
+    expectApiSecurityHeaders(response);
+    expect(assets.fetch).not.toHaveBeenCalled();
+  });
+
+  it("não acessa proteção, banco ou notificação quando a coleta está desativada", async () => {
+    const assets = createAssetsBinding();
+    const env = createWorkerEnv(assets);
+    env.QUOTE_SUBMISSION_ENABLED = "false";
+    const { dependencies, createRepository, fetcher } = createQuoteDependencies();
+
+    const response = await handleWorkerRequest(createQuoteRequest(), env, dependencies);
+
+    expect(response.status).toBe(503);
+    expectApiSecurityHeaders(response);
+    await expect(response.json()).resolves.toEqual({
+      error: {
+        code: "quote_submission_disabled",
+        message: "Solicitações de cotação não estão disponíveis neste ambiente.",
+      },
+    });
+    expect(env.QUOTE_RATE_LIMITER.limit).not.toHaveBeenCalled();
+    expect(createRepository).not.toHaveBeenCalled();
+    expect(fetcher).not.toHaveBeenCalled();
+    expect(assets.fetch).not.toHaveBeenCalled();
+  });
+
+  it("falha de forma fechada quando a coleta está ativa sem bindings obrigatórios", async () => {
+    const assets = createAssetsBinding();
+    const env: Env = {
+      ASSETS: assets,
+      QUOTE_EXPECTED_HOSTNAME: "bsveritas.com.br",
+      QUOTE_NOTIFICATION_ENABLED: "false",
+      QUOTE_SUBMISSION_ENABLED: "true",
+    };
+
+    const response = await handleWorkerRequest(createQuoteRequest(), env);
+
+    expect(response.status).toBe(503);
+    expect(response.headers.get("retry-after")).toBe("60");
     expectApiSecurityHeaders(response);
     expect(assets.fetch).not.toHaveBeenCalled();
   });

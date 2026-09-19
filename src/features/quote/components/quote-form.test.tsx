@@ -1,7 +1,11 @@
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { useEffect, type ComponentProps } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { resolveTurnstileSiteKey, turnstileSiteKeys } from "@/features/quote/turnstile-site-key";
+import {
+  isQuoteSubmissionEnabled,
+  resolveTurnstileSiteKey,
+  turnstileSiteKeys,
+} from "@/features/quote/turnstile-site-key";
 import { QuoteForm } from "./quote-form";
 
 vi.mock("next/script", () => {
@@ -127,5 +131,15 @@ describe("resolveTurnstileSiteKey", () => {
   it("não ativa o formulário em hostnames desconhecidos", () => {
     expect(resolveTurnstileSiteKey("example.com")).toBeUndefined();
     expect(resolveTurnstileSiteKey("bs-veritas-web.caio-dalre.workers.dev")).toBeUndefined();
+  });
+
+  it("habilita persistência somente em produção e no ambiente local", () => {
+    expect(isQuoteSubmissionEnabled("bsveritas.com.br")).toBe(true);
+    expect(isQuoteSubmissionEnabled("www.bsveritas.com.br")).toBe(true);
+    expect(isQuoteSubmissionEnabled("localhost")).toBe(true);
+    expect(
+      isQuoteSubmissionEnabled("quote-preview-bs-veritas-web-preview.caio-dalre.workers.dev"),
+    ).toBe(false);
+    expect(isQuoteSubmissionEnabled("example.com")).toBe(false);
   });
 });

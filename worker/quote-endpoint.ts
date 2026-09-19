@@ -18,11 +18,11 @@ const turnstileTimeoutMs = 3_000;
 const retryAfterSeconds = "60";
 
 export type QuoteEndpointEnvironment = {
-  HYPERDRIVE: Pick<Env["HYPERDRIVE"], "connectionString">;
-  QUOTE_EXPECTED_HOSTNAME: Env["QUOTE_EXPECTED_HOSTNAME"];
-  QUOTE_NOTIFICATION_EMAIL: Env["QUOTE_NOTIFICATION_EMAIL"];
-  QUOTE_NOTIFICATION_ENABLED: Env["QUOTE_NOTIFICATION_ENABLED"];
-  TURNSTILE_SECRET_KEY: Env["TURNSTILE_SECRET_KEY"];
+  HYPERDRIVE: Pick<Hyperdrive, "connectionString">;
+  QUOTE_EXPECTED_HOSTNAME: string;
+  QUOTE_NOTIFICATION_EMAIL?: SendEmail;
+  QUOTE_NOTIFICATION_ENABLED: string;
+  TURNSTILE_SECRET_KEY: string;
 };
 
 export interface QuoteEndpointDependencies {
@@ -160,7 +160,7 @@ export async function handleQuoteRequest(
       return failureResponse(result);
     }
 
-    if (env.QUOTE_NOTIFICATION_ENABLED === "true") {
+    if (env.QUOTE_NOTIFICATION_ENABLED === "true" && env.QUOTE_NOTIFICATION_EMAIL) {
       const notificationPromise = sendQuoteNotification(
         env.QUOTE_NOTIFICATION_EMAIL,
         result.id,

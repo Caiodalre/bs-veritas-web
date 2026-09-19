@@ -19,6 +19,7 @@
   "vars": {
     "QUOTE_EXPECTED_HOSTNAME": "bsveritas.com.br",
     "QUOTE_NOTIFICATION_ENABLED": "true",
+    "QUOTE_SUBMISSION_ENABLED": "true",
   },
   "secrets": {
     "required": ["TURNSTILE_SECRET_KEY"],
@@ -61,33 +62,8 @@
       "vars": {
         "QUOTE_EXPECTED_HOSTNAME": "quote-preview-bs-veritas-web-preview.caio-dalre.workers.dev",
         "QUOTE_NOTIFICATION_ENABLED": "false",
+        "QUOTE_SUBMISSION_ENABLED": "false",
       },
-      "secrets": {
-        "required": ["TURNSTILE_SECRET_KEY"],
-      },
-      "hyperdrive": [
-        {
-          "binding": "HYPERDRIVE",
-          "id": "9328daf3a8434323b2adaa889cfc0f7f",
-        },
-      ],
-      "send_email": [
-        {
-          "name": "QUOTE_NOTIFICATION_EMAIL",
-          "destination_address": "bsveritascorretora@gmail.com",
-          "allowed_sender_addresses": ["contato@bsveritas.com.br"],
-        },
-      ],
-      "ratelimits": [
-        {
-          "name": "QUOTE_RATE_LIMITER",
-          "namespace_id": "24091702",
-          "simple": {
-            "limit": 5,
-            "period": 10,
-          },
-        },
-      ],
     },
   },
 }
