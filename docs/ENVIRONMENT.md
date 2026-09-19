@@ -204,7 +204,7 @@ não recebe esse segredo.
 
 ## Banco de dados
 
-O schema e as três migrations de cotação foram aplicados ao serviço PostgreSQL da Aiven usado pela produção. O
+O schema e as quatro migrations de cotação foram aplicados ao serviço PostgreSQL da Aiven usado pela produção. O
 usuário de aplicação `bs_veritas_app` recebe o papel `bs_veritas_quote_writer`, limitado a inserir
 solicitações e ler somente o UUID retornado. A conexão do Worker é intermediada pelo Hyperdrive; a
 string de conexão e a senha não são enviadas ao navegador nem versionadas.
@@ -221,18 +221,18 @@ Regras operacionais:
 
 ## Serviços externos
 
-| Serviço               | Papel                                       | Estado atual                                       |
-| --------------------- | ------------------------------------------- | -------------------------------------------------- |
-| Cloudflare Workers    | site, endpoint e assets                     | produção ativa; preview isolado                    |
-| Cloudflare Cron       | descarte diário de cotações vencidas        | preparado; depende de migration e deploy           |
-| Cloudflare Hyperdrive | conexão protegida com PostgreSQL            | ativo somente em produção; cache desativado        |
-| Cloudflare Turnstile  | verificação antiabuso                       | ativo em produção e validado no servidor           |
-| PostgreSQL/Aiven      | persistência de leads                       | migrations aplicadas e menor privilégio verificado |
-| Cloudflare Queues     | tentativa assíncrona da notificação         | somente produção; mensagem contém apenas UUID      |
-| Cloudflare Email      | notificação comercial após persistência     | consumido pela fila em produção                    |
-| Provedor de e-mail    | roteamento e autenticação do e-mail público | MX, SPF, DKIM e DMARC ativos                       |
-| GitHub                | repositório privado e CI                    | configurado e validado                             |
-| Analytics             | métricas sem dados pessoais                 | não configurado                                    |
+| Serviço               | Papel                                       | Estado atual                                               |
+| --------------------- | ------------------------------------------- | ---------------------------------------------------------- |
+| Cloudflare Workers    | site, endpoint e assets                     | produção ativa; preview isolado                            |
+| Cloudflare Cron       | descarte diário de cotações vencidas        | ativo em produção às 06:17 UTC; primeira execução pendente |
+| Cloudflare Hyperdrive | conexão protegida com PostgreSQL            | ativo somente em produção; cache desativado                |
+| Cloudflare Turnstile  | verificação antiabuso                       | ativo em produção e validado no servidor                   |
+| PostgreSQL/Aiven      | persistência de leads                       | migrations aplicadas e menor privilégio verificado         |
+| Cloudflare Queues     | tentativa assíncrona da notificação         | somente produção; mensagem contém apenas UUID              |
+| Cloudflare Email      | notificação comercial após persistência     | consumido pela fila em produção                            |
+| Provedor de e-mail    | roteamento e autenticação do e-mail público | MX, SPF, DKIM e DMARC ativos                               |
+| GitHub                | repositório privado e CI                    | configurado e validado                                     |
+| Analytics             | métricas sem dados pessoais                 | não configurado                                            |
 
 A Vercel Hobby não faz parte da infraestrutura porque não permite uso comercial. O formulário está
 ativo apenas no domínio oficial; o preview serve para revisão visual e recusa qualquer tentativa de

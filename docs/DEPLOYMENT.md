@@ -209,7 +209,7 @@ A configuração atual:
 - mantém a cadeia DNSSEC completa, com o DS publicado no Registro.br;
 - mantém certificados, CSP e HSTS validados no domínio final.
 
-Permanecem pendentes a validação operacional da restauração de backup e a rotina automatizada de descarte ao fim da retenção.
+Permanece pendente a validação operacional da restauração de backup. A rotina automatizada de descarte está publicada; a primeira execução agendada ainda precisa ser acompanhada e registrada.
 
 Alterações DNS serão feitas uma por vez, com registro do valor anterior e teste após cada mudança.
 
@@ -461,22 +461,33 @@ Pendências conhecidas:
 - analytics de navegador permaneceu desativado e bloqueado por `Cache-Control: no-transform`;
 - restauração de backup e rotina de descarte por retenção permanecem pendentes.
 
+### Automação do descarte por retenção — 2026-09-19
+
+- commit `15e546e` integrado pela PR #54;
+- migration `0003_quote_retention_cleanup.sql` aplicada ao PostgreSQL/Aiven;
+- função de descarte restrita ao papel de escrita e sem concessão de `DELETE` direto à aplicação;
+- Cron Trigger publicado somente em produção, com execução diária às `06:17 UTC` (`03:17 BRT`);
+- versão Cloudflare `efde43ba-e69b-45b6-b991-d3b43cd5c7ad` recebendo 100% do tráfego;
+- build, TypeScript, exportação estática e monitor público de produção aprovados;
+- primeira execução agendada e restauração de backup ainda precisam de evidência operacional.
+
 ## Estado atual da implantação
 
-| Componente            | Estado                                        |
-| --------------------- | --------------------------------------------- |
-| build local           | configurado e validado                        |
-| testes locais         | configurados e validados                      |
-| repositório Git local | configurado                                   |
-| GitHub remoto         | privado e configurado                         |
-| CI                    | ativo e validado no GitHub                    |
-| Cloudflare Workers    | preview isolado e produção com API ativos     |
-| Vercel                | excluída do plano gratuito                    |
-| domínio no projeto    | apex ativo e `www` com redirecionamento `301` |
-| monitoramento         | agendado no GitHub Actions a cada seis horas  |
-| PostgreSQL remoto     | Aiven conectado por Hyperdrive em produção    |
-| notificações          | e-mail comercial ativo após a persistência    |
-| versão Cloudflare     | `65ca2b79-30a0-41b6-8e9d-5f5f8ea3fb3b`        |
-| produção              | ativa no commit `7dcbb5f`                     |
+| Componente            | Estado                                                |
+| --------------------- | ----------------------------------------------------- |
+| build local           | configurado e validado                                |
+| testes locais         | configurados e validados                              |
+| repositório Git local | configurado                                           |
+| GitHub remoto         | privado e configurado                                 |
+| CI                    | ativo e validado no GitHub                            |
+| Cloudflare Workers    | preview isolado e produção com API ativos             |
+| Vercel                | excluída do plano gratuito                            |
+| domínio no projeto    | apex ativo e `www` com redirecionamento `301`         |
+| monitoramento         | agendado no GitHub Actions a cada seis horas          |
+| PostgreSQL remoto     | Aiven conectado por Hyperdrive em produção            |
+| notificações          | e-mail comercial ativo após a persistência            |
+| retenção              | descarte diário publicado; primeira execução pendente |
+| versão Cloudflare     | `efde43ba-e69b-45b6-b991-d3b43cd5c7ad`                |
+| produção              | ativa no commit `15e546e`                             |
 
 Qualquer mudança desse estado deverá ser feita como uma etapa separada, aprovada e validada.

@@ -39,8 +39,8 @@ revisão jurídica independente da redação e do enquadramento regulatório.
   segura em execuções concorrentes;
 - o preview não possui Cron Trigger nem acesso ao banco;
 - backups também deverão respeitar regras documentadas de expiração e restauração;
-- a aplicação da migration, a publicação do Cron Trigger e o tratamento correspondente dos backups
-  continuam como etapas operacionais separadas.
+- a migration e o Cron Trigger foram publicados em 2026-09-19; o acompanhamento da primeira execução
+  e o tratamento correspondente dos backups continuam como etapas operacionais separadas.
 
 ## Referências
 

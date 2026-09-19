@@ -59,12 +59,13 @@ Já existem no repositório:
 - cabeçalhos defensivos aplicados diretamente às respostas JSON da API;
 - cabeçalho `X-Robots-Tag: noindex` no endereço `workers.dev`;
 - fila de notificação restrita ao UUID da cotação, sem dados pessoais na mensagem;
-- novas tentativas automáticas de e-mail com espera progressiva e fila de mensagens mortas.
+- novas tentativas automáticas de e-mail com espera progressiva e fila de mensagens mortas;
+- migration e Cron Trigger de descarte ao fim da retenção publicados somente em produção.
 
 Ainda não estão configurados ou homologados:
 
 - teste operacional de restauração de backup;
-- aplicação e homologação da migration e do Cron Trigger de descarte ao fim da retenção;
+- acompanhamento e registro da primeira execução agendada do descarte ao fim da retenção;
 - analytics de navegador, que permanece deliberadamente desativado;
 - MFA e canal específico para incidentes e vulnerabilidades.
 

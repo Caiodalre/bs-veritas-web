@@ -33,7 +33,8 @@ Uma prévia pública não deve conseguir gravar dados reais nem depender de cred
 - ambientes desconhecidos não habilitam coleta no navegador;
 - a ausência de bindings obrigatórios em produção causa falha fechada com resposta genérica;
 - mudanças de schema continuam exigindo migration revisada e ordem explícita de implantação;
-- restauração de backup e descarte após a retenção continuam como pendências operacionais.
+- a rotina de descarte após a retenção foi publicada somente em produção; a primeira execução agendada e
+  a restauração de backup continuam como pendências operacionais.
 
 ## Evidências
 
