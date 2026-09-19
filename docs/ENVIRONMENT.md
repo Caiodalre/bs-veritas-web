@@ -159,11 +159,16 @@ O pnpm está configurado para permitir scripts de instalação somente quando re
 
 Uma nova solicitação de build script deverá ser analisada pelo nome do pacote, finalidade, procedência e necessidade antes de ser aprovada.
 
-## Variáveis de ambiente
+## Configuração pública do Turnstile
 
-O build público do formulário usa `NEXT_PUBLIC_TURNSTILE_SITE_KEY`. A chave é pública e identifica
-o widget; ela não substitui o segredo `TURNSTILE_SECRET_KEY`, que existe somente no Worker. Quando a
-chave pública não está presente no build, a página mantém os canais oficiais e não exibe o formulário.
+O formulário seleciona a chave pública do Turnstile no navegador conforme o hostname conhecido:
+produção, alias estável de preview ou ambiente local. Essas chaves identificam os widgets e são
+publicamente visíveis por definição; elas não substituem o segredo `TURNSTILE_SECRET_KEY`, que existe
+somente no Worker.
+
+O build executa uma verificação obrigatória sobre `out/contato.html` e falha quando o formulário não
+está no export estático. Dessa forma, a presença do formulário não depende de uma variável de ambiente
+invisível no momento da publicação.
 
 Quando integrações forem implementadas, cada variável deverá ser classificada como:
 
@@ -190,8 +195,9 @@ Regras:
 - novas variáveis exigirão validação centralizada;
 - variáveis obsoletas deverão ser removidas da plataforma e da documentação.
 
-Como `.env*` é ignorado integralmente, a configuração local deve ser criada apenas na máquina do
-desenvolvedor. Valores de preview e produção são administrados separadamente na Cloudflare.
+Como `.env*` é ignorado integralmente, qualquer configuração privada local deve ser criada apenas na
+máquina do desenvolvedor. O segredo do Turnstile de preview e o de produção são administrados
+separadamente na Cloudflare.
 
 ## Banco de dados
 

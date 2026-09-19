@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { useEffect, type ComponentProps } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { resolveTurnstileSiteKey, turnstileSiteKeys } from "@/features/quote/turnstile-site-key";
 import { QuoteForm } from "./quote-form";
 
 vi.mock("next/script", () => {
@@ -50,11 +51,12 @@ describe("QuoteForm", () => {
     vi.stubGlobal("fetch", vi.fn());
   });
 
-  it("não abre coleta quando a chave pública não está configurada", () => {
-    const { container } = render(<QuoteForm />);
+  it("resolve a chave pública local sem depender do ambiente de build", async () => {
+    render(<QuoteForm />);
 
-    expect(container).toBeEmptyDOMElement();
-    expect(turnstile.render).not.toHaveBeenCalled();
+    await waitFor(() => expect(turnstile.render).toHaveBeenCalledOnce());
+    expect(renderOptions.sitekey).toBe(turnstileSiteKeys.local);
+    expect(screen.getByRole("button", { name: "Solicitar cotação" })).toBeEnabled();
   });
 
   it("envia somente após a verificação e confirma o recebimento", async () => {
@@ -109,5 +111,21 @@ describe("QuoteForm", () => {
 
     expect(await screen.findByText(/várias tentativas em sequência/)).toBeInTheDocument();
     expect(reset).toHaveBeenCalledWith("quote-widget");
+  });
+});
+
+describe("resolveTurnstileSiteKey", () => {
+  it("seleciona as chaves públicas por hostname conhecido", () => {
+    expect(resolveTurnstileSiteKey("bsveritas.com.br")).toBe(turnstileSiteKeys.production);
+    expect(resolveTurnstileSiteKey("www.bsveritas.com.br")).toBe(turnstileSiteKeys.production);
+    expect(
+      resolveTurnstileSiteKey("quote-preview-bs-veritas-web-preview.caio-dalre.workers.dev"),
+    ).toBe(turnstileSiteKeys.preview);
+    expect(resolveTurnstileSiteKey("localhost")).toBe(turnstileSiteKeys.local);
+  });
+
+  it("não ativa o formulário em hostnames desconhecidos", () => {
+    expect(resolveTurnstileSiteKey("example.com")).toBeUndefined();
+    expect(resolveTurnstileSiteKey("bs-veritas-web.caio-dalre.workers.dev")).toBeUndefined();
   });
 });
