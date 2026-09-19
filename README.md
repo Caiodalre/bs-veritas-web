@@ -8,7 +8,7 @@ O projeto tem como objetivos transmitir confiança, apresentar a corretora e seu
 
 A experiência pública inicial está online. O repositório privado e a integração contínua estão ativos, e a Cloudflare Workers Static Assets mantém ambientes públicos de preview e produção.
 
-A produção está disponível em [https://bsveritas.com.br](https://bsveritas.com.br), com redirecionamento permanente de `www`. O formulário de cotação está ativo somente no domínio oficial, persiste as solicitações no PostgreSQL da Aiven e envia uma notificação comercial após a gravação.
+A produção está disponível em [https://bsveritas.com.br](https://bsveritas.com.br), com redirecionamento permanente de `www`. O formulário de cotação está ativo somente no domínio oficial, persiste as solicitações no PostgreSQL da Aiven e enfileira a notificação comercial após a gravação.
 
 Já estão configurados:
 
@@ -118,11 +118,11 @@ As regras completas de desenvolvimento estão em [`AGENTS.md`](./AGENTS.md).
 ## Infraestrutura atual
 
 - Cloudflare Workers Static Assets para preview e produção;
-- Cloudflare para DNS, CDN, SSL, Worker da API, Turnstile, rate limiting e Hyperdrive;
+- Cloudflare para DNS, CDN, SSL, Worker da API, Turnstile, rate limiting, Hyperdrive e Queues;
 - PostgreSQL na Aiven para persistência das solicitações de cotação;
 - Cloudflare Email Workers para a notificação comercial;
 - GitHub para repositório e integração contínua.
 
-O preview é deliberadamente incapaz de enviar ou armazenar solicitações: ele não recebe os bindings do Hyperdrive, e-mail, rate limiter nem o segredo do Turnstile. Analytics de navegador permanece desativado e o monitor de produção verifica essa coerência.
+O preview é deliberadamente incapaz de enviar ou armazenar solicitações: ele não recebe os bindings do Hyperdrive, fila, e-mail, rate limiter nem o segredo do Turnstile. Analytics de navegador permanece desativado e o monitor de produção verifica essa coerência.
 
 O plano gratuito Hobby da Vercel não será utilizado porque restringe o uso a projetos pessoais e não comerciais. Qualquer futura mudança de hospedagem exigirá compatibilidade com uso empresarial sem custo ou aprovação explícita de um plano pago.

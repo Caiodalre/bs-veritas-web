@@ -50,20 +50,21 @@ Já existem no repositório:
 - política de retenção de cinco anos aplicada às solicitações do formulário;
 - `.gitignore` gerado para evitar o versionamento normal de arquivos locais de ambiente;
 - regras de desenvolvimento em `AGENTS.md`;
-- preview na Cloudflare Workers sem bindings de banco, e-mail, rate limiter ou segredo Turnstile;
+- preview na Cloudflare Workers sem bindings de banco, fila, e-mail, rate limiter ou segredo Turnstile;
 - produção no domínio oficial com banco, proteção antiabuso e notificação por e-mail;
 - HTTPS, proteção contra framing, `nosniff`, política de referência e política de permissões;
 - Content Security Policy compatível com a exportação estática do Next.js;
 - HSTS restrito aos hosts oficiais, sem incluir subdomínios ainda não auditados;
 - DNSSEC com cadeia de confiança validada até o Registro.br;
 - cabeçalhos defensivos aplicados diretamente às respostas JSON da API;
-- cabeçalho `X-Robots-Tag: noindex` no endereço `workers.dev`.
+- cabeçalho `X-Robots-Tag: noindex` no endereço `workers.dev`;
+- fila de notificação restrita ao UUID da cotação, sem dados pessoais na mensagem;
+- novas tentativas automáticas de e-mail com espera progressiva e fila de mensagens mortas.
 
 Ainda não estão configurados ou homologados:
 
 - teste operacional de restauração de backup;
 - rotina automatizada de descarte ao fim da retenção;
-- nova tentativa automática da notificação por e-mail;
 - analytics de navegador, que permanece deliberadamente desativado;
 - MFA e canal específico para incidentes e vulnerabilidades.
 

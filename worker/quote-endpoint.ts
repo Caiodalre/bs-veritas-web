@@ -11,7 +11,7 @@ import {
 } from "@/features/quote/processing";
 import type { QuoteRequestRepository } from "@/features/quote/service";
 import { jsonApiResponse } from "./api-response";
-import { sendQuoteNotification } from "./quote-notification";
+import { enqueueQuoteNotification, type QuoteNotificationQueueMessage } from "./quote-notification";
 
 const maximumRequestBodyBytes = 16_384;
 const turnstileTimeoutMs = 3_000;
@@ -20,8 +20,8 @@ const retryAfterSeconds = "60";
 export type QuoteEndpointEnvironment = {
   HYPERDRIVE: Pick<Hyperdrive, "connectionString">;
   QUOTE_EXPECTED_HOSTNAME: string;
-  QUOTE_NOTIFICATION_EMAIL?: SendEmail;
   QUOTE_NOTIFICATION_ENABLED: string;
+  QUOTE_NOTIFICATION_QUEUE?: Pick<Queue<QuoteNotificationQueueMessage>, "send">;
   TURNSTILE_SECRET_KEY: string;
 };
 
@@ -30,7 +30,6 @@ export interface QuoteEndpointDependencies {
   fetcher?: typeof fetch;
   logger?: Pick<Console, "error">;
   now?: () => Date;
-  schedule?: (promise: Promise<unknown>) => void;
 }
 
 function createHyperdriveRepository(connectionString: string) {
@@ -160,23 +159,16 @@ export async function handleQuoteRequest(
       return failureResponse(result);
     }
 
-    if (env.QUOTE_NOTIFICATION_ENABLED === "true" && env.QUOTE_NOTIFICATION_EMAIL) {
-      const notificationPromise = sendQuoteNotification(
-        env.QUOTE_NOTIFICATION_EMAIL,
-        result.id,
-      ).catch((error) => {
+    if (env.QUOTE_NOTIFICATION_ENABLED === "true" && env.QUOTE_NOTIFICATION_QUEUE) {
+      try {
+        await enqueueQuoteNotification(env.QUOTE_NOTIFICATION_QUEUE, result.id);
+      } catch (error) {
         logger.error(
           JSON.stringify({
-            event: "quote_notification_failed",
+            event: "quote_notification_enqueue_failed",
             errorType: error instanceof Error ? error.name : "UnknownError",
           }),
         );
-      });
-
-      if (dependencies.schedule) {
-        dependencies.schedule(notificationPromise);
-      } else {
-        await notificationPromise;
       }
     }
 
