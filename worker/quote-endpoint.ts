@@ -11,6 +11,7 @@ import {
 } from "@/features/quote/processing";
 import type { QuoteRequestRepository } from "@/features/quote/service";
 import { jsonApiResponse } from "./api-response";
+import { sendQuoteNotification } from "./quote-notification";
 
 const maximumRequestBodyBytes = 16_384;
 const turnstileTimeoutMs = 3_000;
@@ -19,6 +20,8 @@ const retryAfterSeconds = "60";
 export type QuoteEndpointEnvironment = {
   HYPERDRIVE: Pick<Env["HYPERDRIVE"], "connectionString">;
   QUOTE_EXPECTED_HOSTNAME: Env["QUOTE_EXPECTED_HOSTNAME"];
+  QUOTE_NOTIFICATION_EMAIL: Env["QUOTE_NOTIFICATION_EMAIL"];
+  QUOTE_NOTIFICATION_ENABLED: Env["QUOTE_NOTIFICATION_ENABLED"];
   TURNSTILE_SECRET_KEY: Env["TURNSTILE_SECRET_KEY"];
 };
 
@@ -27,6 +30,7 @@ export interface QuoteEndpointDependencies {
   fetcher?: typeof fetch;
   logger?: Pick<Console, "error">;
   now?: () => Date;
+  schedule?: (promise: Promise<unknown>) => void;
 }
 
 function createHyperdriveRepository(connectionString: string) {
@@ -134,6 +138,7 @@ export async function handleQuoteRequest(
 ) {
   const createRepository = dependencies.createRepository ?? createHyperdriveRepository;
   const repository = createLazyRepository(env.HYPERDRIVE.connectionString, createRepository);
+  const logger = dependencies.logger ?? console;
 
   try {
     const result = await processQuoteRequest(
@@ -155,9 +160,28 @@ export async function handleQuoteRequest(
       return failureResponse(result);
     }
 
+    if (env.QUOTE_NOTIFICATION_ENABLED === "true") {
+      const notificationPromise = sendQuoteNotification(
+        env.QUOTE_NOTIFICATION_EMAIL,
+        result.id,
+      ).catch((error) => {
+        logger.error(
+          JSON.stringify({
+            event: "quote_notification_failed",
+            errorType: error instanceof Error ? error.name : "UnknownError",
+          }),
+        );
+      });
+
+      if (dependencies.schedule) {
+        dependencies.schedule(notificationPromise);
+      } else {
+        await notificationPromise;
+      }
+    }
+
     return jsonApiResponse({ data: { id: result.id } }, 201);
   } catch (error) {
-    const logger = dependencies.logger ?? console;
     logger.error(
       JSON.stringify({
         event: "quote_request_failed",
