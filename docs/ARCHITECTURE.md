@@ -190,6 +190,11 @@ O PostgreSQL será acessado somente pelo backend da aplicação. O navegador nã
 
 O schema registra somente os campos aprovados para cotação, a versão da política e a expiração de retenção. As migrations PostgreSQL estão versionadas e aplicadas na Aiven. A produção acessa o banco pelo binding Hyperdrive; o preview não recebe esse binding.
 
+A rotina de descarte preparada para produção executa diariamente às `06:17 UTC`. O Worker chama uma
+função PostgreSQL que exclui somente registros vencidos, em lotes de até 500, usando o índice de
+`retention_expires_at` e `SKIP LOCKED`. O papel da aplicação recebe apenas `EXECUTE` nessa função e
+continua sem permissão direta de `DELETE`.
+
 ## Configuração e segredos
 
 - segredos existem apenas em variáveis de ambiente locais ou bindings da plataforma;
@@ -251,7 +256,7 @@ Não haverá edição manual de arquivos em produção.
 ## Pendências atuais
 
 - validar operacionalmente a restauração dos backups da Aiven;
-- definir rotina automatizada e verificável de descarte após o prazo de retenção;
+- aplicar a migration e homologar a rotina diária de descarte após o prazo de retenção;
 - homologar o consumo da fila e o tratamento da fila de mensagens mortas em produção;
 - concluir MFA e responsáveis administrativos nas plataformas;
 - definir um canal específico para incidentes e vulnerabilidades;

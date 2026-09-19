@@ -246,6 +246,23 @@ Quando o banco entrar no fluxo de publicação:
 
 O deploy da aplicação e a migration deverão ter uma ordem explícita e compatível. Mudanças destrutivas de schema exigirão plano específico e não serão aplicadas automaticamente.
 
+### Ordem da rotina de retenção
+
+A ativação do descarte automático seguirá obrigatoriamente esta ordem:
+
+1. revisar e aprovar a migration `0003_quote_retention_cleanup.sql`;
+2. confirmar o backup automático disponível na Aiven;
+3. aplicar a migration com o usuário administrativo;
+4. verificar que `bs_veritas_quote_writer` recebeu somente `EXECUTE` na função e continua sem
+   `DELETE` direto;
+5. publicar o Worker com o Cron Trigger diário `17 6 * * *`;
+6. confirmar no painel da Cloudflare que o agendamento existe somente em produção;
+7. verificar o primeiro evento pelos logs estruturados, que registram apenas contagem, horário e tipo
+   de erro.
+
+O rollback do Worker remove o agendamento, mas não desfaz registros já eliminados. A função exclui
+somente linhas cujo `retention_expires_at` já venceu e processa no máximo 500 registros por execução.
+
 ## Homologação do preview
 
 O preview candidato deverá validar pelo menos:

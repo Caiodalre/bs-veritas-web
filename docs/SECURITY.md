@@ -64,7 +64,7 @@ Já existem no repositório:
 Ainda não estão configurados ou homologados:
 
 - teste operacional de restauração de backup;
-- rotina automatizada de descarte ao fim da retenção;
+- aplicação e homologação da migration e do Cron Trigger de descarte ao fim da retenção;
 - analytics de navegador, que permanece deliberadamente desativado;
 - MFA e canal específico para incidentes e vulnerabilidades.
 

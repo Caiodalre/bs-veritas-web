@@ -1,0 +1,187 @@
+{
+  "id": "f608431d-9c0b-457c-bf8e-12e14276628b",
+  "prevId": "f04b93b1-88b1-4091-bd6f-5e5002b7233c",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.quote_requests": {
+      "name": "quote_requests",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "full_name": {
+          "name": "full_name",
+          "type": "varchar(150)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(254)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "insurance_type": {
+          "name": "insurance_type",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "city": {
+          "name": "city",
+          "type": "varchar(120)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "message": {
+          "name": "message",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "privacy_policy_version": {
+          "name": "privacy_policy_version",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "retention_expires_at": {
+          "name": "retention_expires_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "quote_request_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'new'"
+        }
+      },
+      "indexes": {
+        "quote_requests_created_at_idx": {
+          "name": "quote_requests_created_at_idx",
+          "columns": [
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "with": {},
+          "method": "btree",
+          "concurrently": false
+        },
+        "quote_requests_status_idx": {
+          "name": "quote_requests_status_idx",
+          "columns": [
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "with": {},
+          "method": "btree",
+          "concurrently": false
+        },
+        "quote_requests_retention_expires_at_idx": {
+          "name": "quote_requests_retention_expires_at_idx",
+          "columns": [
+            {
+              "expression": "retention_expires_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "with": {},
+          "method": "btree",
+          "concurrently": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "quote_requests_full_name_check": {
+          "name": "quote_requests_full_name_check",
+          "value": "char_length(btrim(\"quote_requests\".\"full_name\")) between 2 and 150"
+        },
+        "quote_requests_phone_check": {
+          "name": "quote_requests_phone_check",
+          "value": "\"quote_requests\".\"phone\" ~ '^[0-9]{10,15}$'"
+        },
+        "quote_requests_email_check": {
+          "name": "quote_requests_email_check",
+          "value": "\"quote_requests\".\"email\" = lower(btrim(\"quote_requests\".\"email\")) and position('@' in \"quote_requests\".\"email\") > 1"
+        },
+        "quote_requests_insurance_type_check": {
+          "name": "quote_requests_insurance_type_check",
+          "value": "\"quote_requests\".\"insurance_type\" in ('auto', 'residencial', 'empresarial', 'vida', 'viagem', 'outras-solucoes')"
+        },
+        "quote_requests_city_check": {
+          "name": "quote_requests_city_check",
+          "value": "\"quote_requests\".\"city\" is null or (char_length(btrim(\"quote_requests\".\"city\")) between 1 and 120 and \"quote_requests\".\"city\" = btrim(\"quote_requests\".\"city\"))"
+        },
+        "quote_requests_message_check": {
+          "name": "quote_requests_message_check",
+          "value": "\"quote_requests\".\"message\" is null or (char_length(btrim(\"quote_requests\".\"message\")) between 1 and 1000 and \"quote_requests\".\"message\" = btrim(\"quote_requests\".\"message\"))"
+        },
+        "quote_requests_privacy_policy_version_check": {
+          "name": "quote_requests_privacy_policy_version_check",
+          "value": "char_length(btrim(\"quote_requests\".\"privacy_policy_version\")) between 1 and 32 and \"quote_requests\".\"privacy_policy_version\" = btrim(\"quote_requests\".\"privacy_policy_version\")"
+        },
+        "quote_requests_retention_window_check": {
+          "name": "quote_requests_retention_window_check",
+          "value": "\"quote_requests\".\"retention_expires_at\" > \"quote_requests\".\"created_at\""
+        }
+      },
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.quote_request_status": {
+      "name": "quote_request_status",
+      "schema": "public",
+      "values": ["new", "contacted", "closed"]
+    }
+  },
+  "schemas": {},
+  "views": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

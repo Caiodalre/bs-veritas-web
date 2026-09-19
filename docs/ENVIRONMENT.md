@@ -212,6 +212,7 @@ string de conexão e a senha não são enviadas ao navegador nem versionadas.
 Regras operacionais:
 
 - somente a produção possui o binding Hyperdrive;
+- somente a produção habilita o Cron Trigger de retenção; o preview declara `crons: []`;
 - o navegador não receberá a string de conexão;
 - o preview não acessará nem gravará dados;
 - migrations serão geradas, revisadas e testadas antes da aplicação;
@@ -223,6 +224,7 @@ Regras operacionais:
 | Serviço               | Papel                                       | Estado atual                                       |
 | --------------------- | ------------------------------------------- | -------------------------------------------------- |
 | Cloudflare Workers    | site, endpoint e assets                     | produção ativa; preview isolado                    |
+| Cloudflare Cron       | descarte diário de cotações vencidas        | preparado; depende de migration e deploy           |
 | Cloudflare Hyperdrive | conexão protegida com PostgreSQL            | ativo somente em produção; cache desativado        |
 | Cloudflare Turnstile  | verificação antiabuso                       | ativo em produção e validado no servidor           |
 | PostgreSQL/Aiven      | persistência de leads                       | migrations aplicadas e menor privilégio verificado |

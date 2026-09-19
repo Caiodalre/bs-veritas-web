@@ -30,6 +30,10 @@ indexável, sem acesso ao banco ou às integrações de produção.
 
 ### Adicionado
 
+- rotina diária de descarte de cotações vencidas, limitada a 500 registros por execução;
+- função PostgreSQL protegida com privilégio mínimo, tempo limite e concorrência sem bloqueio;
+- Cron Trigger exclusivo de produção, desativado explicitamente no preview;
+- cobertura da migration e dos estados de sucesso, desativação e falha do agendamento;
 - fila assíncrona de notificações comerciais com novas tentativas progressivas e fila de mensagens mortas;
 - mensagens da fila limitadas ao UUID da cotação, sem dados pessoais;
 - cobertura unitária de sucesso, falha, binding ausente e mensagem inválida no consumidor da fila;
@@ -40,6 +44,7 @@ indexável, sem acesso ao banco ou às integrações de produção.
 ### Observações
 
 - o preview continua sem acesso a banco, fila, e-mail, rate limiter ou segredo Turnstile;
+- a rotina de descarte exige aplicar a migration antes de publicar o Cron Trigger;
 - a entrega da fila é pelo menos uma vez e uma notificação duplicada pode ocorrer em caso de nova tentativa;
 - a disponibilidade de produtos permanece condicionada ao perfil, à região e às regras de cada empresa;
 - nenhuma dependência npm, coleta adicional de dados pessoais ou plano pago foi adicionado.
