@@ -8,7 +8,7 @@ O projeto tem como objetivos transmitir confiança, apresentar a corretora e seu
 
 A experiência pública inicial está online. O repositório privado e a integração contínua estão ativos, e a Cloudflare Workers Static Assets mantém ambientes públicos de preview e produção.
 
-A produção está disponível em [https://bsveritas.com.br](https://bsveritas.com.br), com redirecionamento permanente de `www`. A aplicação ainda não coleta dados, não possui banco remoto e não utiliza credenciais de aplicação em produção.
+A produção está disponível em [https://bsveritas.com.br](https://bsveritas.com.br), com redirecionamento permanente de `www`. O formulário de cotação está ativo somente no domínio oficial, persiste as solicitações no PostgreSQL da Aiven e envia uma notificação comercial após a gravação.
 
 Já estão configurados:
 
@@ -17,7 +17,7 @@ Já estão configurados:
 - Tailwind CSS;
 - Vitest e React Testing Library;
 - Playwright com Chromium;
-- fundação do Drizzle ORM para PostgreSQL;
+- Drizzle ORM com migrations aplicadas ao PostgreSQL;
 - ESLint, Prettier e pnpm;
 - repositório privado no GitHub e CI remoto ativo;
 - exportação estática, preview público com `noindex` e produção na Cloudflare Workers;
@@ -27,7 +27,7 @@ Já estão configurados:
 - catálogo de seguros e páginas estáticas das modalidades atendidas;
 - carrossel acessível com Porto Seguro, Petlove e Icatu como parceiros comerciais confirmados;
 - página de Sinistros com primeiros cuidados, limites e orientação segura;
-- página de Contato com canais públicos e sem formulário ou coleta direta de dados;
+- página de Contato com canais públicos e formulário de cotação protegido por Turnstile, honeypot, rate limiting e validação no servidor;
 - Política de Privacidade com práticas atuais, direitos dos titulares e canal de atendimento;
 - sitemap e `robots.txt` canônicos, além de página 404 personalizada.
 - propriedade de domínio verificada no Google Search Console, com sitemap processado e página inicial encaminhada para indexação;
@@ -38,6 +38,7 @@ Já estão configurados:
 - [`docs/SECURITY.md`](./docs/SECURITY.md): riscos, controles e checklist de segurança;
 - [`docs/ENVIRONMENT.md`](./docs/ENVIRONMENT.md): ambientes, ferramentas e execução local;
 - [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md): preview, produção, smoke tests e rollback;
+- [`docs/CONTENT-PENDENCIES.md`](./docs/CONTENT-PENDENCIES.md): informações institucionais que ainda dependem de confirmação;
 - [`CONTRIBUTING.md`](./CONTRIBUTING.md): padrões de desenvolvimento e revisão;
 - [`CHANGELOG.md`](./CHANGELOG.md): marcos e alterações relevantes;
 - [`AGENTS.md`](./AGENTS.md): regras obrigatórias para agentes de desenvolvimento.
@@ -114,13 +115,14 @@ pnpm exec playwright install chromium
 
 As regras completas de desenvolvimento estão em [`AGENTS.md`](./AGENTS.md).
 
-## Infraestrutura atual e planejada
+## Infraestrutura atual
 
-- Cloudflare Workers Static Assets para preview e produção estática;
-- Cloudflare para DNS, CDN, SSL e Turnstile quando os formulários existirem;
-- PostgreSQL, inicialmente por infraestrutura Supabase;
+- Cloudflare Workers Static Assets para preview e produção;
+- Cloudflare para DNS, CDN, SSL, Worker da API, Turnstile, rate limiting e Hyperdrive;
+- PostgreSQL na Aiven para persistência das solicitações de cotação;
+- Cloudflare Email Workers para a notificação comercial;
 - GitHub para repositório e integração contínua.
 
-O GitHub, o CI, o preview e o domínio de produção na Cloudflare estão configurados. Banco remoto, formulários públicos, analytics e notificações da aplicação continuam pendentes e serão tratados em etapas separadas.
+O preview é deliberadamente incapaz de enviar ou armazenar solicitações: ele não recebe os bindings do Hyperdrive, e-mail, rate limiter nem o segredo do Turnstile. Analytics de navegador permanece desativado e o monitor de produção verifica essa coerência.
 
 O plano gratuito Hobby da Vercel não será utilizado porque restringe o uso a projetos pessoais e não comerciais. Qualquer futura mudança de hospedagem exigirá compatibilidade com uso empresarial sem custo ou aprovação explícita de um plano pago.

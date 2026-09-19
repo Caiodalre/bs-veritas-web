@@ -2,7 +2,7 @@
 
 Este documento registra a arquitetura inicial aprovada para o site institucional e comercial da **B&S VERITAS CORRETORA DE SEGUROS LTDA**.
 
-O projeto está em construção. Os componentes descritos como planejados ainda não devem ser considerados ativos em produção.
+O documento distingue o estado operacional atual das evoluções ainda planejadas.
 
 ## Objetivos arquiteturais
 
@@ -61,9 +61,9 @@ Next.js com exportação estática
       notificação comercial
 ```
 
-O preview atual utiliza somente os arquivos estáticos gerados pelo Next.js e não processa formulários nem dados pessoais.
+O preview utiliza somente os arquivos estáticos gerados pelo Next.js. O formulário permanece visível para revisão, mas desativado, e o Worker recusa `POST /api/quote` antes de qualquer integração.
 
-A camada dinâmica foi definida como um Cloudflare Worker restrito às rotas `/api/*`, com Neon PostgreSQL conectado por Hyperdrive. O endpoint de cotação permanece desativado até que todos os controles necessários sejam aprovados.
+A camada dinâmica é um Cloudflare Worker restrito às rotas `/api/*`, com PostgreSQL da Aiven conectado por Hyperdrive. O endpoint de cotação está ativo somente em produção, protegido por rate limiting, validação Zod, honeypot e Turnstile.
 A decisão completa está registrada em [`docs/decisions/0001-quote-runtime-and-database.md`](decisions/0001-quote-runtime-and-database.md).
 
 O e-mail corporativo é uma infraestrutura independente. A troca do provedor de e-mail não deve exigir reconstrução do site.
@@ -87,11 +87,11 @@ Responsável por páginas, componentes, formulários e estados visuais. Server C
 
 ### Pontos de entrada
 
-Server Actions ou Route Handlers receberão requisições externas. Eles coordenarão autenticação quando aplicável, validação, proteção contra abuso e chamada do serviço correto.
+O Worker recebe as requisições externas da API e coordena validação, proteção contra abuso e chamada do serviço correto. As páginas continuam exportadas como assets estáticos.
 
 ### Validação e segurança
 
-A fundação local valida e normaliza os campos com Zod, restringe modalidades ao catálogo e inclui honeypot. A ativação ainda depende de rate limiting, Cloudflare Turnstile e nova validação no servidor antes da persistência.
+O fluxo valida e normaliza os campos com Zod, restringe modalidades ao catálogo, inclui honeypot, aplica rate limiting e valida o token Turnstile no servidor antes da persistência.
 
 ### Serviços
 
@@ -99,7 +99,7 @@ O serviço local de cotação já define o caso de uso de registrar um pedido va
 
 ### Repositórios
 
-O contrato local do repositório de cotação concentra a futura gravação do lead. Um adaptador Drizzle tipado prepara o `insert` e retorna somente o identificador criado, mas ainda não existe conexão real nem migration aplicada. O restante da aplicação não deverá espalhar consultas ao banco por páginas e componentes.
+O contrato do repositório de cotação concentra a gravação do lead. O adaptador Drizzle tipado executa o `insert` por Hyperdrive e retorna somente o identificador criado. As migrations estão aplicadas e o papel da aplicação não pode ler os demais campos, alterar ou excluir registros.
 
 ### Infraestrutura
 
@@ -143,7 +143,7 @@ Uma pasta somente será criada quando houver código real que justifique sua exi
 
 ## Fluxo de cotação
 
-O formulário do V1 terá uma única etapa e coletará apenas os dados necessários:
+O formulário do V1 possui uma única etapa e coleta apenas os dados necessários:
 
 - nome completo;
 - telefone ou WhatsApp;
@@ -164,7 +164,7 @@ receber solicitação
                   -> solicitar notificação à equipe
 ```
 
-A indisponibilidade do serviço de e-mail não deve apagar um lead já registrado. A estratégia de nova tentativa da notificação será definida durante a implementação dessa integração.
+A indisponibilidade do serviço de e-mail não apaga um lead já registrado. A estratégia de nova tentativa automática da notificação continua pendente.
 
 ## Dados e privacidade
 
@@ -178,25 +178,26 @@ Regras obrigatórias:
 - não colocar dados pessoais na URL do WhatsApp;
 - avisar o visitante para não escrever informações sensíveis na mensagem;
 - registrar a versão da política de privacidade aplicável ao lead;
-- definir uma política de retenção antes da produção.
+- aplicar a política de retenção aprovada de cinco anos e a versão correspondente da Política de Privacidade.
 
 ## Banco de dados
 
 O PostgreSQL será acessado somente pelo backend da aplicação. O navegador não receberá credenciais administrativas nem permissão irrestrita de escrita.
 
-O schema local inicial registra somente os campos aprovados para cotação, a versão da política e a expiração de retenção. A migration PostgreSQL inicial está versionada, mas não foi aplicada e a conexão real ainda não existe.
+O schema registra somente os campos aprovados para cotação, a versão da política e a expiração de retenção. As migrations PostgreSQL estão versionadas e aplicadas na Aiven. A produção acessa o banco pelo binding Hyperdrive; o preview não recebe esse binding.
 
 ## Configuração e segredos
 
-- segredos existirão apenas em variáveis de ambiente locais ou da plataforma;
+- segredos existem apenas em variáveis de ambiente locais ou bindings da plataforma;
 - arquivos `.env` reais não serão versionados;
 - variáveis obrigatórias serão validadas ao iniciar a aplicação;
 - ambientes local, preview e produção terão configurações separadas;
-- nenhuma credencial real será adicionada antes da configuração do respectivo serviço.
+- a produção falha de forma fechada quando um binding obrigatório está ausente;
+- o preview não possui bindings de banco, e-mail, rate limiter nem segredo Turnstile.
 
 ## Segurança HTTP
 
-As políticas serão ajustadas aos serviços efetivamente utilizados. Estão planejados:
+As respostas atuais utilizam:
 
 - Content Security Policy;
 - Strict Transport Security;
@@ -209,7 +210,7 @@ A política de segurança não deverá liberar domínios externos sem necessidad
 
 ## Renderização e desempenho
 
-A hospedagem mantém a exportação estática no Cloudflare Workers Static Assets. Um Worker separado no mesmo projeto atenderá somente os pontos de entrada dinâmicos aprovados.
+A hospedagem mantém a exportação estática no Cloudflare Workers Static Assets. O Worker atende os assets e intercepta somente os pontos de entrada dinâmicos aprovados.
 
 - Server Components por padrão;
 - JavaScript no cliente somente quando necessário;
@@ -217,7 +218,7 @@ A hospedagem mantém a exportação estática no Cloudflare Workers Static Asset
 - scripts de terceiros limitados;
 - páginas públicas preparadas para SEO;
 - experiência mobile considerada desde o primeiro componente;
-- domínio canônico planejado como `https://bsveritas.com.br`.
+- domínio canônico `https://bsveritas.com.br`.
 
 O ambiente de preview deverá permanecer fora da indexação de buscadores.
 
@@ -231,7 +232,7 @@ As alterações deverão ser verificadas proporcionalmente ao risco com:
 - testes de jornada com Playwright;
 - revisão do diff antes da integração na `main`.
 
-O fluxo de entrega planejado é:
+O fluxo de entrega é:
 
 ```text
 branch de trabalho
@@ -243,15 +244,13 @@ branch de trabalho
 
 Não haverá edição manual de arquivos em produção.
 
-## Decisões ainda pendentes
+## Pendências atuais
 
-- provedor definitivo de e-mail e notificações;
-- criação do projeto Neon, credenciais e binding Hyperdrive;
-- estratégia e valores de rate limiting;
-- conteúdo jurídico revisado;
-- contatos corporativos reais;
-- seguradoras parceiras confirmadas;
-- configuração final de analytics e cookies;
-- regras finais de Content Security Policy.
-
-Esses pontos serão decididos e documentados antes da respectiva implementação.
+- validar operacionalmente a restauração dos backups da Aiven;
+- definir rotina automatizada e verificável de descarte após o prazo de retenção;
+- definir estratégia de nova tentativa para falhas de notificação por e-mail;
+- concluir MFA e responsáveis administrativos nas plataformas;
+- definir um canal específico para incidentes e vulnerabilidades;
+- obter revisão jurídica independente do conteúdo publicado;
+- decidir se analytics sem dados pessoais será necessário; até lá, permanece desativado;
+- receber as informações institucionais listadas em [`CONTENT-PENDENCIES.md`](CONTENT-PENDENCIES.md).

@@ -1,6 +1,6 @@
 # Implantação do B&S Veritas Web
 
-## Coerência de medição antes da próxima publicação
+## Coerência de medição
 
 O código e as políticas públicas declaram que analytics de navegador não está ativo. Antes de
 promover a próxima versão, a injeção automática do Cloudflare Web Analytics deve permanecer
@@ -16,7 +16,7 @@ com um User-Agent de navegador que o HTML contém `no-transform`, não contém
 
 Este documento descreve o processo planejado de preview, publicação, validação e rollback do site da **B&S VERITAS CORRETORA DE SEGUROS LTDA**.
 
-O repositório privado, o CI, o preview e a produção estática na Cloudflare Workers estão ativos. Banco remoto, formulários e integrações comerciais da aplicação ainda não estão ativos.
+O repositório privado, o CI, o preview e a produção na Cloudflare Workers estão ativos. O formulário de cotação, PostgreSQL, proteção antiabuso e notificação comercial estão ativos somente em produção.
 
 ## Objetivos
 
@@ -40,10 +40,15 @@ DNS, CDN, SSL e proteção
 Workers Static Assets
 Next.js com exportação estática
    |
-   `--> páginas públicas sem coleta de dados
+   +--> páginas públicas
+   |
+   `--> /api/quote
+           -> rate limiting, validação e Turnstile
+           -> Hyperdrive -> PostgreSQL/Aiven
+           -> notificação comercial
 ```
 
-PostgreSQL, Turnstile e notificações serão conectados somente depois da definição da camada dinâmica e das respectivas políticas de dados e segredos.
+O preview publica os mesmos assets para revisão visual, mas não recebe os bindings da camada dinâmica e recusa o endpoint de cotação.
 
 O e-mail corporativo utilizará o mesmo domínio, mas permanecerá independente do deploy da aplicação.
 
@@ -100,7 +105,9 @@ Criado a partir de uma branch ou revisão candidata.
 - configuração separada;
 - dados exclusivamente fictícios;
 - `noindex` e bloqueio de indexação;
-- integrações externas em modo de teste ou desativadas;
+- formulário visível, porém desativado;
+- sem Hyperdrive, e-mail, rate limiter ou segredo Turnstile;
+- API de cotação recusada antes de qualquer integração;
 - URL utilizada para revisão visual, funcional e mobile.
 
 ### Produção
@@ -108,8 +115,8 @@ Criado a partir de uma branch ou revisão candidata.
 Criado somente a partir da revisão aprovada na `main`.
 
 - domínio oficial ativo;
-- aplicação estática sem credenciais ou banco de produção;
-- serviços dinâmicos desativados até aprovação específica;
+- assets estáticos e API de cotação no mesmo Worker;
+- Hyperdrive, PostgreSQL, Turnstile, rate limiting e e-mail ativos;
 - logs e monitoramento restritos;
 - estratégia de rollback disponível.
 
@@ -138,8 +145,8 @@ Antes de conectar serviços externos:
 - [ ] MFA habilitada nas contas administrativas;
 - [x] preview Cloudflare Workers criado e validado;
 - [x] titularidade administrativa da zona Cloudflare confirmada para produção;
-- [ ] ambientes e responsáveis pelo PostgreSQL definidos;
-- [ ] política de segredos aprovada;
+- [x] serviço PostgreSQL e papel de aplicação definidos;
+- [x] bindings e segredos de produção isolados do preview;
 - [x] contatos e conteúdo mínimo de produção confirmados;
 - [x] procedimento de recuperação registrado.
 
@@ -185,7 +192,8 @@ A implantação atual:
 - mantém HSTS versionado somente para os hosts oficiais, sem `includeSubDomains` ou `preload`;
 - protege diretamente as respostas da API, que não recebem as regras do arquivo `_headers`;
 - publica `robots.txt` e sitemap canônicos no domínio oficial;
-- não possui bindings, banco, variáveis ou segredos de produção;
+- mantém bindings de banco, e-mail, rate limiter e segredo Turnstile somente em produção;
+- deixa o preview sem acesso às integrações e com coleta desativada;
 - foi validado por testes automatizados no preview e smoke tests HTTP em produção.
 
 A publicação ainda é manual. Automatizar deploys exigirá uma etapa separada, com credencial de escopo mínimo e aprovação explícita.
@@ -201,15 +209,13 @@ A configuração atual:
 - mantém a cadeia DNSSEC completa, com o DS publicado no Registro.br;
 - mantém certificados, CSP e HSTS validados no domínio final.
 
-Permanecem pendentes:
-
-- configurar Turnstile somente quando os formulários públicos forem ativados.
+Permanecem pendentes a validação operacional da restauração de backup e a rotina automatizada de descarte ao fim da retenção.
 
 Alterações DNS serão feitas uma por vez, com registro do valor anterior e teste após cada mudança.
 
 ## Variáveis de ambiente
 
-Cada variável futura deverá possuir:
+Cada variável deverá possuir:
 
 - nome;
 - finalidade;
@@ -425,6 +431,19 @@ Pendências conhecidas:
 - nenhuma migration, credencial, banco ou serviço pago foi adicionado;
 - a revisão jurídica independente da redação continua recomendada.
 
+### Cotação em produção e isolamento do preview — 2026-09-19
+
+- commit `7dcbb5f4c9f745602a35879d46adc825a402928e`;
+- versão Cloudflare `65ca2b79-30a0-41b6-8e9d-5f5f8ea3fb3b`;
+- formulário de cotação ativo no domínio oficial com Turnstile, rate limiting, validação no servidor,
+  Hyperdrive, PostgreSQL/Aiven e notificação por e-mail;
+- fluxo completo confirmado com persistência e recebimento da notificação;
+- preview publicado sem Hyperdrive, e-mail, rate limiter ou segredo Turnstile;
+- interface do preview desativa o formulário e a API retorna `503 quote_submission_disabled`;
+- CI, 122 testes unitários/componentes, 26 testes de navegador, build e monitor de produção aprovados;
+- analytics de navegador permaneceu desativado e bloqueado por `Cache-Control: no-transform`;
+- restauração de backup e rotina de descarte por retenção permanecem pendentes.
+
 ## Estado atual da implantação
 
 | Componente            | Estado                                        |
@@ -434,13 +453,13 @@ Pendências conhecidas:
 | repositório Git local | configurado                                   |
 | GitHub remoto         | privado e configurado                         |
 | CI                    | ativo e validado no GitHub                    |
-| Cloudflare Workers    | preview e produção estática ativos            |
+| Cloudflare Workers    | preview isolado e produção com API ativos     |
 | Vercel                | excluída do plano gratuito                    |
 | domínio no projeto    | apex ativo e `www` com redirecionamento `301` |
 | monitoramento         | agendado no GitHub Actions a cada seis horas  |
-| PostgreSQL remoto     | não conectado                                 |
-| notificações          | dependem das preferências da conta GitHub     |
-| versão Cloudflare     | `1491f9cb-47cc-4aa9-bd78-7576b180cc19`        |
-| produção              | ativa no commit `84c86d7`                     |
+| PostgreSQL remoto     | Aiven conectado por Hyperdrive em produção    |
+| notificações          | e-mail comercial ativo após a persistência    |
+| versão Cloudflare     | `65ca2b79-30a0-41b6-8e9d-5f5f8ea3fb3b`        |
+| produção              | ativa no commit `7dcbb5f`                     |
 
 Qualquer mudança desse estado deverá ser feita como uma etapa separada, aprovada e validada.

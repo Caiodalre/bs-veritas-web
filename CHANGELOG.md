@@ -2,7 +2,29 @@
 
 Este arquivo registra mudanças relevantes do **B&S Veritas Web**.
 
-O projeto possui produção estática no domínio oficial e um preview público não indexável. Serviços dinâmicos e coleta de dados permanecem desativados.
+O projeto possui produção no domínio oficial com formulário de cotação ativo e um preview público não
+indexável, sem acesso ao banco ou às integrações de produção.
+
+## Cotação em produção e isolamento do preview — 2026-09-19
+
+### Alterado
+
+- formulário de cotação ativado no domínio oficial com validação no servidor, honeypot, Turnstile e
+  rate limiting;
+- persistência conectada ao PostgreSQL da Aiven por Hyperdrive com usuário de menor privilégio;
+- notificação comercial enviada somente após a persistência;
+- preview removido dos bindings de Hyperdrive, e-mail, rate limiter e segredo Turnstile;
+- API do preview configurada para falhar de forma fechada antes de qualquer integração;
+- formulário do preview mantido visível para revisão, porém desativado e com orientação ao visitante;
+- documentação técnica alinhada ao estado operacional e ADR da Aiven adicionado.
+
+### Validação
+
+- fluxo completo confirmado com registro no banco e recebimento do e-mail;
+- CI, 122 testes unitários/componentes, 26 testes de navegador e build aprovados;
+- monitor de produção, API, Turnstile, layout móvel e ausência de Cloudflare Insights verificados;
+- PR #51 mesclado no commit `7dcbb5f4c9f745602a35879d46adc825a402928e`;
+- versão Cloudflare `65ca2b79-30a0-41b6-8e9d-5f5f8ea3fb3b` publicada.
 
 ## Não lançado
 

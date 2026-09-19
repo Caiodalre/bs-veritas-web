@@ -2,7 +2,7 @@
 
 Este documento descreve como o projeto deve ser executado e configurado nos ambientes local, preview e produção.
 
-Nenhuma credencial de aplicação em produção está configurada. O GitHub, o CI, um preview sem indexação e a produção estática sem coleta de dados estão ativos.
+O GitHub, o CI, um preview sem indexação e a produção estão ativos. A produção possui os bindings privados necessários ao formulário de cotação; o preview não recebe acesso ao banco, e-mail, rate limiter nem ao segredo do Turnstile.
 
 ## Ambientes previstos
 
@@ -23,22 +23,25 @@ Usado para desenvolvimento e verificações na máquina do desenvolvedor.
 
 ### Preview
 
-Usado para revisão antes da produção. O preview atual está publicado em `https://bs-veritas-web.caio-dalre.workers.dev`.
+Usado para revisão antes da produção. O alias estável atual é `https://quote-preview-bs-veritas-web-preview.caio-dalre.workers.dev`.
 
 - possui configuração separada de produção;
 - não utiliza dados reais;
 - envia `X-Robots-Tag: noindex`;
 - permanece fora da indexação de buscadores;
 - não é o domínio oficial de produção;
-- integrações externas deverão usar modo de teste ou permanecer desativadas.
+- o formulário permanece visível, mas desativado e acompanhado de uma explicação;
+- não possui bindings de Hyperdrive, e-mail, rate limiter ou segredo Turnstile;
+- `POST /api/quote` falha de forma fechada antes de qualquer integração externa.
 
 ### Produção
 
 Usado exclusivamente pelo domínio público aprovado e ativo.
 
 - domínio canônico: `https://bsveritas.com.br`;
-- revisão inicial implantada: `70feb0c`;
-- aplicação estática sem banco, variáveis ou segredos de aplicação;
+- páginas estáticas e endpoint `/api/quote` no mesmo Worker;
+- PostgreSQL acessado somente pelo Worker por Hyperdrive;
+- Turnstile, rate limiting e notificação por e-mail ativos no fluxo de cotação;
 - logs sem dados pessoais;
 - rollback disponível pelas versões anteriores do Worker;
 - monitoramento automatizado configurado no GitHub Actions para execução a cada seis horas;
@@ -162,7 +165,7 @@ Uma nova solicitação de build script deverá ser analisada pelo nome do pacote
 ## Configuração pública do Turnstile
 
 O formulário seleciona a chave pública do Turnstile no navegador conforme o hostname conhecido:
-produção, alias estável de preview ou ambiente local. Essas chaves identificam os widgets e são
+produção ou ambiente local. O preview não carrega o widget porque a coleta está desativada. Essas chaves identificam os widgets e são
 publicamente visíveis por definição; elas não substituem o segredo `TURNSTILE_SECRET_KEY`, que existe
 somente no Worker.
 
@@ -196,39 +199,41 @@ Regras:
 - variáveis obsoletas deverão ser removidas da plataforma e da documentação.
 
 Como `.env*` é ignorado integralmente, qualquer configuração privada local deve ser criada apenas na
-máquina do desenvolvedor. O segredo do Turnstile de preview e o de produção são administrados
-separadamente na Cloudflare.
+máquina do desenvolvedor. O segredo do Turnstile de produção é administrado na Cloudflare. O preview
+não recebe esse segredo.
 
 ## Banco de dados
 
-O schema e as três migrations de cotação foram aplicados ao serviço PostgreSQL de teste da Aiven. O
+O schema e as três migrations de cotação foram aplicados ao serviço PostgreSQL da Aiven usado pela produção. O
 usuário de aplicação `bs_veritas_app` recebe o papel `bs_veritas_quote_writer`, limitado a inserir
 solicitações e ler somente o UUID retornado. A conexão do Worker é intermediada pelo Hyperdrive; a
 string de conexão e a senha não são enviadas ao navegador nem versionadas.
 
-Antes da ativação pública:
+Regras operacionais:
 
-- cada ambiente terá seu próprio banco ou isolamento equivalente;
+- somente a produção possui o binding Hyperdrive;
 - o navegador não receberá a string de conexão;
-- preview não utilizará dados de produção;
+- o preview não acessará nem gravará dados;
 - migrations serão geradas, revisadas e testadas antes da aplicação;
-- a restauração de backup será validada antes do lançamento.
+- mudanças destrutivas exigirão plano próprio de backup e reversão;
+- a restauração de backup continua pendente de validação operacional.
 
-## Serviços externos planejados
+## Serviços externos
 
-| Serviço               | Papel                                       | Estado atual                                      |
-| --------------------- | ------------------------------------------- | ------------------------------------------------- |
-| Cloudflare Workers    | site, endpoint e assets                     | produção estática ativa; nova API não publicada   |
-| Cloudflare Hyperdrive | conexão protegida com PostgreSQL            | configuração criada e cache desativado            |
-| Cloudflare Turnstile  | verificação antiabuso                       | código integrado; widgets e segredos pendentes    |
-| PostgreSQL/Aiven      | persistência de leads                       | serviço de teste migrado e permissões verificadas |
-| Provedor de e-mail    | roteamento e autenticação do e-mail público | MX, SPF, DKIM e DMARC ativos                      |
-| GitHub                | repositório privado e CI                    | configurado e validado                            |
-| Analytics             | métricas sem dados pessoais                 | não configurado                                   |
+| Serviço               | Papel                                       | Estado atual                                       |
+| --------------------- | ------------------------------------------- | -------------------------------------------------- |
+| Cloudflare Workers    | site, endpoint e assets                     | produção ativa; preview isolado                    |
+| Cloudflare Hyperdrive | conexão protegida com PostgreSQL            | ativo somente em produção; cache desativado        |
+| Cloudflare Turnstile  | verificação antiabuso                       | ativo em produção e validado no servidor           |
+| PostgreSQL/Aiven      | persistência de leads                       | migrations aplicadas e menor privilégio verificado |
+| Cloudflare Email      | notificação comercial após persistência     | ativo em produção                                  |
+| Provedor de e-mail    | roteamento e autenticação do e-mail público | MX, SPF, DKIM e DMARC ativos                       |
+| GitHub                | repositório privado e CI                    | configurado e validado                             |
+| Analytics             | métricas sem dados pessoais                 | não configurado                                    |
 
-A Vercel Hobby não faz parte da infraestrutura porque não permite uso comercial. O formulário não
-deverá ser tratado como ativo antes da configuração dos widgets, segredos e validação explícita em
-preview.
+A Vercel Hobby não faz parte da infraestrutura porque não permite uso comercial. O formulário está
+ativo apenas no domínio oficial; o preview serve para revisão visual e recusa qualquer tentativa de
+envio ou persistência.
 
 ## Dados de desenvolvimento
 

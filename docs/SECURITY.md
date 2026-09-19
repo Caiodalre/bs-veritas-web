@@ -2,7 +2,7 @@
 
 Este documento define os princípios, limites e controles de segurança do site da **B&S VERITAS CORRETORA DE SEGUROS LTDA**.
 
-Ele não declara que todos os controles descritos já estão ativos. A produção estática inicial não coleta dados; cada seção distingue os controles já verificados dos mecanismos exigidos antes da ativação de formulários e serviços dinâmicos.
+Ele distingue os controles ativos dos controles ainda pendentes. A produção coleta apenas as solicitações enviadas pelo formulário de cotação; o preview não envia nem armazena dados.
 
 ## Escopo
 
@@ -45,13 +45,13 @@ Já existem no repositório:
 - repositório privado no GitHub e CI remoto validado;
 - Drizzle ORM conectado ao PostgreSQL por Hyperdrive, sem credenciais no repositório;
 - schema local, validação Zod, normalização e honeypot para cotação;
-- endpoint de cotação com persistência, Turnstile e respostas sem dados pessoais versionado, ainda não publicado;
+- endpoint de cotação com persistência, Turnstile e respostas sem dados pessoais ativo em produção;
 - rate limiting de 5 solicitações em 10 segundos por origem configurado no Worker;
-- política de retenção de cinco anos formalizada para futuras solicitações do formulário;
+- política de retenção de cinco anos aplicada às solicitações do formulário;
 - `.gitignore` gerado para evitar o versionamento normal de arquivos locais de ambiente;
 - regras de desenvolvimento em `AGENTS.md`;
-- preview estático na Cloudflare Workers sem dados reais;
-- produção estática no domínio oficial, sem banco ou coleta de dados;
+- preview na Cloudflare Workers sem bindings de banco, e-mail, rate limiter ou segredo Turnstile;
+- produção no domínio oficial com banco, proteção antiabuso e notificação por e-mail;
 - HTTPS, proteção contra framing, `nosniff`, política de referência e política de permissões;
 - Content Security Policy compatível com a exportação estática do Next.js;
 - HSTS restrito aos hosts oficiais, sem incluir subdomínios ainda não auditados;
@@ -61,11 +61,11 @@ Já existem no repositório:
 
 Ainda não estão configurados ou homologados:
 
-- widget e segredo Turnstile separados para preview e produção;
-- formulário público em preview e produção;
-- provedor de notificação;
-- analytics;
-- monitoramento e alertas de produção.
+- teste operacional de restauração de backup;
+- rotina automatizada de descarte ao fim da retenção;
+- nova tentativa automática da notificação por e-mail;
+- analytics de navegador, que permanece deliberadamente desativado;
+- MFA e canal específico para incidentes e vulnerabilidades.
 
 ## Princípios obrigatórios
 
@@ -80,7 +80,7 @@ Ainda não estão configurados ou homologados:
 
 ## Dados pessoais
 
-O contato inicial poderá coletar somente:
+O formulário de cotação coleta somente:
 
 - nome;
 - e-mail;
@@ -99,11 +99,11 @@ O site não deverá solicitar no V1:
 - dados de dependentes;
 - informações completas de apólices.
 
-O campo de mensagem deverá orientar o visitante a não enviar dados sensíveis. A política de retenção dos leads precisa ser definida antes da ativação de qualquer formulário público.
+O campo de mensagem orienta o visitante a não enviar dados sensíveis. Cada lead recebe `retention_expires_at` calculado no servidor para cinco anos após o recebimento, sujeito às exceções legais documentadas.
 
 ## Formulários públicos
 
-O fluxo planejado terá as seguintes camadas:
+O fluxo ativo em produção possui as seguintes camadas:
 
 ```text
 requisição
@@ -125,22 +125,22 @@ Regras:
 - não revelar qual camada de proteção rejeitou uma requisição;
 - definir timeouts para serviços externos.
 
-Os limites numéricos serão estabelecidos com base no ambiente real e testados antes da ativação dos formulários.
+O Worker inicia com o limite de 5 solicitações em 10 segundos por origem. O valor deverá ser revisado com tráfego real, sem tratar o contador como mecanismo de auditoria.
 
 ## Banco de dados
 
 - o navegador nunca terá credencial administrativa do PostgreSQL;
 - gravações de leads passarão pelo backend;
 - o usuário do banco terá apenas as permissões necessárias;
-- ambientes não compartilharão credenciais;
+- o preview não receberá credenciais nem bindings de banco;
 - migrations serão versionadas e revisadas;
-- backups e restauração serão validados antes da conexão do banco à aplicação;
+- a restauração de backup deverá ser validada e registrada como pendência até haver evidência;
 - consultas deverão ser feitas por APIs seguras do ORM, sem concatenação manual de entrada externa;
 - dados reais não serão copiados para testes locais ou previews.
 
-As migrations foram aplicadas ao serviço Aiven de teste. O papel de conexão foi verificado com
+As migrations foram aplicadas ao serviço Aiven usado pela produção. O papel de conexão foi verificado com
 `INSERT ... RETURNING id` e sem permissão para ler os demais campos, alterar ou excluir registros. A
-ativação pública permanece condicionada à homologação do fluxo completo e da restauração de backup.
+restauração de backup continua pendente de validação operacional e não deve ser declarada como testada.
 
 ## Segredos e variáveis de ambiente
 
@@ -149,7 +149,7 @@ Segredos incluem senhas, tokens, chaves privadas, URLs de banco com credenciais 
 Regras:
 
 - armazenar segredos locais somente em arquivos ignorados pelo Git;
-- armazenar segredos de preview e produção na plataforma correspondente;
+- armazenar o segredo de produção na plataforma correspondente e não fornecer segredo ao preview;
 - validar variáveis obrigatórias no início da aplicação;
 - nunca prefixar segredo com `NEXT_PUBLIC_`;
 - não inserir valores reais em exemplos ou fixtures;
@@ -260,11 +260,11 @@ Não se deve apagar evidências ou publicar detalhes do incidente sem coordenaç
 
 ## Comunicação de vulnerabilidades
 
-O canal público de segurança ainda não foi definido e permanece pendente após a publicação estática inicial. Antes de ativar coleta de dados, deverá existir um endereço corporativo apropriado e um procedimento interno para receber, classificar e responder relatos.
+O canal público específico de segurança ainda não foi definido. Até sua criação, o canal geral publicado pode receber o primeiro contato, sem que o relato inclua credenciais, dados pessoais de terceiros ou detalhes exploráveis.
 
 Dados de vulnerabilidade não devem ser enviados para formulários comerciais comuns quando o canal oficial estiver disponível.
 
-## Checklist mínimo antes de formulários e coleta de dados
+## Checklist operacional do formulário e da coleta
 
 - [x] schemas de entrada e testes de casos inválidos;
 - [x] honeypot verificado na camada local de validação;
@@ -273,7 +273,7 @@ Dados de vulnerabilidade não devem ser enviados para formulários comerciais co
 - [x] permissões mínimas do banco verificadas;
 - [x] política de retenção de cinco anos aprovada;
 - [ ] backups e restauração testados;
-- [ ] secrets separados por ambiente;
+- [x] produção com segredo próprio e preview sem segredo ou integração de dados;
 - [x] headers HTTP avaliados no domínio final;
 - [x] logs e respostas revisados contra exposição de dados pessoais;
 - [x] previews fora dos buscadores;
