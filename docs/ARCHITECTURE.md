@@ -170,6 +170,11 @@ receber solicitação
 
 A indisponibilidade do serviço de e-mail não apaga um lead já registrado. A fila transporta somente o UUID da cotação, tenta novamente com espera progressiva e encaminha falhas esgotadas para uma fila de mensagens mortas. A entrega é pelo menos uma vez; por isso, uma notificação duplicada é possível e pode ser reconhecida pelo mesmo UUID.
 
+O monitor operacional da fila de mensagens mortas consulta apenas `Queue.metrics()` a cada seis
+horas. Ele não registra consumidor na DLQ, não lê nem remove mensagens e envia e-mail somente quando
+o backlog é maior que zero. O alerta contém apenas contagem, tamanho total e horário da mensagem mais
+antiga. Essa configuração permanece desativada e sem bindings no preview.
+
 ## Dados e privacidade
 
 O formulário público não solicitará CPF, RG, CNH, dados bancários, dados de cartão, renda, documentos, informações médicas ou dados completos de apólices.

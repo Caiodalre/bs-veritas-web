@@ -18,12 +18,13 @@
   },
   "vars": {
     "QUOTE_EXPECTED_HOSTNAME": "bsveritas.com.br",
+    "QUOTE_DLQ_MONITOR_ENABLED": "true",
     "QUOTE_NOTIFICATION_ENABLED": "true",
     "QUOTE_RETENTION_CLEANUP_ENABLED": "true",
     "QUOTE_SUBMISSION_ENABLED": "true",
   },
   "triggers": {
-    "crons": ["17 6 * * *"],
+    "crons": ["17 6 * * *", "47 */6 * * *"],
   },
   "secrets": {
     "required": ["TURNSTILE_SECRET_KEY"],
@@ -53,6 +54,10 @@
       {
         "binding": "QUOTE_NOTIFICATION_QUEUE",
         "queue": "bs-veritas-quote-notifications",
+      },
+      {
+        "binding": "QUOTE_NOTIFICATION_DLQ",
+        "queue": "bs-veritas-quote-notifications-dlq",
       },
     ],
     "consumers": [
@@ -86,6 +91,7 @@
       },
       "vars": {
         "QUOTE_EXPECTED_HOSTNAME": "quote-preview-bs-veritas-web-preview.caio-dalre.workers.dev",
+        "QUOTE_DLQ_MONITOR_ENABLED": "false",
         "QUOTE_NOTIFICATION_ENABLED": "false",
         "QUOTE_RETENTION_CLEANUP_ENABLED": "false",
         "QUOTE_SUBMISSION_ENABLED": "false",

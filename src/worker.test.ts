@@ -1,7 +1,7 @@
 /** @vitest-environment node */
 
 import { describe, expect, it, vi } from "vitest";
-import { createRscAssetRequest, handleWorkerRequest } from "../worker/index";
+import { createRscAssetRequest, handleScheduledWorker, handleWorkerRequest } from "../worker/index";
 import {
   handleQuoteNotificationBatch,
   type QuoteNotificationQueueMessage,
@@ -108,6 +108,7 @@ function createWorkerEnv(
   return {
     ASSETS: assets,
     HYPERDRIVE: createHyperdriveBinding(),
+    QUOTE_DLQ_MONITOR_ENABLED: "false",
     QUOTE_NOTIFICATION_EMAIL: emailBinding,
     QUOTE_NOTIFICATION_ENABLED: "false",
     QUOTE_NOTIFICATION_QUEUE: notificationQueue,
@@ -132,6 +133,14 @@ function createQueueMessage(body: unknown, attempts = 1) {
   } satisfies Message<unknown>;
 
   return { ack, message, retry };
+}
+
+function createScheduledController(cron: string): ScheduledController {
+  return {
+    cron,
+    noRetry: vi.fn(),
+    scheduledTime: Date.parse("2026-09-20T06:17:00.000Z"),
+  };
 }
 
 function createQueueBatch(messages: readonly Message<unknown>[]): MessageBatch<unknown> {
@@ -271,6 +280,7 @@ describe("quote worker", () => {
     const env: Env = {
       ASSETS: assets,
       QUOTE_EXPECTED_HOSTNAME: "bsveritas.com.br",
+      QUOTE_DLQ_MONITOR_ENABLED: "false",
       QUOTE_NOTIFICATION_ENABLED: "false",
       QUOTE_RETENTION_CLEANUP_ENABLED: "false",
       QUOTE_SUBMISSION_ENABLED: "true",
@@ -626,5 +636,51 @@ describe("quote worker", () => {
     expect(loggedValue).toBe(JSON.stringify({ event: "quote_request_failed", errorType: "Error" }));
     expect(loggedValue).not.toContain(validSubmission.email);
     expect(loggedValue).not.toContain("Sensitive database detail");
+  });
+});
+
+describe("scheduled worker routing", () => {
+  it("executa somente o monitor da DLQ no cron de seis horas", async () => {
+    const env = createWorkerEnv();
+    const handleDlqMonitor = vi.fn(async () => undefined);
+    const handleRetentionCleanup = vi.fn(async () => undefined);
+
+    await handleScheduledWorker(createScheduledController("47 */6 * * *"), env, {
+      handleDlqMonitor,
+      handleRetentionCleanup,
+    });
+
+    expect(handleDlqMonitor).toHaveBeenCalledOnce();
+    expect(handleDlqMonitor).toHaveBeenCalledWith(env);
+    expect(handleRetentionCleanup).not.toHaveBeenCalled();
+  });
+
+  it("executa somente a limpeza de retenção no cron diário", async () => {
+    const controller = createScheduledController("17 6 * * *");
+    const env = createWorkerEnv();
+    const handleDlqMonitor = vi.fn(async () => undefined);
+    const handleRetentionCleanup = vi.fn(async () => undefined);
+
+    await handleScheduledWorker(controller, env, {
+      handleDlqMonitor,
+      handleRetentionCleanup,
+    });
+
+    expect(handleRetentionCleanup).toHaveBeenCalledOnce();
+    expect(handleRetentionCleanup).toHaveBeenCalledWith(controller, env);
+    expect(handleDlqMonitor).not.toHaveBeenCalled();
+  });
+
+  it("ignora cron desconhecido", async () => {
+    const handleDlqMonitor = vi.fn(async () => undefined);
+    const handleRetentionCleanup = vi.fn(async () => undefined);
+
+    await handleScheduledWorker(createScheduledController("0 0 * * *"), createWorkerEnv(), {
+      handleDlqMonitor,
+      handleRetentionCleanup,
+    });
+
+    expect(handleDlqMonitor).not.toHaveBeenCalled();
+    expect(handleRetentionCleanup).not.toHaveBeenCalled();
   });
 });

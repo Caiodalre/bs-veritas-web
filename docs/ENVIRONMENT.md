@@ -212,7 +212,8 @@ string de conexão e a senha não são enviadas ao navegador nem versionadas.
 Regras operacionais:
 
 - somente a produção possui o binding Hyperdrive;
-- somente a produção habilita o Cron Trigger de retenção; o preview declara `crons: []`;
+- somente a produção habilita os Cron Triggers de retenção e monitoramento da DLQ; o preview declara
+  `crons: []`;
 - o navegador não receberá a string de conexão;
 - o preview não acessará nem gravará dados;
 - migrations serão geradas, revisadas e testadas antes da aplicação;
@@ -225,6 +226,7 @@ Regras operacionais:
 | --------------------- | ------------------------------------------- | ---------------------------------------------------------- |
 | Cloudflare Workers    | site, endpoint e assets                     | produção ativa; preview isolado                            |
 | Cloudflare Cron       | descarte diário de cotações vencidas        | ativo em produção às 06:17 UTC; primeira execução pendente |
+| Cloudflare Cron       | alerta de backlog da DLQ a cada seis horas  | validado localmente; publicação pendente                   |
 | Cloudflare Hyperdrive | conexão protegida com PostgreSQL            | ativo somente em produção; cache desativado                |
 | Cloudflare Turnstile  | verificação antiabuso                       | ativo em produção e validado no servidor                   |
 | PostgreSQL/Aiven      | persistência de leads                       | migrations, menor privilégio e restauração validados       |
