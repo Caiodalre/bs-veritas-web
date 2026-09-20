@@ -19,6 +19,10 @@ requisição pelo navegador não é seguro porque poderia criar um segundo lead.
 - limitar a oito as novas tentativas e encaminhar mensagens esgotadas para uma fila de mensagens
   mortas;
 - manter os bindings da fila e do e-mail somente em produção;
+- consultar somente as métricas da fila de mensagens mortas a cada seis horas, sem consumir ou
+  remover mensagens, e enviar um alerta técnico quando o backlog for maior que zero;
+- incluir no alerta apenas contagem, tamanho total e horário da mensagem mais antiga, sem UUID,
+  corpo da mensagem ou dado pessoal;
 - responder sucesso ao navegador quando o lead já foi gravado, mesmo se o enfileiramento falhar,
   evitando que uma nova tentativa do usuário duplique o lead;
 - registrar somente eventos técnicos e tipos de erro, sem UUID ou dados pessoais nos logs.
@@ -50,7 +54,11 @@ requisição pelo navegador não é seguro porque poderia criar um segundo lead.
 - fila principal e fila de mensagens mortas com backlog em tempo real de 0 mensagens e 0 bytes;
 - nenhuma pausa de entrega indicada pela API;
 - fila de mensagens mortas sem consumidor, com retenção de 24 horas; alerta ou inspeção operacional
-  dentro desse período permanece pendente.
+  dentro desse período permanece pendente em produção;
+- monitor da DLQ implementado localmente para o cron `47 */6 * * *`, com e-mail somente quando o
+  backlog é maior que zero e logs limitados a métricas técnicas;
+- testes, tipos, lint, formatação, build e dry-runs de produção e preview aprovados; publicação e
+  primeira execução real do alerta permanecem pendentes.
 
 ## Referências
 

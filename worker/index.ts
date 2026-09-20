@@ -3,6 +3,7 @@ import {
   handleQuoteNotificationBatch,
   type QuoteNotificationQueueMessage,
 } from "./quote-notification";
+import { handleQuoteNotificationDlqMonitor } from "./quote-notification-dlq-monitor";
 import { handleQuoteRequest, type QuoteEndpointDependencies } from "./quote-endpoint";
 import { handleQuoteRetentionCleanup } from "./quote-retention";
 
@@ -11,6 +12,13 @@ const rscPagePayloadSuffix = ".__PAGE__.txt";
 const rscPagePayloadMarker = "/__next.";
 const rateLimitRetryAfterSeconds = "10";
 const configurationRetryAfterSeconds = "60";
+const quoteNotificationDlqMonitorCron = "47 */6 * * *";
+const quoteRetentionCleanupCron = "17 6 * * *";
+
+type ScheduledWorkerDependencies = {
+  handleDlqMonitor?: (env: Env) => Promise<void>;
+  handleRetentionCleanup?: (controller: ScheduledController, env: Env) => Promise<void>;
+};
 
 type EnabledQuoteEnvironment = Env & {
   HYPERDRIVE: Hyperdrive;
@@ -136,6 +144,21 @@ export async function handleWorkerRequest(
   return handleQuoteRequest(request, env, quoteDependencies);
 }
 
+export async function handleScheduledWorker(
+  controller: ScheduledController,
+  env: Env,
+  dependencies: ScheduledWorkerDependencies = {},
+): Promise<void> {
+  if (controller.cron === quoteNotificationDlqMonitorCron) {
+    await (dependencies.handleDlqMonitor ?? handleQuoteNotificationDlqMonitor)(env);
+    return;
+  }
+
+  if (controller.cron === quoteRetentionCleanupCron) {
+    await (dependencies.handleRetentionCleanup ?? handleQuoteRetentionCleanup)(controller, env);
+  }
+}
+
 export const worker = {
   async fetch(request: Request, env: Env): Promise<Response> {
     return handleWorkerRequest(request, env);
@@ -144,7 +167,7 @@ export const worker = {
     await handleQuoteNotificationBatch(batch, env);
   },
   async scheduled(controller: ScheduledController, env: Env): Promise<void> {
-    await handleQuoteRetentionCleanup(controller, env);
+    await handleScheduledWorker(controller, env);
   },
 } satisfies ExportedHandler<Env>;
 

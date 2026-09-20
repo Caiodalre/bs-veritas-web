@@ -1,5 +1,5 @@
-const notificationRecipient = "bsveritascorretora@gmail.com";
-const notificationSender = {
+export const notificationRecipient = "bsveritascorretora@gmail.com";
+export const notificationSender = {
   email: "contato@bsveritas.com.br",
   name: "B&S Veritas",
 } satisfies EmailAddress;
