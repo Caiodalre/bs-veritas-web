@@ -217,7 +217,7 @@ Regras operacionais:
 - o preview não acessará nem gravará dados;
 - migrations serão geradas, revisadas e testadas antes da aplicação;
 - mudanças destrutivas exigirão plano próprio de backup e reversão;
-- a restauração de backup continua pendente de validação operacional.
+- o backup lógico e a restauração foram validados operacionalmente em PostgreSQL 18 local isolado.
 
 ## Serviços externos
 
@@ -227,7 +227,7 @@ Regras operacionais:
 | Cloudflare Cron       | descarte diário de cotações vencidas        | ativo em produção às 06:17 UTC; primeira execução pendente |
 | Cloudflare Hyperdrive | conexão protegida com PostgreSQL            | ativo somente em produção; cache desativado                |
 | Cloudflare Turnstile  | verificação antiabuso                       | ativo em produção e validado no servidor                   |
-| PostgreSQL/Aiven      | persistência de leads                       | migrations aplicadas e menor privilégio verificado         |
+| PostgreSQL/Aiven      | persistência de leads                       | migrations, menor privilégio e restauração validados       |
 | Cloudflare Queues     | tentativa assíncrona da notificação         | somente produção; mensagem contém apenas UUID              |
 | Cloudflare Email      | notificação comercial após persistência     | consumido pela fila em produção                            |
 | Provedor de e-mail    | roteamento e autenticação do e-mail público | MX, SPF, DKIM e DMARC ativos                               |

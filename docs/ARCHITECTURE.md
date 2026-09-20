@@ -255,7 +255,6 @@ Não haverá edição manual de arquivos em produção.
 
 ## Pendências atuais
 
-- validar operacionalmente a restauração dos backups da Aiven;
 - acompanhar a primeira execução agendada e registrar evidência operacional da rotina diária de descarte;
 - homologar o consumo da fila e o tratamento da fila de mensagens mortas em produção;
 - concluir MFA e responsáveis administrativos nas plataformas;
