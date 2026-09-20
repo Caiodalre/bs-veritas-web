@@ -29,8 +29,8 @@ requisição pelo navegador não é seguro porque poderia criar um segundo lead.
 - a indisponibilidade da fila não remove um lead já persistido;
 - a entrega da fila é pelo menos uma vez, portanto uma notificação duplicada pode ocorrer;
 - a equipe consegue reconhecer duplicatas pelo mesmo UUID presente no e-mail;
-- mensagens na fila gratuita possuem retenção limitada e exigem acompanhamento da fila de mensagens
-  mortas;
+- a configuração publicada retém mensagens não consumidas por 24 horas; a fila de mensagens mortas
+  exige acompanhamento dentro desse período;
 - uma futura garantia forte de idempotência exigirá estado próprio de notificação no banco e uma
   migration separada.
 
@@ -41,6 +41,16 @@ requisição pelo navegador não é seguro porque poderia criar um segundo lead.
 - dry-run de produção listando fila, e-mail e Hyperdrive;
 - dry-run de preview sem fila, e-mail, Hyperdrive, rate limiter ou segredo Turnstile;
 - criação das filas principal e de mensagens mortas antes do deploy de produção.
+
+## Evidência operacional — 2026-09-20
+
+- fila principal vinculada ao Worker `bs-veritas-web` como produtor e consumidor;
+- consumidor publicado com lote 5, espera máxima de 5 segundos, oito novas tentativas, atraso de
+  60 segundos e encaminhamento para `bs-veritas-quote-notifications-dlq`;
+- fila principal e fila de mensagens mortas com backlog em tempo real de 0 mensagens e 0 bytes;
+- nenhuma pausa de entrega indicada pela API;
+- fila de mensagens mortas sem consumidor, com retenção de 24 horas; alerta ou inspeção operacional
+  dentro desse período permanece pendente.
 
 ## Referências
 
