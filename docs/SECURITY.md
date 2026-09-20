@@ -60,11 +60,11 @@ Já existem no repositório:
 - cabeçalho `X-Robots-Tag: noindex` no endereço `workers.dev`;
 - fila de notificação restrita ao UUID da cotação, sem dados pessoais na mensagem;
 - novas tentativas automáticas de e-mail com espera progressiva e fila de mensagens mortas;
-- migration e Cron Trigger de descarte ao fim da retenção publicados somente em produção.
+- migration e Cron Trigger de descarte ao fim da retenção publicados somente em produção;
+- backup lógico do PostgreSQL/Aiven restaurado e validado em PostgreSQL 18 local isolado.
 
 Ainda não estão configurados ou homologados:
 
-- teste operacional de restauração de backup;
 - acompanhamento e registro da primeira execução agendada do descarte ao fim da retenção;
 - analytics de navegador, que permanece deliberadamente desativado;
 - MFA e canal específico para incidentes e vulnerabilidades.
@@ -136,13 +136,15 @@ O Worker inicia com o limite de 5 solicitações em 10 segundos por origem. O va
 - o usuário do banco terá apenas as permissões necessárias;
 - o preview não receberá credenciais nem bindings de banco;
 - migrations serão versionadas e revisadas;
-- a restauração de backup deverá ser validada e registrada como pendência até haver evidência;
+- restaurações de backup deverão ser validadas operacionalmente e registradas com evidência;
 - consultas deverão ser feitas por APIs seguras do ORM, sem concatenação manual de entrada externa;
 - dados reais não serão copiados para testes locais ou previews.
 
 As migrations foram aplicadas ao serviço Aiven usado pela produção. O papel de conexão foi verificado com
-`INSERT ... RETURNING id` e sem permissão para ler os demais campos, alterar ou excluir registros. A
-restauração de backup continua pendente de validação operacional e não deve ser declarada como testada.
+`INSERT ... RETURNING id` e sem permissão para ler os demais campos, alterar ou excluir registros. Em
+2026-09-20, um backup lógico criado com `pg_dump` 18 foi restaurado em PostgreSQL 18 local isolado. A
+validação confirmou a tabela de cotações, o histórico de migrations, as restrições e a função de retenção,
+sem imprimir dados pessoais; o banco e o arquivo temporários foram removidos ao final.
 
 ## Segredos e variáveis de ambiente
 
@@ -274,7 +276,7 @@ Dados de vulnerabilidade não devem ser enviados para formulários comerciais co
 - [x] Turnstile integrado no cliente e validado no servidor;
 - [x] permissões mínimas do banco verificadas;
 - [x] política de retenção de cinco anos aprovada;
-- [ ] backups e restauração testados;
+- [x] backup lógico e restauração testados operacionalmente;
 - [x] produção com segredo próprio e preview sem segredo ou integração de dados;
 - [x] headers HTTP avaliados no domínio final;
 - [x] logs e respostas revisados contra exposição de dados pessoais;

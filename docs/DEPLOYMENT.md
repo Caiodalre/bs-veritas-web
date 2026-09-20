@@ -209,7 +209,7 @@ A configuração atual:
 - mantém a cadeia DNSSEC completa, com o DS publicado no Registro.br;
 - mantém certificados, CSP e HSTS validados no domínio final.
 
-Permanece pendente a validação operacional da restauração de backup. A rotina automatizada de descarte está publicada; a primeira execução agendada ainda precisa ser acompanhada e registrada.
+A restauração de backup foi validada operacionalmente em 2026-09-20. A rotina automatizada de descarte está publicada; a primeira execução agendada ainda precisa ser acompanhada e registrada.
 
 Alterações DNS serão feitas uma por vez, com registro do valor anterior e teste após cada mudança.
 
@@ -459,7 +459,7 @@ Pendências conhecidas:
 - interface do preview desativa o formulário e a API retorna `503 quote_submission_disabled`;
 - CI, 122 testes unitários/componentes, 26 testes de navegador, build e monitor de produção aprovados;
 - analytics de navegador permaneceu desativado e bloqueado por `Cache-Control: no-transform`;
-- restauração de backup e rotina de descarte por retenção permanecem pendentes.
+- a restauração de backup ainda não havia sido validada nessa entrega; a rotina de descarte por retenção permanecia pendente.
 
 ### Automação do descarte por retenção — 2026-09-19
 
@@ -469,7 +469,19 @@ Pendências conhecidas:
 - Cron Trigger publicado somente em produção, com execução diária às `06:17 UTC` (`03:17 BRT`);
 - versão Cloudflare `efde43ba-e69b-45b6-b991-d3b43cd5c7ad` recebendo 100% do tráfego;
 - build, TypeScript, exportação estática e monitor público de produção aprovados;
-- primeira execução agendada e restauração de backup ainda precisam de evidência operacional.
+- primeira execução agendada ainda precisa de evidência operacional.
+
+### Validação de backup e restauração — 2026-09-20
+
+- cliente e servidor local PostgreSQL `18.6` instalados no Ubuntu/WSL pelo repositório oficial do PostgreSQL;
+- conexão administrativa com o PostgreSQL/Aiven validada com TLS obrigatório;
+- backup lógico criado com `pg_dump` 18 no formato custom, sem preservar proprietário ou privilégios;
+- restauração concluída em banco PostgreSQL 18 local isolado;
+- tabela de cotações, histórico de quatro migrations, restrições e função de retenção confirmados sem
+  exibir dados pessoais;
+- senha removida da área de transferência e do ambiente imediatamente após o uso;
+- banco restaurado e arquivo de backup temporários removidos ao final da validação;
+- banco remoto de produção permaneceu inalterado durante todo o teste.
 
 ## Estado atual da implantação
 
@@ -484,7 +496,7 @@ Pendências conhecidas:
 | Vercel                | excluída do plano gratuito                            |
 | domínio no projeto    | apex ativo e `www` com redirecionamento `301`         |
 | monitoramento         | agendado no GitHub Actions a cada seis horas          |
-| PostgreSQL remoto     | Aiven conectado por Hyperdrive em produção            |
+| PostgreSQL remoto     | Aiven conectado; backup e restauração validados       |
 | notificações          | e-mail comercial ativo após a persistência            |
 | retenção              | descarte diário publicado; primeira execução pendente |
 | versão Cloudflare     | `efde43ba-e69b-45b6-b991-d3b43cd5c7ad`                |

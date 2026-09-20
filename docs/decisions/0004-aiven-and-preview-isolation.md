@@ -33,8 +33,9 @@ Uma prévia pública não deve conseguir gravar dados reais nem depender de cred
 - ambientes desconhecidos não habilitam coleta no navegador;
 - a ausência de bindings obrigatórios em produção causa falha fechada com resposta genérica;
 - mudanças de schema continuam exigindo migration revisada e ordem explícita de implantação;
-- a rotina de descarte após a retenção foi publicada somente em produção; a primeira execução agendada e
-  a restauração de backup continuam como pendências operacionais.
+- a rotina de descarte após a retenção foi publicada somente em produção; a primeira execução agendada
+  continua como pendência operacional;
+- o backup lógico e a restauração foram validados em PostgreSQL 18 local isolado em 2026-09-20.
 
 ## Evidências
 
@@ -42,4 +43,5 @@ Uma prévia pública não deve conseguir gravar dados reais nem depender de cred
 - o dry-run e o upload do preview listaram somente assets e variáveis públicas de controle;
 - `POST /api/quote` no preview retorna `503 quote_submission_disabled`;
 - testes unitários verificam que o bloqueio ocorre antes do rate limiter, Turnstile e repositório;
+- a restauração confirmou schema, migrations, restrições e função de retenção sem exibir dados pessoais;
 - a CI e os testes de navegador foram aprovados antes da publicação.
