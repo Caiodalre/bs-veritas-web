@@ -483,23 +483,34 @@ Pendências conhecidas:
 - banco restaurado e arquivo de backup temporários removidos ao final da validação;
 - banco remoto de produção permaneceu inalterado durante todo o teste.
 
+### Auditoria das filas de notificação — 2026-09-20
+
+- fila `bs-veritas-quote-notifications` confirmada com o Worker `bs-veritas-web` como único produtor
+  e único consumidor;
+- consumidor remoto conferido com lote 5, espera máxima de 5 segundos, oito novas tentativas,
+  atraso de 60 segundos e DLQ `bs-veritas-quote-notifications-dlq`;
+- fila principal e DLQ com backlog em tempo real de 0 mensagens e 0 bytes;
+- nenhuma pausa de entrega indicada pela API da Cloudflare;
+- ambas as filas retêm mensagens não consumidas por 24 horas;
+- DLQ sem consumidor; alerta ou inspeção operacional dentro da janela de 24 horas permanece pendente.
+
 ## Estado atual da implantação
 
-| Componente            | Estado                                                |
-| --------------------- | ----------------------------------------------------- |
-| build local           | configurado e validado                                |
-| testes locais         | configurados e validados                              |
-| repositório Git local | configurado                                           |
-| GitHub remoto         | privado e configurado                                 |
-| CI                    | ativo e validado no GitHub                            |
-| Cloudflare Workers    | preview isolado e produção com API ativos             |
-| Vercel                | excluída do plano gratuito                            |
-| domínio no projeto    | apex ativo e `www` com redirecionamento `301`         |
-| monitoramento         | agendado no GitHub Actions a cada seis horas          |
-| PostgreSQL remoto     | Aiven conectado; backup e restauração validados       |
-| notificações          | e-mail comercial ativo após a persistência            |
-| retenção              | descarte diário publicado; primeira execução pendente |
-| versão Cloudflare     | `efde43ba-e69b-45b6-b991-d3b43cd5c7ad`                |
-| produção              | ativa no commit `15e546e`                             |
+| Componente            | Estado                                                      |
+| --------------------- | ----------------------------------------------------------- |
+| build local           | configurado e validado                                      |
+| testes locais         | configurados e validados                                    |
+| repositório Git local | configurado                                                 |
+| GitHub remoto         | privado e configurado                                       |
+| CI                    | ativo e validado no GitHub                                  |
+| Cloudflare Workers    | preview isolado e produção com API ativos                   |
+| Vercel                | excluída do plano gratuito                                  |
+| domínio no projeto    | apex ativo e `www` com redirecionamento `301`               |
+| monitoramento         | agendado no GitHub Actions a cada seis horas                |
+| PostgreSQL remoto     | Aiven conectado; backup e restauração validados             |
+| notificações          | fila e e-mail ativos; backlog vazio; alerta da DLQ pendente |
+| retenção              | descarte diário publicado; primeira execução pendente       |
+| versão Cloudflare     | `efde43ba-e69b-45b6-b991-d3b43cd5c7ad`                      |
+| produção              | ativa no commit `15e546e`                                   |
 
 Qualquer mudança desse estado deverá ser feita como uma etapa separada, aprovada e validada.

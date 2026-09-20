@@ -286,6 +286,7 @@ Dados de vulnerabilidade não devem ser enviados para formulários comerciais co
 - [x] dependências e scripts de instalação revisados;
 - [x] testes, lint e build aprovados;
 - [x] estratégia de rollback documentada;
+- [ ] alerta ou inspeção da DLQ dentro da retenção de 24 horas;
 - [ ] canal de incidente e vulnerabilidade definido.
 
 Nenhum item deve ser marcado como concluído sem evidência verificável.
