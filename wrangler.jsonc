@@ -17,6 +17,7 @@
     "watch_dir": ["src", "public", "next.config.ts", "worker"],
   },
   "vars": {
+    "CAMPAIGN_ADMIN_ENABLED": "false",
     "QUOTE_EXPECTED_HOSTNAME": "bsveritas.com.br",
     "QUOTE_DLQ_MONITOR_ENABLED": "true",
     "QUOTE_NOTIFICATION_ENABLED": "true",
@@ -27,7 +28,7 @@
     "crons": ["17 6 * * *", "47 */6 * * *"],
   },
   "secrets": {
-    "required": ["TURNSTILE_SECRET_KEY"],
+    "required": ["CAMPAIGN_ACCESS_AUD", "CAMPAIGN_ACCESS_TEAM_DOMAIN", "TURNSTILE_SECRET_KEY"],
   },
   "assets": {
     "directory": "./out",
@@ -40,6 +41,12 @@
     {
       "binding": "HYPERDRIVE",
       "id": "9328daf3a8434323b2adaa889cfc0f7f",
+    },
+  ],
+  "r2_buckets": [
+    {
+      "binding": "CAMPAIGN_ASSETS",
+      "bucket_name": "bs-veritas-campaigns",
     },
   ],
   "send_email": [
@@ -90,6 +97,7 @@
         "crons": [],
       },
       "vars": {
+        "CAMPAIGN_ADMIN_ENABLED": "false",
         "QUOTE_EXPECTED_HOSTNAME": "quote-preview-bs-veritas-web-preview.caio-dalre.workers.dev",
         "QUOTE_DLQ_MONITOR_ENABLED": "false",
         "QUOTE_NOTIFICATION_ENABLED": "false",

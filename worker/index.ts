@@ -1,4 +1,5 @@
 import { jsonApiResponse } from "./api-response";
+import { handleCampaignRequest, type CampaignEndpointDependencies } from "./campaign-endpoint";
 import {
   handleQuoteNotificationBatch,
   type QuoteNotificationQueueMessage,
@@ -69,8 +70,17 @@ export async function handleWorkerRequest(
   request: Request,
   env: Env,
   quoteDependencies?: QuoteEndpointDependencies,
+  campaignDependencies?: CampaignEndpointDependencies,
 ): Promise<Response> {
   const { pathname } = new URL(request.url);
+
+  if (
+    pathname === "/api/campaigns" ||
+    pathname.startsWith("/api/campaign-images/") ||
+    pathname.startsWith("/api/admin/campaign")
+  ) {
+    return handleCampaignRequest(request, env, campaignDependencies);
+  }
 
   if (pathname !== quoteEndpoint) {
     return env.ASSETS.fetch(createRscAssetRequest(request));

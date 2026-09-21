@@ -5,6 +5,7 @@ import { Container } from "@/components/layout/container";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { buttonStyles } from "@/components/ui/button";
+import { CampaignFeed } from "@/features/campaigns/components/campaign-feed";
 import { insuranceCatalog } from "@/features/insurance/catalog";
 import { InsuranceIcon } from "@/features/insurance/components/insurance-icon";
 import { partnerCatalog } from "@/features/partners/catalog";
@@ -185,6 +186,34 @@ export default function Home() {
                 );
               })}
             </div>
+          </Container>
+        </section>
+
+        <section
+          className="scroll-mt-24 border-y border-border bg-aqua-50 py-20 sm:py-24"
+          id="campanhas"
+        >
+          <Container>
+            <div className="mb-10 flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
+              <div className="max-w-3xl">
+                <p className="text-sm font-bold uppercase tracking-[0.18em] text-aqua-700">
+                  Avisos e campanhas
+                </p>
+                <h2 className="mt-4 font-serif text-3xl leading-tight font-bold tracking-[-0.025em] text-navy-950 sm:text-4xl">
+                  Novidades das seguradoras parceiras
+                </h2>
+                <p className="mt-5 text-base leading-8 text-slate-600">
+                  Acompanhe ações vigentes, benefícios e informações importantes. Condições,
+                  disponibilidade e elegibilidade são sempre apresentadas conforme a comunicação
+                  oficial de cada seguradora.
+                </p>
+              </div>
+              <p className="max-w-sm text-sm leading-6 text-slate-500">
+                Deslize no celular ou use as setas do teclado para navegar pelas publicações.
+              </p>
+            </div>
+
+            <CampaignFeed />
           </Container>
         </section>
 
