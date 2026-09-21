@@ -1,6 +1,4 @@
-import type { partnerCatalog } from "@/features/partners/catalog";
-
-export type PartnerSlug = (typeof partnerCatalog)[number]["slug"];
+import type { PartnerSlug } from "@/features/campaigns/model";
 
 export type PartnerCampaign = {
   id: string;
@@ -13,7 +11,3 @@ export type PartnerCampaign = {
   href: string;
   conditions?: string;
 };
-
-// Campanhas só devem ser adicionadas após o recebimento da peça, do texto,
-// do destino e das condições oficiais fornecidas pela seguradora.
-export const campaignCatalog: readonly PartnerCampaign[] = [];

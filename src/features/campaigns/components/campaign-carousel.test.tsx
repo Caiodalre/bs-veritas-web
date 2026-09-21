@@ -51,6 +51,9 @@ describe("CampaignCarousel", () => {
     ).toBeInTheDocument();
     expect(screen.getAllByRole("group")).toHaveLength(2);
     expect(screen.getByText("Condições fictícias para o teste.")).toBeInTheDocument();
+    expect(screen.getByAltText("Imagem fictícia da primeira campanha")).toHaveClass(
+      "object-contain",
+    );
     expect(screen.getByRole("link", { name: "Consultar condições" })).toHaveAttribute(
       "target",
       "_blank",

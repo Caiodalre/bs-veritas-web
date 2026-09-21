@@ -5,8 +5,7 @@ import { Container } from "@/components/layout/container";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { buttonStyles } from "@/components/ui/button";
-import { campaignCatalog } from "@/features/campaigns/catalog";
-import { CampaignCarousel } from "@/features/campaigns/components/campaign-carousel";
+import { CampaignFeed } from "@/features/campaigns/components/campaign-feed";
 import { insuranceCatalog } from "@/features/insurance/catalog";
 import { InsuranceIcon } from "@/features/insurance/components/insurance-icon";
 import { partnerCatalog } from "@/features/partners/catalog";
@@ -214,7 +213,7 @@ export default function Home() {
               </p>
             </div>
 
-            <CampaignCarousel campaigns={campaignCatalog} />
+            <CampaignFeed />
           </Container>
         </section>
 

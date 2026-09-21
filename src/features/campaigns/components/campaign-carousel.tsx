@@ -11,9 +11,10 @@ import { cn } from "@/lib/cn";
 
 type CampaignCarouselProps = {
   campaigns: readonly PartnerCampaign[];
+  loadFailed?: boolean;
 };
 
-export function CampaignCarousel({ campaigns }: CampaignCarouselProps) {
+export function CampaignCarousel({ campaigns, loadFailed = false }: CampaignCarouselProps) {
   const carouselId = useId();
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -25,11 +26,14 @@ export function CampaignCarousel({ campaigns }: CampaignCarouselProps) {
           <Megaphone aria-hidden="true" size={23} />
         </span>
         <h3 className="mt-5 font-serif text-xl font-bold text-navy-950">
-          Nenhuma campanha publicada no momento
+          {loadFailed
+            ? "Não foi possível carregar as campanhas agora"
+            : "Nenhuma campanha publicada no momento"}
         </h3>
         <p className="mt-3 max-w-xl text-sm leading-7 text-slate-600">
-          Novos avisos e condições das seguradoras parceiras serão apresentados aqui somente após a
-          confirmação das informações oficiais.
+          {loadFailed
+            ? "Atualize a página em alguns instantes ou fale com a corretora pelos canais oficiais."
+            : "Novos avisos e condições das seguradoras parceiras serão apresentados aqui somente após a confirmação das informações oficiais."}
         </p>
         <Link
           className={buttonStyles({ className: "mt-6", variant: "outlineLight" })}
@@ -136,23 +140,11 @@ export function CampaignCarousel({ campaigns }: CampaignCarouselProps) {
             <article
               aria-label={`${index + 1} de ${campaigns.length}: ${campaign.title}`}
               aria-roledescription="slide"
-              className="group relative aspect-[4/5] w-[82vw] max-w-[22rem] flex-none snap-center overflow-hidden rounded-3xl bg-navy-950 text-white shadow-[0_18px_55px_rgba(7,24,39,0.16)] sm:w-[22rem] lg:w-[calc((100%-3rem)/3)] lg:max-w-none"
+              className="group flex w-[84vw] max-w-[24rem] flex-none snap-center flex-col overflow-hidden rounded-3xl border border-aqua-200 bg-white shadow-[0_18px_55px_rgba(7,24,39,0.12)] sm:w-[24rem] lg:w-[calc((100%-3rem)/3)] lg:max-w-none"
               key={campaign.id}
               role="group"
             >
-              <Image
-                alt={campaign.imageAlt}
-                className="object-cover transition duration-500 group-hover:scale-[1.025]"
-                fill
-                sizes="(max-width: 639px) 82vw, (max-width: 1023px) 352px, 30vw"
-                src={campaign.imageSrc}
-              />
-              <div
-                aria-hidden="true"
-                className="absolute inset-0 bg-gradient-to-t from-navy-950 via-navy-950/55 to-transparent"
-              />
-
-              <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-4 p-5">
+              <div className="flex min-h-16 items-center justify-between gap-4 border-b border-aqua-100 px-5 py-3">
                 <span className="rounded-full bg-aqua-300 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-navy-950">
                   Campanha
                 </span>
@@ -168,23 +160,36 @@ export function CampaignCarousel({ campaigns }: CampaignCarouselProps) {
                 </span>
               </div>
 
-              <div className="absolute inset-x-0 bottom-0 p-6">
-                <h3 className="font-serif text-2xl leading-tight font-bold text-balance">
+              <div className="relative aspect-[2/3] w-full bg-white">
+                <Image
+                  alt={campaign.imageAlt}
+                  className="object-contain"
+                  fill
+                  sizes="(max-width: 639px) 84vw, (max-width: 1023px) 384px, 30vw"
+                  src={campaign.imageSrc}
+                  unoptimized
+                />
+              </div>
+
+              <div className="flex flex-1 flex-col border-t border-aqua-100 p-6">
+                <h3 className="font-serif text-xl leading-tight font-bold text-navy-950 text-balance">
                   {campaign.title}
                 </h3>
-                <p className="mt-3 text-sm leading-6 text-slate-200">{campaign.summary}</p>
+                <p className="mt-3 text-sm leading-6 text-slate-600">{campaign.summary}</p>
                 {campaign.conditions ? (
-                  <p className="mt-3 text-xs leading-5 text-slate-300">{campaign.conditions}</p>
+                  <p className="mt-3 text-xs leading-5 text-slate-500">{campaign.conditions}</p>
                 ) : null}
-                <a
-                  className={buttonStyles({ className: "mt-5 w-full", size: "sm" })}
-                  href={campaign.href}
-                  rel={externalLink ? "noopener noreferrer" : undefined}
-                  target={externalLink ? "_blank" : undefined}
-                >
-                  {campaign.ctaLabel}
-                  <ChevronRight aria-hidden="true" size={17} />
-                </a>
+                <div className="mt-auto pt-5">
+                  <a
+                    className={buttonStyles({ className: "w-full", size: "sm" })}
+                    href={campaign.href}
+                    rel={externalLink ? "noopener noreferrer" : undefined}
+                    target={externalLink ? "_blank" : undefined}
+                  >
+                    {campaign.ctaLabel}
+                    <ChevronRight aria-hidden="true" size={17} />
+                  </a>
+                </div>
               </div>
             </article>
           );
