@@ -31,8 +31,24 @@ describe("CampaignFeed", () => {
     );
 
     render(<CampaignFeed />);
-    expect(screen.getByRole("status", { name: "Carregando campanhas" })).toBeInTheDocument();
     await waitFor(() => expect(screen.getByText("Campanha oficial carregada")).toBeInTheDocument());
+  });
+
+  it("oculta toda a seção quando não existem campanhas publicadas", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => Response.json({ campaigns: [] })),
+    );
+
+    render(<CampaignFeed />);
+
+    await waitFor(() => expect(fetch).toHaveBeenCalledOnce());
+    expect(
+      screen.queryByRole("heading", { name: "Novidades das seguradoras parceiras" }),
+    ).toBeNull();
+    expect(
+      screen.queryByRole("heading", { name: "Nenhuma campanha publicada no momento" }),
+    ).toBeNull();
   });
 
   it("informa falha sem exibir conteúdo inventado", async () => {

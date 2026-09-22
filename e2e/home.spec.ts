@@ -50,14 +50,7 @@ test("exibe a pagina inicial", async ({ page }) => {
 
   await expect(
     page.getByRole("heading", { name: "Novidades das seguradoras parceiras" }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("heading", { name: "Nenhuma campanha publicada no momento" }),
-  ).toBeVisible();
-  await expect(page.getByRole("link", { name: "Falar com a corretora" })).toHaveAttribute(
-    "href",
-    "/contato",
-  );
+  ).toHaveCount(0);
   await expect(
     page.getByRole("region", { name: "Campanhas das seguradoras parceiras" }),
   ).toHaveCount(0);
