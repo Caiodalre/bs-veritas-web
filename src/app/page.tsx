@@ -209,7 +209,7 @@ export default function Home() {
                 </p>
               </div>
               <p className="max-w-sm text-sm leading-6 text-slate-500">
-                Deslize no celular ou use as setas do teclado para navegar pelas publicações.
+                Confira as publicações e consulte as condições apresentadas em cada campanha.
               </p>
             </div>
 

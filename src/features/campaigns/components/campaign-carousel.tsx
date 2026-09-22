@@ -79,38 +79,40 @@ export function CampaignCarousel({ campaigns, loadFailed = false }: CampaignCaro
 
   return (
     <div>
-      <div className="mb-5 flex items-center justify-between gap-4">
-        <p aria-live="polite" className="text-sm font-semibold text-slate-600">
-          {activeIndex + 1} de {campaigns.length}
-        </p>
-        <div className="hidden gap-2 sm:flex">
-          <button
-            aria-controls={carouselId}
-            aria-label="Ver campanha anterior"
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-aqua-200 bg-white text-navy-950 transition hover:border-aqua-600 hover:bg-aqua-50 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-aqua-700 disabled:cursor-not-allowed disabled:opacity-40"
-            disabled={activeIndex === 0}
-            onClick={() => goToCampaign(activeIndex - 1)}
-            type="button"
-          >
-            <ChevronLeft aria-hidden="true" size={20} />
-          </button>
-          <button
-            aria-controls={carouselId}
-            aria-label="Ver próxima campanha"
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-aqua-200 bg-white text-navy-950 transition hover:border-aqua-600 hover:bg-aqua-50 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-aqua-700 disabled:cursor-not-allowed disabled:opacity-40"
-            disabled={activeIndex === campaigns.length - 1}
-            onClick={() => goToCampaign(activeIndex + 1)}
-            type="button"
-          >
-            <ChevronRight aria-hidden="true" size={20} />
-          </button>
+      {campaigns.length > 1 ? (
+        <div className="mb-5 flex items-center justify-between gap-4">
+          <p aria-live="polite" className="text-sm font-semibold text-slate-600">
+            {activeIndex + 1} de {campaigns.length}
+          </p>
+          <div className="hidden gap-2 sm:flex">
+            <button
+              aria-controls={carouselId}
+              aria-label="Ver campanha anterior"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-aqua-200 bg-white text-navy-950 transition hover:border-aqua-600 hover:bg-aqua-50 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-aqua-700 disabled:cursor-not-allowed disabled:opacity-40"
+              disabled={activeIndex === 0}
+              onClick={() => goToCampaign(activeIndex - 1)}
+              type="button"
+            >
+              <ChevronLeft aria-hidden="true" size={20} />
+            </button>
+            <button
+              aria-controls={carouselId}
+              aria-label="Ver próxima campanha"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-aqua-200 bg-white text-navy-950 transition hover:border-aqua-600 hover:bg-aqua-50 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-aqua-700 disabled:cursor-not-allowed disabled:opacity-40"
+              disabled={activeIndex === campaigns.length - 1}
+              onClick={() => goToCampaign(activeIndex + 1)}
+              type="button"
+            >
+              <ChevronRight aria-hidden="true" size={20} />
+            </button>
+          </div>
         </div>
-      </div>
+      ) : null}
 
       <div
         aria-label="Campanhas das seguradoras parceiras"
         aria-roledescription="carrossel"
-        className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-5 focus-visible:rounded-2xl focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-aqua-700 focus-visible:ring-offset-4 sm:gap-6"
+        className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-5 focus-visible:rounded-2xl focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-aqua-700 focus-visible:ring-offset-4 sm:gap-6 lg:gap-8"
         id={carouselId}
         onKeyDown={(event) => {
           if (event.key === "ArrowLeft") {
@@ -140,11 +142,11 @@ export function CampaignCarousel({ campaigns, loadFailed = false }: CampaignCaro
             <article
               aria-label={`${index + 1} de ${campaigns.length}: ${campaign.title}`}
               aria-roledescription="slide"
-              className="group flex w-[84vw] max-w-[24rem] flex-none snap-center flex-col overflow-hidden rounded-3xl border border-aqua-200 bg-white shadow-[0_18px_55px_rgba(7,24,39,0.12)] sm:w-[24rem] lg:w-[calc((100%-3rem)/3)] lg:max-w-none"
+              className="group flex w-[84vw] max-w-[24rem] flex-none snap-center flex-col overflow-hidden rounded-3xl border border-aqua-200 bg-white shadow-[0_18px_55px_rgba(7,24,39,0.12)] sm:w-[24rem] lg:grid lg:w-full lg:max-w-none lg:grid-cols-[minmax(20rem,24rem)_minmax(0,1fr)] lg:grid-rows-[auto_1fr]"
               key={campaign.id}
               role="group"
             >
-              <div className="flex min-h-16 items-center justify-between gap-4 border-b border-aqua-100 px-5 py-3">
+              <div className="flex min-h-16 items-center justify-between gap-4 border-b border-aqua-100 px-5 py-3 lg:col-span-2 lg:px-8">
                 <span className="rounded-full bg-aqua-300 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-navy-950">
                   Campanha
                 </span>
@@ -160,26 +162,30 @@ export function CampaignCarousel({ campaigns, loadFailed = false }: CampaignCaro
                 </span>
               </div>
 
-              <div className="relative aspect-[2/3] w-full bg-white">
+              <div className="relative aspect-[2/3] w-full bg-white lg:col-start-1 lg:row-start-2">
                 <Image
                   alt={campaign.imageAlt}
                   className="object-contain"
                   fill
-                  sizes="(max-width: 639px) 84vw, (max-width: 1023px) 384px, 30vw"
+                  sizes="(max-width: 639px) 84vw, 384px"
                   src={campaign.imageSrc}
                   unoptimized
                 />
               </div>
 
-              <div className="flex flex-1 flex-col border-t border-aqua-100 p-6">
-                <h3 className="font-serif text-xl leading-tight font-bold text-navy-950 text-balance">
+              <div className="flex flex-1 flex-col border-t border-aqua-100 p-6 lg:col-start-2 lg:row-start-2 lg:justify-center lg:border-t-0 lg:border-l lg:p-10 xl:p-14">
+                <h3 className="font-serif text-xl leading-tight font-bold text-navy-950 text-balance lg:max-w-2xl lg:text-3xl">
                   {campaign.title}
                 </h3>
-                <p className="mt-3 text-sm leading-6 text-slate-600">{campaign.summary}</p>
+                <p className="mt-3 text-sm leading-6 text-slate-600 lg:mt-5 lg:max-w-2xl lg:text-base lg:leading-8">
+                  {campaign.summary}
+                </p>
                 {campaign.conditions ? (
-                  <p className="mt-3 text-xs leading-5 text-slate-500">{campaign.conditions}</p>
+                  <p className="mt-3 text-xs leading-5 text-slate-500 lg:max-w-2xl lg:text-sm lg:leading-6">
+                    {campaign.conditions}
+                  </p>
                 ) : null}
-                <div className="mt-auto pt-5">
+                <div className="mt-auto pt-5 lg:mt-8 lg:max-w-sm lg:pt-0">
                   <a
                     className={buttonStyles({ className: "w-full", size: "sm" })}
                     href={campaign.href}
@@ -196,22 +202,24 @@ export function CampaignCarousel({ campaigns, loadFailed = false }: CampaignCaro
         })}
       </div>
 
-      <nav aria-label="Selecionar campanha" className="mt-2 flex justify-center gap-2">
-        {campaigns.map((campaign, index) => (
-          <button
-            aria-controls={carouselId}
-            aria-current={index === activeIndex ? "true" : undefined}
-            aria-label={`Mostrar campanha ${index + 1}: ${campaign.title}`}
-            className={cn(
-              "h-2.5 rounded-full transition-all focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-aqua-700 focus-visible:ring-offset-2",
-              index === activeIndex ? "w-8 bg-aqua-700" : "w-2.5 bg-aqua-200 hover:bg-aqua-500",
-            )}
-            key={campaign.id}
-            onClick={() => goToCampaign(index)}
-            type="button"
-          />
-        ))}
-      </nav>
+      {campaigns.length > 1 ? (
+        <nav aria-label="Selecionar campanha" className="mt-2 flex justify-center gap-2">
+          {campaigns.map((campaign, index) => (
+            <button
+              aria-controls={carouselId}
+              aria-current={index === activeIndex ? "true" : undefined}
+              aria-label={`Mostrar campanha ${index + 1}: ${campaign.title}`}
+              className={cn(
+                "h-2.5 rounded-full transition-all focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-aqua-700 focus-visible:ring-offset-2",
+                index === activeIndex ? "w-8 bg-aqua-700" : "w-2.5 bg-aqua-200 hover:bg-aqua-500",
+              )}
+              key={campaign.id}
+              onClick={() => goToCampaign(index)}
+              type="button"
+            />
+          ))}
+        </nav>
+      ) : null}
     </div>
   );
 }
