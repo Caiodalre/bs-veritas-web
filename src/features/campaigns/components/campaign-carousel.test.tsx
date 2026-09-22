@@ -60,6 +60,14 @@ describe("CampaignCarousel", () => {
     );
   });
 
+  it("omite controles redundantes quando existe somente uma campanha", () => {
+    render(<CampaignCarousel campaigns={[campaigns[0]]} />);
+
+    expect(screen.queryByText("1 de 1")).toBeNull();
+    expect(screen.queryByRole("button", { name: "Ver campanha anterior" })).toBeNull();
+    expect(screen.queryByRole("navigation", { name: "Selecionar campanha" })).toBeNull();
+  });
+
   it("avança por botão e teclado sem reprodução automática", () => {
     render(<CampaignCarousel campaigns={campaigns} />);
 
