@@ -17,7 +17,7 @@
     "watch_dir": ["src", "public", "next.config.ts", "worker"],
   },
   "vars": {
-    "CAMPAIGN_ADMIN_ENABLED": "false",
+    "CAMPAIGN_ADMIN_ENABLED": "true",
     "QUOTE_EXPECTED_HOSTNAME": "bsveritas.com.br",
     "QUOTE_DLQ_MONITOR_ENABLED": "true",
     "QUOTE_NOTIFICATION_ENABLED": "true",

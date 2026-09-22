@@ -1,7 +1,7 @@
 # Ativação da área de campanhas
 
-A implementação mantém a administração desativada até que a proteção e o armazenamento sejam
-configurados no Cloudflare.
+A administração fica habilitada no ambiente principal somente depois da configuração do R2 e do
+Cloudflare Access descrita abaixo. Ambientes de preview continuam com a administração desativada.
 
 ## 1. R2
 
@@ -26,9 +26,12 @@ Gravar os valores sem colocá-los no Git:
     pnpm exec wrangler secret put CAMPAIGN_ACCESS_AUD
     pnpm exec wrangler secret put CAMPAIGN_ACCESS_TEAM_DOMAIN
 
-Depois de validar o Access, alterar CAMPAIGN_ADMIN_ENABLED para true, executar a suíte de testes e
-fazer o deploy. A aplicação valida o JWT do Access no próprio Worker e falha de forma fechada quando
-qualquer configuração está ausente.
+O ambiente principal mantém CAMPAIGN_ADMIN_ENABLED como true no wrangler.jsonc. O ambiente preview
+mantém o valor false para não expor a administração em URLs temporárias. A aplicação valida o JWT do
+Access no próprio Worker e falha de forma fechada quando qualquer configuração está ausente.
+
+Depois de alterar a configuração, executar a suíte de testes e um dry-run do Wrangler antes do
+deploy. Não substituir CAMPAIGN_ADMIN_ENABLED manualmente durante a publicação normal.
 
 ## 4. Verificação antes da publicação
 
