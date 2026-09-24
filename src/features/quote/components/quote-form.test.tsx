@@ -63,6 +63,15 @@ describe("QuoteForm", () => {
     expect(screen.getByRole("button", { name: "Solicitar cotação" })).toBeEnabled();
   });
 
+  it("mantém o honeypot fora da navegação e da árvore de acessibilidade", () => {
+    const { container } = render(<QuoteForm siteKey="test-site-key" />);
+    const honeypot = container.querySelector<HTMLInputElement>('input[name="website"]');
+
+    expect(honeypot).toHaveAttribute("tabindex", "-1");
+    expect(honeypot?.parentElement?.parentElement).toHaveAttribute("aria-hidden", "true");
+    expect(honeypot?.parentElement?.parentElement).toHaveAttribute("inert");
+  });
+
   it("envia somente após a verificação e confirma o recebimento", async () => {
     vi.mocked(fetch).mockResolvedValueOnce(
       Response.json({ data: { id: "quote-id" } }, { status: 201 }),
