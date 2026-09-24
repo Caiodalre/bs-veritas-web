@@ -308,7 +308,11 @@ export function QuoteForm({ siteKey: configuredSiteKey }: { siteKey?: string }) 
           </label>
         </div>
 
-        <div aria-hidden="true" className="absolute -left-[10000px] h-px w-px overflow-hidden">
+        <div
+          aria-hidden="true"
+          className="absolute -left-[10000px] h-px w-px overflow-hidden"
+          inert
+        >
           <label>
             Não preencha este campo
             <input autoComplete="off" name="website" tabIndex={-1} type="text" />
