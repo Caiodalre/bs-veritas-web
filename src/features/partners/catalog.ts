@@ -20,4 +20,11 @@ export const partnerCatalog = [
     logoWidth: 214,
     logoHeight: 40,
   },
+  {
+    name: "Bradesco Seguros",
+    slug: "bradesco-seguros",
+    logoSrc: "/brands/bradesco-seguros.svg",
+    logoWidth: 172,
+    logoHeight: 40,
+  },
 ] as const;

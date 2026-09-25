@@ -37,9 +37,9 @@ indexável, sem acesso ao banco ou às integrações de produção.
 - fila assíncrona de notificações comerciais com novas tentativas progressivas e fila de mensagens mortas;
 - mensagens da fila limitadas ao UUID da cotação, sem dados pessoais;
 - cobertura unitária de sucesso, falha, binding ausente e mensagem inválida no consumidor da fila;
-- carrossel acessível e responsivo com Porto Seguro, Petlove e Icatu como parceiros comerciais confirmados;
+- carrossel acessível e responsivo com Porto Seguro, Petlove, Icatu e Bradesco Seguros como parceiros comerciais confirmados;
 - logotipos oficiais hospedados localmente, sem requisições ou rastreamento pelos sites das marcas;
-- atalhos de navegação, texto de atribuição e cobertura E2E das três marcas.
+- atalhos de navegação, texto de atribuição e cobertura E2E das quatro marcas.
 
 ### Observações
 

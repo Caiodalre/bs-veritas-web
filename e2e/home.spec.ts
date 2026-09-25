@@ -47,6 +47,7 @@ test("exibe a pagina inicial", async ({ page }) => {
   await expect(page.getByRole("img", { name: "Logotipo Porto Seguro" })).toBeVisible();
   await expect(page.getByRole("img", { name: "Logotipo Petlove" })).toBeVisible();
   await expect(page.getByRole("img", { name: "Logotipo Icatu" })).toBeVisible();
+  await expect(page.getByRole("img", { name: "Logotipo Bradesco Seguros" })).toBeVisible();
 
   await expect(
     page.getByRole("heading", { name: "Novidades das seguradoras parceiras" }),
