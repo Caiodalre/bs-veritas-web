@@ -34,8 +34,8 @@ desses dados deve ser inferido ou publicado como provisório.
 
 ## Parceiros
 
-- confirmação periódica de que Porto Seguro, Petlove e Icatu permanecem como relações comerciais
-  vigentes e podem ser exibidas;
+- confirmação periódica de que Porto Seguro, Petlove, Icatu e Bradesco Seguros permanecem como
+  relações comerciais vigentes e podem ser exibidas;
 - modalidades efetivamente atendidas com cada empresa, sem sugerir exclusividade;
 - ordem de exibição e texto institucional aprovados;
 - autorização e versão correta dos arquivos de marca;

@@ -25,7 +25,7 @@ Já estão configurados:
 - página inicial institucional responsiva;
 - página Sobre com propósito, princípios e forma de atendimento;
 - catálogo de seguros e páginas estáticas das modalidades atendidas;
-- carrossel acessível com Porto Seguro, Petlove e Icatu como parceiros comerciais confirmados;
+- carrossel acessível com Porto Seguro, Petlove, Icatu e Bradesco Seguros como parceiros comerciais confirmados;
 - página de Sinistros com primeiros cuidados, limites e orientação segura;
 - página de Contato com canais públicos e formulário de cotação protegido por Turnstile, honeypot, rate limiting e validação no servidor;
 - Política de Privacidade com práticas atuais, direitos dos titulares e canal de atendimento;
