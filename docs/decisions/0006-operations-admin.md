@@ -23,6 +23,9 @@ não pode depender apenas de uma página estática ou de controles no navegador.
 - registrar, na mesma transação, os retratos anterior e posterior de cada alteração financeira;
 - não permitir exclusão de funcionários ou vendas no V1; funcionários são desativados para preservar
   o vínculo histórico;
+- manter funcionários, vendas, repasses e eventos de auditoria sem exclusão automática no V1;
+- exigir uma nova decisão formal, migration ou rotina específica, backup recuperável e validação
+  antes de qualquer descarte ou anonimização futura desses registros;
 - conceder ao papel da aplicação somente `EXECUTE` em funções `SECURITY DEFINER`, sem acesso direto
   às novas tabelas;
 - manter o módulo desativado no preview e não integrar pagamentos ou sistemas bancários.
@@ -34,6 +37,9 @@ não pode depender apenas de uma página estática ou de controles no navegador.
 - a migration `0005_operations_admin.sql` deve ser aplicada antes do deploy que ativa
   `OPERATIONS_ADMIN_ENABLED`;
 - o histórico de auditoria aumenta o volume armazenado e contém os mesmos dados do registro
-  comercial; sua retenção deverá acompanhar a política aprovada para esses registros;
+  comercial; a política inicial aprovada em 2026-09-26 é mantê-lo sem exclusão automática, junto
+  aos registros comerciais correspondentes;
+- a retenção de cinco anos dos pedidos de cotação não se aplica automaticamente ao controle
+  comercial;
 - uma futura integração de pagamento exigirá uma decisão separada, novos controles e aprovação
   explícita.

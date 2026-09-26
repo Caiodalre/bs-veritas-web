@@ -73,10 +73,14 @@ Já existem no repositório:
 Ainda não estão configurados ou homologados:
 
 - migration e publicação do controle comercial de funcionários, seguros fechados e repasses;
-- prazo de retenção formal aprovado para registros comerciais e seu histórico de auditoria;
 - acompanhamento e registro da primeira execução agendada do descarte ao fim da retenção;
 - analytics de navegador, que permanece deliberadamente desativado;
 - MFA e canal específico para incidentes e vulnerabilidades.
+
+Para o controle comercial, a política inicial aprovada em 2026-09-26 mantém funcionários, vendas,
+repasses e eventos de auditoria sem exclusão automática. Essa decisão não reutiliza o prazo de cinco
+anos dos pedidos de cotação. Qualquer descarte ou anonimização futura exige nova aprovação formal,
+backup recuperável, implementação específica e validação antes da publicação.
 
 ## Princípios obrigatórios
 

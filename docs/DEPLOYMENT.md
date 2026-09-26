@@ -251,7 +251,8 @@ O deploy da aplicação e a migration deverão ter uma ordem explícita e compat
 A ativação do painel de funcionários, seguros fechados e repasses seguirá esta ordem:
 
 1. revisar e aprovar a migration `0005_operations_admin.sql`;
-2. confirmar backup recuperável e prazo de retenção aprovado para os registros comerciais;
+2. confirmar backup recuperável e a política aprovada de manter os registros comerciais e sua
+   auditoria sem exclusão automática;
 3. aplicar a migration com o usuário administrativo e confirmar tabelas, índices, restrições e
    funções;
 4. verificar que `bs_veritas_quote_writer` possui somente `EXECUTE` nas funções do módulo e nenhum
@@ -266,6 +267,10 @@ A ativação do painel de funcionários, seguros fechados e repasses seguirá es
 
 O rollback do Worker desativa a interface, mas não remove tabelas nem registros. A migration é
 aditiva e não modifica as solicitações de cotação existentes.
+
+O V1 não publica função, agendamento ou endpoint de exclusão para funcionários, vendas, repasses ou
+eventos de auditoria. Uma futura política de descarte deverá ser tratada como mudança separada e não
+poderá reutilizar automaticamente a rotina de retenção dos pedidos de cotação.
 
 ### Ordem da rotina de retenção
 

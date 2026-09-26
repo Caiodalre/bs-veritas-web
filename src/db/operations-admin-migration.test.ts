@@ -44,4 +44,12 @@ describe("operations admin migration", () => {
     expect(migration).toContain("an administrator cannot remove their own access");
     expect(migration).toContain("at least one active administrator is required");
   });
+
+  it("não cria descarte automático para os registros comerciais", () => {
+    expect(migration).not.toMatch(/retention_expires_at/iu);
+    expect(migration).not.toMatch(
+      /DELETE\s+FROM\s+(?:public\.)?(?:staff_members|insurance_sales|insurance_sale_audit_events)/iu,
+    );
+    expect(migration).not.toMatch(/ON DELETE cascade/iu);
+  });
 });

@@ -19,10 +19,14 @@ indexável, sem acesso ao banco ou às integrações de produção.
 
 ### Pendente antes da publicação
 
-- aprovar o prazo de retenção dos registros comerciais e do histórico de auditoria;
 - aplicar e verificar a migration no PostgreSQL/Aiven;
 - publicar o Worker e ativar o primeiro administrador com identidade já permitida pelo Access;
 - executar smoke test somente com dados fictícios.
+
+### Decidido
+
+- manter registros comerciais e seu histórico de auditoria sem exclusão automática no V1; qualquer
+  descarte futuro exigirá nova decisão formal e implementação específica.
 
 ## Administração protegida de solicitações — 2026-09-26
 
