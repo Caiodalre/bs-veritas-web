@@ -5,6 +5,25 @@ Este arquivo registra mudanças relevantes do **B&S Veritas Web**.
 O projeto possui produção no domínio oficial com formulário de cotação ativo e um preview público não
 indexável, sem acesso ao banco ou às integrações de produção.
 
+## Administração protegida de solicitações — 2026-09-26
+
+### Adicionado
+
+- painel interno protegido para listar solicitações, filtrar por situação e atualizar o andamento;
+- paginação por cursor e índices compostos para manter consultas previsíveis;
+- funções PostgreSQL de leitura e atualização com privilégio mínimo, sem acesso direto à tabela;
+- rota integrada à aplicação Cloudflare Access já utilizada pela administração de campanhas;
+- testes unitários, de migration e de navegador para os estados administrativos.
+
+### Publicação
+
+- PR #66 integrada pelo merge commit `c522403dc6b3b0e4fba2a44ddca6d70d76410b86`;
+- migration `0004_quote_request_admin.sql` aplicada e verificada no PostgreSQL/Aiven;
+- versão Cloudflare `5d985998-da39-48c5-96b1-83e145af0e15` publicada;
+- CI, build, TypeScript, dry-run e smoke test autenticado aprovados;
+- site público permaneceu disponível, rota administrativa redirecionou ao Access e API direta recusou acesso sem autenticação;
+- nenhuma solicitação ou situação foi alterada durante a validação.
+
 ## Cotação em produção e isolamento do preview — 2026-09-19
 
 ### Alterado

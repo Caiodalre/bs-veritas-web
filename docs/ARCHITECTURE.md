@@ -25,6 +25,8 @@ O V1 não terá:
 - escrita direta do navegador no banco de dados;
 - integração direta com sistemas de seguradoras.
 
+O V1 possui duas áreas internas de escopo limitado, protegidas pelo Cloudflare Access: administração de campanhas e acompanhamento do estado das solicitações. Elas não autenticam clientes, não são públicas e não substituem um CRM.
+
 ## Contexto do sistema
 
 ```text
@@ -67,6 +69,7 @@ Next.js com exportação estática
 O preview utiliza somente os arquivos estáticos gerados pelo Next.js. O formulário permanece visível para revisão, mas desativado, e o Worker recusa `POST /api/quote` antes de qualquer integração.
 
 A camada dinâmica é um Cloudflare Worker restrito às rotas `/api/*`, com PostgreSQL da Aiven conectado por Hyperdrive. O endpoint de cotação está ativo somente em produção, protegido por rate limiting, validação Zod, honeypot e Turnstile.
+A mesma camada atende as APIs administrativas de campanhas e solicitações. O Cloudflare Access protege os caminhos no domínio oficial, e o Worker valida novamente o JWT antes de acessar R2 ou PostgreSQL. O preview mantém essas funções desativadas.
 A decisão completa está registrada em [`docs/decisions/0001-quote-runtime-and-database.md`](decisions/0001-quote-runtime-and-database.md).
 
 O e-mail corporativo é uma infraestrutura independente. A troca do provedor de e-mail não deve exigir reconstrução do site.
@@ -102,7 +105,7 @@ O serviço local de cotação já define o caso de uso de registrar um pedido va
 
 ### Repositórios
 
-O contrato do repositório de cotação concentra a gravação do lead. O adaptador Drizzle tipado executa o `insert` por Hyperdrive e retorna somente o identificador criado. As migrations estão aplicadas e o papel da aplicação não pode ler os demais campos, alterar ou excluir registros.
+O contrato do repositório de cotação concentra a gravação do lead. O adaptador Drizzle tipado executa o `insert` por Hyperdrive e retorna somente o identificador criado. As migrations estão aplicadas e o papel da aplicação não possui leitura ou alteração direta da tabela. A área administrativa consulta e atualiza somente a situação por funções PostgreSQL `SECURITY DEFINER`, com `EXECUTE` concedido explicitamente e sem permissão direta de exclusão.
 
 ### Infraestrutura
 
@@ -113,9 +116,11 @@ Inclui PostgreSQL, Drizzle ORM, Cloudflare Queues, notificações por e-mail, an
 A organização prevista é orientada aos seguintes domínios:
 
 - `quote`: solicitação de cotação e registro do lead;
+- `quote-admin`: consulta protegida e atualização da situação de atendimento;
 - `contact`: contato geral e encaminhamento do assunto;
 - `insurance`: catálogo e páginas das modalidades de seguro;
 - `partners`: seguradoras parceiras confirmadas;
+- `campaigns`: publicação protegida de peças no R2 e feed público controlado;
 - `claims`: conteúdo de orientação e canais para sinistros.
 
 A área de sinistros não deverá solicitar documentos ou dar a entender que a corretora regula ou paga o sinistro. O papel apresentado será de suporte e orientação.
@@ -133,6 +138,8 @@ src/
 |   `-- sections/        seções institucionais
 |-- features/
 |   |-- quote/
+|   |-- quote-admin/
+|   |-- campaigns/
 |   |-- contact/
 |   |-- insurance/
 |   |-- partners/
@@ -193,7 +200,7 @@ Regras obrigatórias:
 
 O PostgreSQL será acessado somente pelo backend da aplicação. O navegador não receberá credenciais administrativas nem permissão irrestrita de escrita.
 
-O schema registra somente os campos aprovados para cotação, a versão da política e a expiração de retenção. As migrations PostgreSQL estão versionadas e aplicadas na Aiven. A produção acessa o banco pelo binding Hyperdrive; o preview não recebe esse binding.
+O schema registra somente os campos aprovados para cotação, a versão da política e a expiração de retenção. As migrations PostgreSQL estão versionadas e aplicadas na Aiven. A produção acessa o banco pelo binding Hyperdrive; o preview não recebe esse binding. Índices compostos sustentam a paginação por cursor do painel, e funções específicas limitam a leitura e a atualização de situação ao fluxo administrativo autenticado.
 
 A rotina de descarte preparada para produção executa diariamente às `06:17 UTC`. O Worker chama uma
 função PostgreSQL que exclui somente registros vencidos, em lotes de até 500, usando o índice de
