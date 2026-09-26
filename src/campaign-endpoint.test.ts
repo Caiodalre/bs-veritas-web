@@ -81,9 +81,12 @@ function createAdminEnv(bucket: R2Bucket) {
   };
 }
 
-function createUploadRequest(status: "draft" | "published" = "draft") {
+function createUploadRequest(
+  status: "draft" | "published" = "draft",
+  partnerSlug = "porto-seguro",
+) {
   const formData = new FormData();
-  formData.set("partnerSlug", "porto-seguro");
+  formData.set("partnerSlug", partnerSlug);
   formData.set("title", "Campanha oficial de teste");
   formData.set("summary", "Resumo oficial usado somente no teste automatizado.");
   formData.set("imageAlt", "Peça vertical da campanha oficial");
@@ -163,6 +166,20 @@ describe("campaign endpoint", () => {
       { now },
     );
     expect(publicImage.status).toBe(404);
+  });
+
+  it("aceita Bradesco Seguros como parceiro de campanha", async () => {
+    const { bucket } = createBucket();
+    const created = await handleCampaignRequest(
+      createUploadRequest("draft", "bradesco-seguros"),
+      createAdminEnv(bucket),
+      { authorize: async () => true, now, randomUUID: () => campaignId },
+    );
+
+    expect(created.status).toBe(201);
+    await expect(created.json()).resolves.toMatchObject({
+      campaign: { partnerSlug: "bradesco-seguros" },
+    });
   });
 
   it("publica, entrega a imagem segura e exclui a campanha", async () => {

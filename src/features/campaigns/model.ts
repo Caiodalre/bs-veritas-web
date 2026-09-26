@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const partnerSlugSchema = z.enum(["porto-seguro", "petlove", "icatu"]);
+export const partnerSlugSchema = z.enum(["porto-seguro", "petlove", "icatu", "bradesco-seguros"]);
 export const campaignStatusSchema = z.enum(["draft", "published"]);
 
 const optionalText = (maximum: number) =>
