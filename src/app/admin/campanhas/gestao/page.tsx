@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Wordmark } from "@/components/brand/wordmark";
 import { Container } from "@/components/layout/container";
-import { QuoteRequestAdmin } from "@/features/quote-admin/components/quote-request-admin";
+import { OperationsAdmin } from "@/features/operations-admin/components/operations-admin";
 
 export const metadata: Metadata = {
-  title: "Solicitações de cotação",
+  title: "Controle comercial",
   robots: { index: false, follow: false },
 };
 
-export default function QuoteRequestAdminPage() {
+export default function OperationsAdminPage() {
   return (
     <div className="min-h-screen bg-aqua-50">
       <header className="border-b border-white/10 bg-navy-950 text-white">
@@ -27,9 +27,9 @@ export default function QuoteRequestAdminPage() {
             </Link>
             <Link
               className="text-aqua-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-300"
-              href="/admin/campanhas/gestao"
+              href="/admin/campanhas/solicitacoes"
             >
-              Gestão
+              Solicitações
             </Link>
             <Link
               className="text-aqua-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-300"
@@ -47,14 +47,14 @@ export default function QuoteRequestAdminPage() {
               Área protegida
             </p>
             <h1 className="mt-4 font-serif text-3xl font-bold tracking-[-0.025em] text-navy-950 sm:text-4xl">
-              Solicitações de cotação
+              Funcionários, vendas e repasses
             </h1>
             <p className="mt-5 text-base leading-8 text-slate-600">
-              Organize o atendimento dos pedidos recebidos sem expor informações pessoais no site
-              público.
+              Acompanhe quem fechou cada seguro e mantenha os valores comerciais registrados com
+              histórico de alterações.
             </p>
           </div>
-          <QuoteRequestAdmin />
+          <OperationsAdmin />
         </Container>
       </main>
     </div>

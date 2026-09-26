@@ -5,6 +5,25 @@ Este arquivo registra mudanças relevantes do **B&S Veritas Web**.
 O projeto possui produção no domínio oficial com formulário de cotação ativo e um preview público não
 indexável, sem acesso ao banco ou às integrações de produção.
 
+## Não lançado — controle comercial interno
+
+### Adicionado
+
+- painel protegido para cadastrar funcionários e definir administradores;
+- registro de seguros fechados com responsável, seguradora, modalidade, prêmio, comissão e repasse;
+- edição de valores e situação do repasse com auditoria transacional dos estados anterior e posterior;
+- resumo financeiro e paginação por cursor sem integração de pagamentos;
+- autorização adicional por funcionário ativo no PostgreSQL, além da validação do Cloudflare Access;
+- migration `0005_operations_admin.sql` com privilégios mínimos e sem exclusão direta de registros;
+- testes de endpoint, segurança da migration, TypeScript, lint, build e bundle do Worker.
+
+### Pendente antes da publicação
+
+- aprovar o prazo de retenção dos registros comerciais e do histórico de auditoria;
+- aplicar e verificar a migration no PostgreSQL/Aiven;
+- publicar o Worker e ativar o primeiro administrador com identidade já permitida pelo Access;
+- executar smoke test somente com dados fictícios.
+
 ## Administração protegida de solicitações — 2026-09-26
 
 ### Adicionado
