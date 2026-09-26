@@ -29,6 +29,13 @@
       "when": 1789848823637,
       "tag": "0003_quote_retention_cleanup",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790387423788,
+      "tag": "0004_quote_request_admin",
+      "breakpoints": true
     }
   ]
 }

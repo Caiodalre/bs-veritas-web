@@ -6,6 +6,10 @@ import {
 } from "./quote-notification";
 import { handleQuoteNotificationDlqMonitor } from "./quote-notification-dlq-monitor";
 import { handleQuoteRequest, type QuoteEndpointDependencies } from "./quote-endpoint";
+import {
+  handleQuoteAdminRequest,
+  type QuoteAdminEndpointDependencies,
+} from "./quote-admin-endpoint";
 import { handleQuoteRetentionCleanup } from "./quote-retention";
 
 const quoteEndpoint = "/api/quote";
@@ -71,8 +75,13 @@ export async function handleWorkerRequest(
   env: Env,
   quoteDependencies?: QuoteEndpointDependencies,
   campaignDependencies?: CampaignEndpointDependencies,
+  quoteAdminDependencies?: QuoteAdminEndpointDependencies,
 ): Promise<Response> {
   const { pathname } = new URL(request.url);
+
+  if (pathname.startsWith("/api/admin/campaigns/quote-requests")) {
+    return handleQuoteAdminRequest(request, env, quoteAdminDependencies);
+  }
 
   if (
     pathname === "/api/campaigns" ||

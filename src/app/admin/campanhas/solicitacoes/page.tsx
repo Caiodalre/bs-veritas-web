@@ -2,18 +2,18 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Wordmark } from "@/components/brand/wordmark";
 import { Container } from "@/components/layout/container";
-import { CampaignAdmin } from "@/features/campaigns/components/campaign-admin";
+import { QuoteRequestAdmin } from "@/features/quote-admin/components/quote-request-admin";
 
 export const metadata: Metadata = {
-  title: "Administrar campanhas",
+  title: "Solicitações de cotação",
   robots: { index: false, follow: false },
 };
 
-export default function CampaignAdminPage() {
+export default function QuoteRequestAdminPage() {
   return (
     <div className="min-h-screen bg-aqua-50">
       <header className="border-b border-white/10 bg-navy-950 text-white">
-        <Container className="flex min-h-20 items-center justify-between gap-4">
+        <Container className="flex min-h-20 flex-wrap items-center justify-between gap-4 py-4">
           <Wordmark inverted />
           <nav
             aria-label="Navegação administrativa"
@@ -21,9 +21,9 @@ export default function CampaignAdminPage() {
           >
             <Link
               className="text-aqua-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-300"
-              href="/admin/campanhas/solicitacoes"
+              href="/admin/campanhas"
             >
-              Solicitações
+              Campanhas
             </Link>
             <Link
               className="text-aqua-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-300"
@@ -41,14 +41,14 @@ export default function CampaignAdminPage() {
               Área protegida
             </p>
             <h1 className="mt-4 font-serif text-3xl font-bold tracking-[-0.025em] text-navy-950 sm:text-4xl">
-              Campanhas das seguradoras
+              Solicitações de cotação
             </h1>
             <p className="mt-5 text-base leading-8 text-slate-600">
-              Envie as peças recebidas, revise o conteúdo e controle o que aparece no carrossel
+              Organize o atendimento dos pedidos recebidos sem expor informações pessoais no site
               público.
             </p>
           </div>
-          <CampaignAdmin />
+          <QuoteRequestAdmin />
         </Container>
       </main>
     </div>
