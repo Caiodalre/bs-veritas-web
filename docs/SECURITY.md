@@ -11,6 +11,7 @@ Esta política cobre:
 - aplicação Next.js;
 - formulários de cotação e contato;
 - banco de leads;
+- áreas administrativas de campanhas e solicitações;
 - integrações de notificação;
 - variáveis de ambiente;
 - ambientes local, preview e produção;
@@ -26,6 +27,7 @@ Os principais riscos considerados são:
 - injeção de conteúdo malicioso;
 - exposição de credenciais;
 - acesso indevido ao banco de leads;
+- acesso indevido às rotas administrativas ou às peças privadas de campanha;
 - vazamento de dados pessoais por logs, analytics ou mensagens de erro;
 - dependências comprometidas ou desatualizadas;
 - configuração incorreta de DNS, headers ou ambientes;
@@ -62,6 +64,10 @@ Já existem no repositório:
 - novas tentativas automáticas de e-mail com espera progressiva e fila de mensagens mortas;
 - migration e Cron Trigger de descarte ao fim da retenção publicados somente em produção;
 - backup lógico do PostgreSQL/Aiven restaurado e validado em PostgreSQL 18 local isolado.
+- Cloudflare Access restringindo as áreas internas aos administradores aprovados;
+- validação do JWT do Access dentro do Worker antes de consultar R2 ou dados de solicitações;
+- bucket R2 privado, APIs administrativas com `Cache-Control: no-store` e preview administrativo desativado;
+- funções PostgreSQL de consulta paginada e atualização de situação com privilégio mínimo, sem leitura, alteração ou exclusão direta da tabela pelo papel da aplicação.
 
 Ainda não estão configurados ou homologados:
 
@@ -141,7 +147,9 @@ O Worker inicia com o limite de 5 solicitações em 10 segundos por origem. O va
 - dados reais não serão copiados para testes locais ou previews.
 
 As migrations foram aplicadas ao serviço Aiven usado pela produção. O papel de conexão foi verificado com
-`INSERT ... RETURNING id` e sem permissão para ler os demais campos, alterar ou excluir registros. Em
+`INSERT ... RETURNING id` e sem permissão direta para ler os demais campos, alterar ou excluir registros.
+As operações administrativas de leitura paginada e atualização de situação são expostas somente por funções
+específicas, com `EXECUTE` concedido ao papel da aplicação. Em
 2026-09-20, um backup lógico criado com `pg_dump` 18 foi restaurado em PostgreSQL 18 local isolado. A
 validação confirmou a tabela de cotações, o histórico de migrations, as restrições e a função de retenção,
 sem imprimir dados pessoais; o banco e o arquivo temporários foram removidos ao final.
@@ -197,7 +205,7 @@ CSP e HSTS foram verificados no domínio final durante a publicação inicial de
 
 ## Autenticação administrativa
 
-Embora o V1 não tenha painel administrativo público, as plataformas de infraestrutura deverão seguir estas regras:
+O V1 não possui painel administrativo público. As áreas internas de campanhas e solicitações são protegidas pelo Cloudflare Access, aceitam somente as identidades aprovadas e validam o token novamente no Worker. Além desses controles, as plataformas de infraestrutura deverão seguir estas regras:
 
 - autenticação multifator obrigatória;
 - contas individuais, sem senha compartilhada;
@@ -278,6 +286,8 @@ Dados de vulnerabilidade não devem ser enviados para formulários comerciais co
 - [x] política de retenção de cinco anos aprovada;
 - [x] backup lógico e restauração testados operacionalmente;
 - [x] produção com segredo próprio e preview sem segredo ou integração de dados;
+- [x] áreas administrativas protegidas pelo Access e por validação de JWT no Worker;
+- [x] APIs administrativas sem cache público e com privilégios mínimos no R2 e PostgreSQL;
 - [x] headers HTTP avaliados no domínio final;
 - [x] logs e respostas revisados contra exposição de dados pessoais;
 - [x] previews fora dos buscadores;

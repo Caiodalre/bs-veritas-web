@@ -10,6 +10,8 @@ A experiência pública inicial está online. O repositório privado e a integra
 
 A produção está disponível em [https://bsveritas.com.br](https://bsveritas.com.br), com redirecionamento permanente de `www`. O formulário de cotação está ativo somente no domínio oficial, persiste as solicitações no PostgreSQL da Aiven e enfileira a notificação comercial após a gravação.
 
+A operação interna possui áreas restritas para administrar campanhas e acompanhar solicitações. Essas rotas são protegidas pelo Cloudflare Access e por validação adicional do token no Worker; não constituem autenticação de clientes nem um CRM público.
+
 Já estão configurados:
 
 - Next.js com App Router;
@@ -26,6 +28,8 @@ Já estão configurados:
 - página Sobre com propósito, princípios e forma de atendimento;
 - catálogo de seguros e páginas estáticas das modalidades atendidas;
 - carrossel acessível com Porto Seguro, Petlove, Icatu e Bradesco Seguros como parceiros comerciais confirmados;
+- administração protegida de campanhas com imagens privadas no R2;
+- painel protegido de solicitações com filtro, paginação e atualização de situação;
 - página de Sinistros com primeiros cuidados, limites e orientação segura;
 - página de Contato com canais públicos e formulário de cotação protegido por Turnstile, honeypot, rate limiting e validação no servidor;
 - Política de Privacidade com práticas atuais, direitos dos titulares e canal de atendimento;
@@ -58,7 +62,7 @@ O V1 prevê as seguintes áreas:
 - Política de Cookies;
 - Termos de Uso.
 
-Não fazem parte do V1: área autenticada, upload de documentos, CRM completo ou cotação integral dentro do site.
+Não fazem parte do V1: autenticação de clientes, upload de documentos de clientes, CRM completo ou cotação integral dentro do site. As áreas internas existentes são restritas à equipe e têm escopo operacional limitado.
 
 ## Requisitos locais
 
@@ -119,6 +123,7 @@ As regras completas de desenvolvimento estão em [`AGENTS.md`](./AGENTS.md).
 
 - Cloudflare Workers Static Assets para preview e produção;
 - Cloudflare para DNS, CDN, SSL, Worker da API, Turnstile, rate limiting, Hyperdrive e Queues;
+- Cloudflare Access para as rotas administrativas e R2 privado para as peças de campanha;
 - PostgreSQL na Aiven para persistência das solicitações de cotação;
 - Cloudflare Email Workers para a notificação comercial;
 - GitHub para repositório e integração contínua.

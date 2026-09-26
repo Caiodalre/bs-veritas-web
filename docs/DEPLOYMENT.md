@@ -498,23 +498,36 @@ Pendências conhecidas:
 - validação local concluída com 142 testes, tipos, lint, formatação, build e dry-runs dos ambientes;
   publicação e primeira execução real do monitor permanecem pendentes.
 
+### Administração protegida de solicitações — 2026-09-26
+
+- PR #66 integrada pelo merge commit `c522403dc6b3b0e4fba2a44ddca6d70d76410b86`;
+- migration `0004_quote_request_admin.sql` aplicada ao PostgreSQL/Aiven e confirmada com dois índices,
+  duas funções e o quinto registro no histórico do Drizzle;
+- versão Cloudflare `5d985998-da39-48c5-96b1-83e145af0e15` recebendo 100% do tráfego;
+- `QUOTE_ADMIN_ENABLED=true` somente em produção, com Hyperdrive e Cloudflare Access preservados;
+- rota pública de contato respondeu `200`, rota administrativa redirecionou ao Access e API direta
+  sem autenticação respondeu `401`;
+- smoke test autenticado carregou a lista por Hyperdrive sem evento de erro `quote_admin`;
+- nenhuma solicitação ou situação foi alterada durante a homologação.
+
 ## Estado atual da implantação
 
-| Componente            | Estado                                                   |
-| --------------------- | -------------------------------------------------------- |
-| build local           | configurado e validado                                   |
-| testes locais         | configurados e validados                                 |
-| repositório Git local | configurado                                              |
-| GitHub remoto         | privado e configurado                                    |
-| CI                    | ativo e validado no GitHub                               |
-| Cloudflare Workers    | preview isolado e produção com API ativos                |
-| Vercel                | excluída do plano gratuito                               |
-| domínio no projeto    | apex ativo e `www` com redirecionamento `301`            |
-| monitoramento         | agendado no GitHub Actions a cada seis horas             |
-| PostgreSQL remoto     | Aiven conectado; backup e restauração validados          |
-| notificações          | fila e e-mail ativos; monitor da DLQ validado localmente |
-| retenção              | descarte diário publicado; primeira execução pendente    |
-| versão Cloudflare     | `efde43ba-e69b-45b6-b991-d3b43cd5c7ad`                   |
-| produção              | ativa no commit `15e546e`                                |
+| Componente            | Estado                                                          |
+| --------------------- | --------------------------------------------------------------- |
+| build local           | configurado e validado                                          |
+| testes locais         | configurados e validados                                        |
+| repositório Git local | configurado                                                     |
+| GitHub remoto         | privado e configurado                                           |
+| CI                    | ativo e validado no GitHub                                      |
+| Cloudflare Workers    | preview isolado e produção com API ativos                       |
+| Vercel                | excluída do plano gratuito                                      |
+| domínio no projeto    | apex ativo e `www` com redirecionamento `301`                   |
+| monitoramento         | agendado no GitHub Actions a cada seis horas                    |
+| PostgreSQL remoto     | Aiven conectado; backup, restauração e migration 0004 validados |
+| notificações          | fila e e-mail ativos; monitor da DLQ validado localmente        |
+| retenção              | descarte diário publicado; primeira execução pendente           |
+| administração         | campanhas e solicitações protegidas pelo Access                 |
+| versão Cloudflare     | `5d985998-da39-48c5-96b1-83e145af0e15`                          |
+| produção              | ativa no commit `c522403`                                       |
 
 Qualquer mudança desse estado deverá ser feita como uma etapa separada, aprovada e validada.
