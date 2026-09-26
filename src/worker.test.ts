@@ -109,6 +109,7 @@ function createWorkerEnv(
     ASSETS: assets,
     CAMPAIGN_ADMIN_ENABLED: "false",
     HYPERDRIVE: createHyperdriveBinding(),
+    QUOTE_ADMIN_ENABLED: "false",
     QUOTE_DLQ_MONITOR_ENABLED: "false",
     QUOTE_NOTIFICATION_EMAIL: emailBinding,
     QUOTE_NOTIFICATION_ENABLED: "false",
@@ -281,6 +282,7 @@ describe("quote worker", () => {
     const env: Env = {
       ASSETS: assets,
       CAMPAIGN_ADMIN_ENABLED: "false",
+      QUOTE_ADMIN_ENABLED: "false",
       QUOTE_EXPECTED_HOSTNAME: "bsveritas.com.br",
       QUOTE_DLQ_MONITOR_ENABLED: "false",
       QUOTE_NOTIFICATION_ENABLED: "false",

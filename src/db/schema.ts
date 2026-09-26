@@ -49,7 +49,9 @@ export const quoteRequests = pgTable(
       sql`${table.retentionExpiresAt} > ${table.createdAt}`,
     ),
     index("quote_requests_created_at_idx").on(table.createdAt),
+    index("quote_requests_created_at_id_idx").on(table.createdAt, table.id),
     index("quote_requests_status_idx").on(table.status),
+    index("quote_requests_status_created_at_id_idx").on(table.status, table.createdAt, table.id),
     index("quote_requests_retention_expires_at_idx").on(table.retentionExpiresAt),
   ],
 );
