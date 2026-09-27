@@ -1,0 +1,742 @@
+{
+  "id": "18762cbb-ef58-4825-b1cc-0be0edb8a14a",
+  "prevId": "166aa7ad-a5d1-4427-a78d-5f478b0809e3",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.insurance_sale_audit_events": {
+      "name": "insurance_sale_audit_events",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "insurance_sale_audit_events_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "9223372036854775807",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "sale_id": {
+          "name": "sale_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "occurred_at": {
+          "name": "occurred_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "actor_email": {
+          "name": "actor_email",
+          "type": "varchar(254)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "action": {
+          "name": "action",
+          "type": "sale_audit_action",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "previous_snapshot": {
+          "name": "previous_snapshot",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "new_snapshot": {
+          "name": "new_snapshot",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "insurance_sale_audit_sale_occurred_idx": {
+          "name": "insurance_sale_audit_sale_occurred_idx",
+          "columns": [
+            {
+              "expression": "sale_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "occurred_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "insurance_sale_audit_events_sale_id_insurance_sales_id_fk": {
+          "name": "insurance_sale_audit_events_sale_id_insurance_sales_id_fk",
+          "tableFrom": "insurance_sale_audit_events",
+          "tableTo": "insurance_sales",
+          "columnsFrom": ["sale_id"],
+          "columnsTo": ["id"],
+          "onDelete": "restrict",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "insurance_sale_audit_actor_email_check": {
+          "name": "insurance_sale_audit_actor_email_check",
+          "value": "\"insurance_sale_audit_events\".\"actor_email\" = lower(btrim(\"insurance_sale_audit_events\".\"actor_email\")) and position('@' in \"insurance_sale_audit_events\".\"actor_email\") > 1"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.insurance_sales": {
+      "name": "insurance_sales",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "sold_at": {
+          "name": "sold_at",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "staff_member_id": {
+          "name": "staff_member_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "customer_name": {
+          "name": "customer_name",
+          "type": "varchar(150)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "insurer": {
+          "name": "insurer",
+          "type": "varchar(120)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "insurance_type": {
+          "name": "insurance_type",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "policy_number": {
+          "name": "policy_number",
+          "type": "varchar(80)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "premium_amount": {
+          "name": "premium_amount",
+          "type": "numeric(14, 2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "brokerage_commission_amount": {
+          "name": "brokerage_commission_amount",
+          "type": "numeric(14, 2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "employee_payout_amount": {
+          "name": "employee_payout_amount",
+          "type": "numeric(14, 2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "payout_status": {
+          "name": "payout_status",
+          "type": "payout_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'pending'"
+        },
+        "payout_paid_at": {
+          "name": "payout_paid_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "insurance_sales_staff_sold_at_id_idx": {
+          "name": "insurance_sales_staff_sold_at_id_idx",
+          "columns": [
+            {
+              "expression": "staff_member_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "sold_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "insurance_sales_payout_sold_at_id_idx": {
+          "name": "insurance_sales_payout_sold_at_id_idx",
+          "columns": [
+            {
+              "expression": "payout_status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "sold_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "insurance_sales_sold_at_id_idx": {
+          "name": "insurance_sales_sold_at_id_idx",
+          "columns": [
+            {
+              "expression": "sold_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "insurance_sales_staff_member_id_staff_members_id_fk": {
+          "name": "insurance_sales_staff_member_id_staff_members_id_fk",
+          "tableFrom": "insurance_sales",
+          "tableTo": "staff_members",
+          "columnsFrom": ["staff_member_id"],
+          "columnsTo": ["id"],
+          "onDelete": "restrict",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "insurance_sales_customer_name_check": {
+          "name": "insurance_sales_customer_name_check",
+          "value": "char_length(btrim(\"insurance_sales\".\"customer_name\")) between 2 and 150 and \"insurance_sales\".\"customer_name\" = btrim(\"insurance_sales\".\"customer_name\")"
+        },
+        "insurance_sales_insurer_check": {
+          "name": "insurance_sales_insurer_check",
+          "value": "char_length(btrim(\"insurance_sales\".\"insurer\")) between 2 and 120 and \"insurance_sales\".\"insurer\" = btrim(\"insurance_sales\".\"insurer\")"
+        },
+        "insurance_sales_insurance_type_check": {
+          "name": "insurance_sales_insurance_type_check",
+          "value": "char_length(btrim(\"insurance_sales\".\"insurance_type\")) between 2 and 64 and \"insurance_sales\".\"insurance_type\" = btrim(\"insurance_sales\".\"insurance_type\")"
+        },
+        "insurance_sales_policy_number_check": {
+          "name": "insurance_sales_policy_number_check",
+          "value": "\"insurance_sales\".\"policy_number\" is null or (char_length(btrim(\"insurance_sales\".\"policy_number\")) between 1 and 80 and \"insurance_sales\".\"policy_number\" = btrim(\"insurance_sales\".\"policy_number\"))"
+        },
+        "insurance_sales_premium_amount_check": {
+          "name": "insurance_sales_premium_amount_check",
+          "value": "\"insurance_sales\".\"premium_amount\" >= 0"
+        },
+        "insurance_sales_commission_amount_check": {
+          "name": "insurance_sales_commission_amount_check",
+          "value": "\"insurance_sales\".\"brokerage_commission_amount\" >= 0 and \"insurance_sales\".\"brokerage_commission_amount\" <= \"insurance_sales\".\"premium_amount\""
+        },
+        "insurance_sales_employee_payout_amount_check": {
+          "name": "insurance_sales_employee_payout_amount_check",
+          "value": "\"insurance_sales\".\"employee_payout_amount\" >= 0 and \"insurance_sales\".\"employee_payout_amount\" <= \"insurance_sales\".\"brokerage_commission_amount\""
+        },
+        "insurance_sales_payout_paid_at_check": {
+          "name": "insurance_sales_payout_paid_at_check",
+          "value": "(\"insurance_sales\".\"payout_status\" = 'paid' and \"insurance_sales\".\"payout_paid_at\" is not null) or (\"insurance_sales\".\"payout_status\" = 'pending' and \"insurance_sales\".\"payout_paid_at\" is null)"
+        },
+        "insurance_sales_notes_check": {
+          "name": "insurance_sales_notes_check",
+          "value": "\"insurance_sales\".\"notes\" is null or (char_length(btrim(\"insurance_sales\".\"notes\")) between 1 and 2000 and \"insurance_sales\".\"notes\" = btrim(\"insurance_sales\".\"notes\"))"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.quote_requests": {
+      "name": "quote_requests",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "full_name": {
+          "name": "full_name",
+          "type": "varchar(150)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(254)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "insurance_type": {
+          "name": "insurance_type",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "city": {
+          "name": "city",
+          "type": "varchar(120)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "message": {
+          "name": "message",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "privacy_policy_version": {
+          "name": "privacy_policy_version",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "retention_expires_at": {
+          "name": "retention_expires_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "quote_request_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'new'"
+        }
+      },
+      "indexes": {
+        "quote_requests_created_at_idx": {
+          "name": "quote_requests_created_at_idx",
+          "columns": [
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "quote_requests_created_at_id_idx": {
+          "name": "quote_requests_created_at_id_idx",
+          "columns": [
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "quote_requests_status_idx": {
+          "name": "quote_requests_status_idx",
+          "columns": [
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "quote_requests_status_created_at_id_idx": {
+          "name": "quote_requests_status_created_at_id_idx",
+          "columns": [
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "quote_requests_retention_expires_at_idx": {
+          "name": "quote_requests_retention_expires_at_idx",
+          "columns": [
+            {
+              "expression": "retention_expires_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "quote_requests_full_name_check": {
+          "name": "quote_requests_full_name_check",
+          "value": "char_length(btrim(\"quote_requests\".\"full_name\")) between 2 and 150"
+        },
+        "quote_requests_phone_check": {
+          "name": "quote_requests_phone_check",
+          "value": "\"quote_requests\".\"phone\" ~ '^[0-9]{10,15}$'"
+        },
+        "quote_requests_email_check": {
+          "name": "quote_requests_email_check",
+          "value": "\"quote_requests\".\"email\" = lower(btrim(\"quote_requests\".\"email\")) and position('@' in \"quote_requests\".\"email\") > 1"
+        },
+        "quote_requests_insurance_type_check": {
+          "name": "quote_requests_insurance_type_check",
+          "value": "\"quote_requests\".\"insurance_type\" in ('auto', 'residencial', 'empresarial', 'vida', 'viagem', 'outras-solucoes')"
+        },
+        "quote_requests_city_check": {
+          "name": "quote_requests_city_check",
+          "value": "\"quote_requests\".\"city\" is null or (char_length(btrim(\"quote_requests\".\"city\")) between 1 and 120 and \"quote_requests\".\"city\" = btrim(\"quote_requests\".\"city\"))"
+        },
+        "quote_requests_message_check": {
+          "name": "quote_requests_message_check",
+          "value": "\"quote_requests\".\"message\" is null or (char_length(btrim(\"quote_requests\".\"message\")) between 1 and 1000 and \"quote_requests\".\"message\" = btrim(\"quote_requests\".\"message\"))"
+        },
+        "quote_requests_privacy_policy_version_check": {
+          "name": "quote_requests_privacy_policy_version_check",
+          "value": "char_length(btrim(\"quote_requests\".\"privacy_policy_version\")) between 1 and 32 and \"quote_requests\".\"privacy_policy_version\" = btrim(\"quote_requests\".\"privacy_policy_version\")"
+        },
+        "quote_requests_retention_window_check": {
+          "name": "quote_requests_retention_window_check",
+          "value": "\"quote_requests\".\"retention_expires_at\" > \"quote_requests\".\"created_at\""
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.staff_members": {
+      "name": "staff_members",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(150)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(254)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "access_subject": {
+          "name": "access_subject",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "role": {
+          "name": "role",
+          "type": "staff_role",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'employee'"
+        },
+        "is_master": {
+          "name": "is_master",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "active": {
+          "name": "active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        }
+      },
+      "indexes": {
+        "staff_members_email_unique_idx": {
+          "name": "staff_members_email_unique_idx",
+          "columns": [
+            {
+              "expression": "email",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "staff_members_access_subject_unique_idx": {
+          "name": "staff_members_access_subject_unique_idx",
+          "columns": [
+            {
+              "expression": "access_subject",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "where": "\"staff_members\".\"access_subject\" is not null",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "staff_members_active_role_name_idx": {
+          "name": "staff_members_active_role_name_idx",
+          "columns": [
+            {
+              "expression": "active",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "role",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "staff_members_name_check": {
+          "name": "staff_members_name_check",
+          "value": "char_length(btrim(\"staff_members\".\"name\")) between 2 and 150 and \"staff_members\".\"name\" = btrim(\"staff_members\".\"name\")"
+        },
+        "staff_members_email_check": {
+          "name": "staff_members_email_check",
+          "value": "\"staff_members\".\"email\" = lower(btrim(\"staff_members\".\"email\")) and position('@' in \"staff_members\".\"email\") > 1"
+        },
+        "staff_members_access_subject_check": {
+          "name": "staff_members_access_subject_check",
+          "value": "\"staff_members\".\"access_subject\" is null or (char_length(btrim(\"staff_members\".\"access_subject\")) between 1 and 255 and \"staff_members\".\"access_subject\" = btrim(\"staff_members\".\"access_subject\"))"
+        },
+        "staff_members_master_role_check": {
+          "name": "staff_members_master_role_check",
+          "value": "not \"staff_members\".\"is_master\" or \"staff_members\".\"role\" = 'administrator'"
+        }
+      },
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.payout_status": {
+      "name": "payout_status",
+      "schema": "public",
+      "values": ["pending", "paid"]
+    },
+    "public.quote_request_status": {
+      "name": "quote_request_status",
+      "schema": "public",
+      "values": ["new", "contacted", "closed"]
+    },
+    "public.sale_audit_action": {
+      "name": "sale_audit_action",
+      "schema": "public",
+      "values": ["created", "updated"]
+    },
+    "public.staff_role": {
+      "name": "staff_role",
+      "schema": "public",
+      "values": ["administrator", "employee"]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

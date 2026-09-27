@@ -6,6 +6,11 @@ export const staffRoleLabels = {
   employee: "Funcionário",
 } satisfies Record<StaffRole, string>;
 
+export type OperationsIdentity = {
+  email: string;
+  subject: string;
+};
+
 export const payoutStatuses = ["pending", "paid"] as const;
 export type PayoutStatus = (typeof payoutStatuses)[number];
 
@@ -19,6 +24,7 @@ export type OperationsActor = {
   staffMemberId: string;
   name: string;
   role: StaffRole;
+  isMaster: boolean;
 };
 
 export type OperationsSession =
@@ -32,6 +38,8 @@ export type StaffMember = {
   name: string;
   email: string;
   role: StaffRole;
+  isMaster: boolean;
+  accessBound: boolean;
   active: boolean;
 };
 
@@ -66,6 +74,7 @@ export type CreateStaffMemberInput = {
   name: string;
   email: string;
   role: StaffRole;
+  isMaster: boolean;
 };
 
 export type UpdateStaffMemberInput = CreateStaffMemberInput & {

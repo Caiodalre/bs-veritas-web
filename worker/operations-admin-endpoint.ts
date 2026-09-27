@@ -29,6 +29,7 @@ const staffSchema = z
     name: z.string().trim().min(2).max(150),
     email: z.string().trim().toLowerCase().max(254).email(),
     role: z.enum(staffRoles),
+    isMaster: z.boolean(),
   })
   .strict();
 
@@ -143,7 +144,7 @@ async function handleSession(
   if (request.method !== "GET") {
     return apiError("method_not_allowed", "Método não permitido.", 405, { allow: "GET" });
   }
-  const session = await repository.getSession(identity.email);
+  const session = await repository.getSession(identity);
   return jsonApiResponse(
     session.actor
       ? { authenticated: true, authorized: true, actor: session.actor }
@@ -170,28 +171,28 @@ async function handleBootstrap(
   const input = bootstrapSchema.safeParse(parsedBody.data);
   if (!input.success) return apiError("invalid_staff_member", "Nome inválido.", 422);
 
-  const item = await repository.bootstrapAdmin(identity.email, input.data.name);
+  const item = await repository.bootstrapMaster(identity, input.data.name);
   if (!item) {
     return apiError("bootstrap_unavailable", "O administrador inicial já foi definido.", 409);
   }
   return jsonApiResponse({ item }, 201, { "cache-control": "private, no-store" });
 }
 
-async function requireAdministrator(
+async function requireActor(
   identity: CampaignAccessIdentity,
   repository: OperationsAdminRepository,
 ) {
-  const session = await repository.getSession(identity.email);
-  return session.actor?.role === "administrator" ? session.actor : undefined;
+  const session = await repository.getSession(identity);
+  return session.actor;
 }
 
 async function handleStaffCollection(
   request: Request,
-  actorEmail: string,
+  identity: CampaignAccessIdentity,
   repository: OperationsAdminRepository,
 ) {
   if (request.method === "GET") {
-    const items = await repository.listStaff(actorEmail);
+    const items = await repository.listStaff(identity);
     return jsonApiResponse({ items }, 200, { "cache-control": "private, no-store" });
   }
   if (request.method !== "POST") {
@@ -205,13 +206,13 @@ async function handleStaffCollection(
   const input = staffSchema.safeParse(parsedBody.data);
   if (!input.success)
     return apiError("invalid_staff_member", "Dados do funcionário inválidos.", 422);
-  const item = await repository.createStaff(actorEmail, input.data);
+  const item = await repository.createStaff(identity, input.data);
   return jsonApiResponse({ item }, 201, { "cache-control": "private, no-store" });
 }
 
 async function handleStaffItem(
   request: Request,
-  actorEmail: string,
+  identity: CampaignAccessIdentity,
   id: string,
   repository: OperationsAdminRepository,
 ) {
@@ -223,14 +224,14 @@ async function handleStaffItem(
   const input = updateStaffSchema.safeParse(parsedBody.data);
   if (!input.success)
     return apiError("invalid_staff_member", "Dados do funcionário inválidos.", 422);
-  const item = await repository.updateStaff(actorEmail, id, input.data);
+  const item = await repository.updateStaff(identity, id, input.data);
   if (!item) return apiError("staff_member_not_found", "Funcionário não encontrado.", 404);
   return jsonApiResponse({ item }, 200, { "cache-control": "private, no-store" });
 }
 
 async function handleSalesCollection(
   request: Request,
-  actorEmail: string,
+  identity: CampaignAccessIdentity,
   repository: OperationsAdminRepository,
 ) {
   if (request.method === "GET") {
@@ -238,7 +239,7 @@ async function handleSalesCollection(
     const cursor = cursorValue ? decodeCursor(cursorValue) : undefined;
     if (cursorValue && !cursor) return apiError("invalid_cursor", "Paginação inválida.", 400);
     const rows = await repository.listSales({
-      actorEmail,
+      identity,
       ...(cursor ? { cursor } : {}),
       limit: pageSize + 1,
     });
@@ -259,13 +260,13 @@ async function handleSalesCollection(
   if (parsedBody.response) return parsedBody.response;
   const input = saleSchema.safeParse(parsedBody.data);
   if (!input.success) return apiError("invalid_sale", "Dados do seguro inválidos.", 422);
-  const item = await repository.createSale(actorEmail, input.data);
+  const item = await repository.createSale(identity, input.data);
   return jsonApiResponse({ item }, 201, { "cache-control": "private, no-store" });
 }
 
 async function handleSaleItem(
   request: Request,
-  actorEmail: string,
+  identity: CampaignAccessIdentity,
   id: string,
   repository: OperationsAdminRepository,
 ) {
@@ -276,7 +277,7 @@ async function handleSaleItem(
   if (parsedBody.response) return parsedBody.response;
   const input = saleSchema.safeParse(parsedBody.data);
   if (!input.success) return apiError("invalid_sale", "Dados do seguro inválidos.", 422);
-  const item = await repository.updateSale(actorEmail, id, input.data);
+  const item = await repository.updateSale(identity, id, input.data);
   if (!item) return apiError("sale_not_found", "Seguro fechado não encontrado.", 404);
   return jsonApiResponse({ item }, 200, { "cache-control": "private, no-store" });
 }
@@ -312,28 +313,43 @@ export async function handleOperationsAdminRequest(
       return await handleBootstrap(request, identity, repository);
     }
 
-    const actor = await requireAdministrator(identity, repository);
-    if (!actor) return apiError("forbidden", "Seu usuário não possui acesso administrativo.", 403);
+    const actor = await requireActor(identity, repository);
+    if (!actor) return apiError("forbidden", "Seu usuário não possui acesso ao painel.", 403);
 
     if (pathname === `${basePath}/staff`) {
-      return await handleStaffCollection(request, actor.email, repository);
+      if (actor.role !== "administrator") {
+        return apiError("forbidden", "Somente administradores podem consultar a equipe.", 403);
+      }
+      if (request.method === "POST" && !actor.isMaster) {
+        return apiError("forbidden", "Somente um ADM master pode cadastrar funcionários.", 403);
+      }
+      return await handleStaffCollection(request, identity, repository);
     }
     const staffMatch = pathname.match(new RegExp(`^${basePath}/staff/([0-9a-f-]+)$`, "iu"));
     if (staffMatch && uuidPattern.test(staffMatch[1])) {
-      return await handleStaffItem(request, actor.email, staffMatch[1], repository);
+      if (!actor.isMaster) {
+        return apiError("forbidden", "Somente um ADM master pode alterar funcionários.", 403);
+      }
+      return await handleStaffItem(request, identity, staffMatch[1], repository);
     }
     if (pathname === `${basePath}/sales`) {
-      return await handleSalesCollection(request, actor.email, repository);
+      if (request.method === "POST" && actor.role !== "administrator") {
+        return apiError("forbidden", "Somente administradores podem registrar seguros.", 403);
+      }
+      return await handleSalesCollection(request, identity, repository);
     }
     const saleMatch = pathname.match(new RegExp(`^${basePath}/sales/([0-9a-f-]+)$`, "iu"));
     if (saleMatch && uuidPattern.test(saleMatch[1])) {
-      return await handleSaleItem(request, actor.email, saleMatch[1], repository);
+      if (actor.role !== "administrator") {
+        return apiError("forbidden", "Somente administradores podem alterar seguros.", 403);
+      }
+      return await handleSaleItem(request, identity, saleMatch[1], repository);
     }
     if (pathname === `${basePath}/summary`) {
       if (request.method !== "GET") {
         return apiError("method_not_allowed", "Método não permitido.", 405, { allow: "GET" });
       }
-      const summary = await repository.getSummary(actor.email);
+      const summary = await repository.getSummary(identity);
       return jsonApiResponse({ summary }, 200, { "cache-control": "private, no-store" });
     }
 
@@ -348,8 +364,7 @@ export async function handleOperationsAdminRequest(
       }),
     );
 
-    if (databaseCode === "42501")
-      return apiError("forbidden", "Acesso administrativo negado.", 403);
+    if (databaseCode === "42501") return apiError("forbidden", "Acesso ao painel negado.", 403);
     if (databaseCode === "23505")
       return apiError("duplicate_staff_email", "Este e-mail já está cadastrado.", 409);
     if (databaseCode === "23503" || databaseCode === "23514" || databaseCode === "22023") {

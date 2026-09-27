@@ -15,13 +15,25 @@ indexável, sem acesso ao banco ou às integrações de produção.
 - resumo financeiro e paginação por cursor sem integração de pagamentos;
 - autorização adicional por funcionário ativo no PostgreSQL, além da validação do Cloudflare Access;
 - migration `0005_operations_admin.sql` com privilégios mínimos e sem exclusão direta de registros;
+- entrada principal em `/painel`, com perfis ADM master, administrador e funcionário;
+- vínculo único da identidade Cloudflare Access ao cadastro, sem senha armazenada pela aplicação;
+- visão do funcionário limitada às próprias vendas e repasses, com autorização repetida na API e no
+  PostgreSQL;
+- migration aditiva `0006_staff_portal_access.sql` para vínculo de identidade e delegação segura do
+  perfil master;
 - testes de endpoint, segurança da migration, TypeScript, lint, build e bundle do Worker.
 
 ### Pendente antes da publicação
 
-- aplicar e verificar a migration no PostgreSQL/Aiven;
-- publicar o Worker e ativar o primeiro administrador com identidade já permitida pelo Access;
+- aplicar e verificar `0006_staff_portal_access.sql` no PostgreSQL/Aiven;
+- proteger `/painel*` no Cloudflare Access e publicar o Worker;
 - executar smoke test somente com dados fictícios.
+
+### Estado da base
+
+- `0005_operations_admin.sql` aplicada e validada em produção em 2026-09-27;
+- tabelas, índices, funções, histórico de migrations e ausência de privilégios diretos foram
+  confirmados sem exposição de dados ou credenciais.
 
 ### Decidido
 

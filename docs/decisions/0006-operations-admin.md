@@ -1,7 +1,8 @@
 # ADR 0006 — Controle comercial interno
 
-- **Status:** proposto e implementado localmente; ainda não publicado
-- **Data:** 2026-09-26
+- **Status:** base operacional publicada; evolução do portal implementada localmente e ainda não
+  publicada
+- **Data:** 2026-09-27
 
 ## Contexto
 
@@ -11,12 +12,20 @@ não pode depender apenas de uma página estática ou de controles no navegador.
 
 ## Decisão
 
-- manter a interface em `/admin/campanhas/gestao`, dentro da aplicação já protegida pelo Cloudflare
-  Access;
-- validar novamente o JWT do Access no Worker e usar o e-mail confirmado como identidade do autor;
-- exigir um funcionário ativo com função `administrator` para qualquer consulta ou alteração;
-- permitir a ativação do primeiro administrador somente enquanto a tabela de funcionários estiver
-  vazia e somente para uma identidade já aprovada pelo Access;
+- oferecer a entrada principal em `/painel`, preservando `/admin/campanhas/gestao` durante a
+  transição;
+- usar o Cloudflare Access como tela de entrada e provedor de identidade, sem criar ou armazenar
+  senhas no site;
+- validar novamente o JWT do Access no Worker e vincular o `sub` verificado ao cadastro previamente
+  autorizado pelo e-mail, impedindo que uma mesma identidade seja vinculada a duas pessoas;
+- adotar três níveis funcionais: `ADM master` (`administrator` com `is_master`), administrador e
+  funcionário;
+- permitir que o ADM master cadastre, altere, desative e delegue perfis; permitir que o administrador
+  consulte a equipe e gerencie vendas; limitar o funcionário às próprias vendas e repasses;
+- aplicar as mesmas regras de autorização no endpoint e nas funções PostgreSQL, sem depender de
+  controles visuais do navegador;
+- permitir a ativação do primeiro ADM master somente enquanto a tabela de funcionários estiver vazia
+  e somente para uma identidade já aprovada pelo Access;
 - persistir funcionários, seguros fechados e eventos de auditoria no PostgreSQL/Aiven;
 - usar `numeric(14, 2)` para valores monetários e validações que impedem comissão maior que prêmio e
   repasse maior que comissão;
@@ -32,10 +41,15 @@ não pode depender apenas de uma página estática ou de controles no navegador.
 
 ## Consequências
 
-- adicionar um administrador no painel não substitui a inclusão do e-mail na política do Cloudflare
-  Access;
-- a migration `0005_operations_admin.sql` deve ser aplicada antes do deploy que ativa
-  `OPERATIONS_ADMIN_ENABLED`;
+- a migration `0005_operations_admin.sql` foi aplicada e validada em produção em 2026-09-27;
+- a evolução de perfis e vínculo de identidade exige aplicar `0006_staff_portal_access.sql` antes do
+  deploy correspondente;
+- a aplicação Cloudflare Access deve proteger `/painel*` e a API operacional, admitindo somente os
+  e-mails da equipe; o cadastro no PostgreSQL continua sendo uma segunda autorização obrigatória;
+- remover ou desativar um funcionário no banco bloqueia os dados do painel mesmo que ainda exista
+  uma sessão do Access;
+- alterar o e-mail de um funcionário remove o vínculo anterior e exige nova autenticação da
+  identidade correspondente;
 - o histórico de auditoria aumenta o volume armazenado e contém os mesmos dados do registro
   comercial; a política inicial aprovada em 2026-09-26 é mantê-lo sem exclusão automática, junto
   aos registros comerciais correspondentes;

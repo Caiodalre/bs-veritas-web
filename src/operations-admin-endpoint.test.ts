@@ -11,11 +11,20 @@ import { handleOperationsAdminRequest } from "../worker/operations-admin-endpoin
 import type { OperationsAdminRepository } from "../worker/operations-admin-repository";
 
 const actorEmail = "admin@example.invalid";
+const identity = { email: actorEmail, subject: "subject-example" };
 const actor: OperationsActor = {
   email: actorEmail,
   staffMemberId: "11111111-1111-4111-8111-111111111111",
   name: "Pessoa Administradora",
   role: "administrator",
+  isMaster: true,
+};
+const regularAdministrator: OperationsActor = { ...actor, isMaster: false };
+const employeeActor: OperationsActor = {
+  ...actor,
+  name: "Pessoa Funcionária",
+  role: "employee",
+  isMaster: false,
 };
 const staffMember: StaffMember = {
   id: actor.staffMemberId,
@@ -24,6 +33,8 @@ const staffMember: StaffMember = {
   name: actor.name,
   email: actorEmail,
   role: "administrator",
+  isMaster: true,
+  accessBound: true,
   active: true,
 };
 const validSaleInput: InsuranceSaleInput = {
@@ -56,7 +67,7 @@ function createRepository() {
       actor,
       bootstrapAvailable: false,
     })),
-    bootstrapAdmin: vi.fn(async () => staffMember),
+    bootstrapMaster: vi.fn(async () => staffMember),
     listStaff: vi.fn(async () => [staffMember]),
     createStaff: vi.fn(async () => staffMember),
     updateStaff: vi.fn(async () => staffMember),
@@ -80,7 +91,7 @@ function createEnv(enabled = true) {
   };
 }
 
-const authorize = async () => ({ email: actorEmail, subject: "subject-example" });
+const authorize = async () => identity;
 
 function jsonRequest(path: string, method: "POST" | "PATCH", body: unknown) {
   return new Request(`https://bsveritas.com.br${path}`, {
@@ -143,7 +154,7 @@ describe("operations admin endpoint", () => {
     );
 
     expect(response.status).toBe(201);
-    expect(repository.bootstrapAdmin).toHaveBeenCalledWith(actorEmail, "Pessoa Administradora");
+    expect(repository.bootstrapMaster).toHaveBeenCalledWith(identity, "Pessoa Administradora");
   });
 
   it("impede usuário autenticado sem função administrativa", async () => {
@@ -166,17 +177,85 @@ describe("operations admin endpoint", () => {
         name: "Pessoa Funcionária",
         email: "funcionario@example.invalid",
         role: "employee",
+        isMaster: false,
       }),
       createEnv(),
       { authorize, createRepository: () => repository },
     );
 
     expect(response.status).toBe(201);
-    expect(repository.createStaff).toHaveBeenCalledWith(actorEmail, {
+    expect(repository.createStaff).toHaveBeenCalledWith(identity, {
       name: "Pessoa Funcionária",
       email: "funcionario@example.invalid",
       role: "employee",
+      isMaster: false,
     });
+  });
+
+  it("reserva o cadastro de funcionários ao ADM master", async () => {
+    const repository = createRepository();
+    repository.getSession.mockResolvedValueOnce({
+      actor: regularAdministrator,
+      bootstrapAvailable: false,
+    });
+    const response = await handleOperationsAdminRequest(
+      jsonRequest("/api/admin/campaigns/operations/staff", "POST", {
+        name: "Pessoa Funcionária",
+        email: "funcionario@example.invalid",
+        role: "employee",
+        isMaster: false,
+      }),
+      createEnv(),
+      { authorize, createRepository: () => repository },
+    );
+
+    expect(response.status).toBe(403);
+    expect(repository.createStaff).not.toHaveBeenCalled();
+  });
+
+  it("permite que o funcionário consulte somente sua visão operacional", async () => {
+    const repository = createRepository();
+    repository.getSession.mockResolvedValueOnce({
+      actor: employeeActor,
+      bootstrapAvailable: false,
+    });
+    const response = await handleOperationsAdminRequest(
+      new Request("https://bsveritas.com.br/api/admin/campaigns/operations/sales"),
+      createEnv(),
+      { authorize, createRepository: () => repository },
+    );
+
+    expect(response.status).toBe(200);
+    expect(repository.listSales).toHaveBeenCalledWith({ identity, limit: 21 });
+  });
+
+  it("impede funcionário de registrar seguros ou consultar a equipe", async () => {
+    const salesRepository = createRepository();
+    salesRepository.getSession.mockResolvedValueOnce({
+      actor: employeeActor,
+      bootstrapAvailable: false,
+    });
+    const salesResponse = await handleOperationsAdminRequest(
+      jsonRequest("/api/admin/campaigns/operations/sales", "POST", validSaleInput),
+      createEnv(),
+      { authorize, createRepository: () => salesRepository },
+    );
+
+    const staffRepository = createRepository();
+    staffRepository.getSession.mockResolvedValueOnce({
+      actor: employeeActor,
+      bootstrapAvailable: false,
+    });
+    const staffResponse = await handleOperationsAdminRequest(
+      new Request("https://bsveritas.com.br/api/admin/campaigns/operations/staff"),
+      createEnv(),
+      { authorize, createRepository: () => staffRepository },
+    );
+
+    expect(salesResponse.status).toBe(403);
+    expect(staffResponse.status).toBe(403);
+    expect(salesRepository.createSale).not.toHaveBeenCalled();
+    expect(staffRepository.listStaff).not.toHaveBeenCalled();
   });
 
   it("rejeita repasse superior à comissão antes de consultar a gravação", async () => {
@@ -209,7 +288,7 @@ describe("operations admin endpoint", () => {
     expect(response.status).toBe(200);
     expect(payload.items).toHaveLength(20);
     expect(payload.nextCursor).toMatch(/^[A-Za-z0-9_-]+$/u);
-    expect(repository.listSales).toHaveBeenCalledWith({ actorEmail, limit: 21 });
+    expect(repository.listSales).toHaveBeenCalledWith({ identity, limit: 21 });
   });
 
   it("não registra nem devolve detalhes sensíveis quando o banco falha", async () => {
