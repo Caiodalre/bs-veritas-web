@@ -1,0 +1,6 @@
+Contact: mailto:contato@bsveritas.com.br
+Expires: 2027-09-26T23:59:59Z
+Preferred-Languages: pt-BR
+Canonical: https://bsveritas.com.br/.well-known/security.txt
+
+# Não envie credenciais, dados pessoais de terceiros ou detalhes exploráveis no primeiro contato.

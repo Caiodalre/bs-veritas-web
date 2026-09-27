@@ -285,7 +285,10 @@ Não se deve apagar evidências ou publicar detalhes do incidente sem coordenaç
 
 ## Comunicação de vulnerabilidades
 
-O canal público específico de segurança ainda não foi definido. Até sua criação, o canal geral publicado pode receber o primeiro contato, sem que o relato inclua credenciais, dados pessoais de terceiros ou detalhes exploráveis.
+O endpoint padronizado `https://bsveritas.com.br/.well-known/security.txt` publica o canal geral como
+ponto de descoberta temporário para relatos de vulnerabilidade. Ele não substitui a criação futura de
+um endereço específico de segurança. O primeiro contato não deve incluir credenciais, dados pessoais
+de terceiros ou detalhes exploráveis.
 
 Dados de vulnerabilidade não devem ser enviados para formulários comerciais comuns quando o canal oficial estiver disponível.
 
@@ -309,6 +312,7 @@ Dados de vulnerabilidade não devem ser enviados para formulários comerciais co
 - [x] dependências e scripts de instalação revisados;
 - [x] testes, lint e build aprovados;
 - [x] estratégia de rollback documentada;
+- [x] endpoint público `security.txt` com contato, validade e URL canônica;
 - [ ] alerta da DLQ dentro da retenção de 24 horas — implementação local validada; publicação e
       execução real pendentes;
 - [ ] canal de incidente e vulnerabilidade definido.
