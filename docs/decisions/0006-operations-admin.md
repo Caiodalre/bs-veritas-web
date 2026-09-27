@@ -42,8 +42,8 @@ não pode depender apenas de uma página estática ou de controles no navegador.
 ## Consequências
 
 - a migration `0005_operations_admin.sql` foi aplicada e validada em produção em 2026-09-27;
-- a evolução de perfis e vínculo de identidade exige aplicar `0006_staff_portal_access.sql` antes do
-  deploy correspondente;
+- a migration `0006_staff_portal_access.sql` foi aplicada e validada em produção em 2026-09-27;
+- a adoção operacional e a expansão dos perfis do portal permanecem em standby até nova aprovação;
 - a aplicação Cloudflare Access deve proteger `/painel*` e a API operacional, admitindo somente os
   e-mails da equipe; o cadastro no PostgreSQL continua sendo uma segunda autorização obrigatória;
 - remover ou desativar um funcionário no banco bloqueia os dados do painel mesmo que ainda exista

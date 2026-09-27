@@ -204,11 +204,12 @@ não recebe esse segredo.
 
 ## Banco de dados
 
-As migrations até `0005_operations_admin.sql` foram aplicadas ao serviço PostgreSQL da Aiven usado
-pela produção. `0006_staff_portal_access.sql` permanece local e pendente de aprovação e aplicação. O
-usuário de aplicação `bs_veritas_app` recebe o papel `bs_veritas_quote_writer`, limitado às operações
-explicitamente concedidas. A conexão do Worker é intermediada pelo Hyperdrive; a string de conexão e
-a senha não são enviadas ao navegador nem versionadas.
+As migrations até `0006_staff_portal_access.sql` foram aplicadas e validadas no serviço PostgreSQL da
+Aiven usado pela produção. A adoção operacional e a expansão dos perfis do portal permanecem em
+standby, sem desfazer o schema aditivo já aplicado. O usuário de aplicação `bs_veritas_app` recebe o
+papel `bs_veritas_quote_writer`, limitado às operações explicitamente concedidas. A conexão do Worker
+é intermediada pelo Hyperdrive; a string de conexão e a senha não são enviadas ao navegador nem
+versionadas.
 
 Regras operacionais:
 
@@ -227,7 +228,7 @@ Regras operacionais:
 | --------------------- | ------------------------------------------- | ---------------------------------------------------------- |
 | Cloudflare Workers    | site, endpoint e assets                     | produção ativa; preview isolado                            |
 | Cloudflare Cron       | descarte diário de cotações vencidas        | ativo em produção às 06:17 UTC; primeira execução pendente |
-| Cloudflare Cron       | alerta de backlog da DLQ a cada seis horas  | validado localmente; publicação pendente                   |
+| Cloudflare Cron       | alerta de backlog da DLQ a cada seis horas  | ativo em produção; primeira execução real pendente         |
 | Cloudflare Hyperdrive | conexão protegida com PostgreSQL            | ativo somente em produção; cache desativado                |
 | Cloudflare Turnstile  | verificação antiabuso                       | ativo em produção e validado no servidor                   |
 | PostgreSQL/Aiven      | persistência de leads                       | migrations, menor privilégio e restauração validados       |

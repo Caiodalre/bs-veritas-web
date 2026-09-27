@@ -248,26 +248,15 @@ O deploy da aplicação e a migration deverão ter uma ordem explícita e compat
 
 ### Ordem do controle comercial
 
-A base `0005_operations_admin.sql` foi aplicada e validada em produção em 2026-09-27. A evolução do
-portal de equipe seguirá esta ordem:
+A base `0005_operations_admin.sql` e a evolução aditiva `0006_staff_portal_access.sql` foram aplicadas
+e validadas em produção em 2026-09-27. A validação da `0006` confirmou colunas, restrições, índice de
+identidade, funções com privilégio mínimo, ausência de concessão direta às tabelas e o ADM master.
+`/painel*` permanece protegido pelo Cloudflare Access e o Worker mantém a segunda autorização no
+PostgreSQL.
 
-1. revisar e aprovar a migration aditiva `0006_staff_portal_access.sql`;
-2. confirmar backup recuperável e manter a política aprovada de não excluir automaticamente os
-   registros comerciais e sua auditoria;
-3. aplicar a migration com o usuário administrativo e confirmar as colunas `access_subject` e
-   `is_master`, restrições, índice único parcial e funções;
-4. verificar que `bs_veritas_quote_writer` continua sem acesso direto às tabelas e possui somente
-   `EXECUTE` nas nove funções públicas do módulo;
-5. atualizar a aplicação Cloudflare Access para proteger `/painel*`, mantendo também protegidas a
-   rota legada e a API operacional; a política deve usar contas individuais da equipe;
-6. publicar a revisão aprovada do Worker, mantendo `OPERATIONS_ADMIN_ENABLED=true` somente em
-   produção;
-7. abrir `/painel` com o ADM master já cadastrado, confirmar o vínculo da identidade e cadastrar os
-   demais funcionários sem criar senhas no site;
-8. testar com identidades fictícias ou controladas que o master gerencia acessos, o administrador
-   gerencia vendas e o funcionário enxerga somente os próprios registros;
-9. confirmar que desativar um funcionário bloqueia sua sessão no banco mesmo que o Access ainda o
-   autentique.
+A adoção operacional e a expansão dos perfis do portal foram colocadas em standby pelo responsável.
+Até nova aprovação, não serão cadastrados novos funcionários, ampliados os fluxos comerciais nem
+alteradas as políticas de retenção desse módulo.
 
 O rollback do Worker desativa a interface, mas não remove tabelas nem registros. A migration é
 aditiva e não modifica as solicitações de cotação existentes.
@@ -523,10 +512,10 @@ Pendências conhecidas:
 - nenhuma pausa de entrega indicada pela API da Cloudflare;
 - ambas as filas retêm mensagens não consumidas por 24 horas;
 - DLQ sem consumidor; o monitor não lê nem remove mensagens;
-- verificação automática da DLQ implementada localmente a cada seis horas, com alerta por e-mail
+- verificação automática da DLQ publicada em produção a cada seis horas, com alerta por e-mail
   somente quando o backlog for maior que zero e sem incluir conteúdo das mensagens;
 - validação local concluída com 142 testes, tipos, lint, formatação, build e dry-runs dos ambientes;
-  publicação e primeira execução real do monitor permanecem pendentes.
+  a primeira execução real do monitor ainda precisa de evidência operacional.
 
 ### Administração protegida de solicitações — 2026-09-26
 
@@ -542,22 +531,22 @@ Pendências conhecidas:
 
 ## Estado atual da implantação
 
-| Componente            | Estado                                                          |
-| --------------------- | --------------------------------------------------------------- |
-| build local           | configurado e validado                                          |
-| testes locais         | configurados e validados                                        |
-| repositório Git local | configurado                                                     |
-| GitHub remoto         | privado e configurado                                           |
-| CI                    | ativo e validado no GitHub                                      |
-| Cloudflare Workers    | preview isolado e produção com API ativos                       |
-| Vercel                | excluída do plano gratuito                                      |
-| domínio no projeto    | apex ativo e `www` com redirecionamento `301`                   |
-| monitoramento         | agendado no GitHub Actions a cada seis horas                    |
-| PostgreSQL remoto     | Aiven conectado; backup, restauração e migration 0004 validados |
-| notificações          | fila e e-mail ativos; monitor da DLQ validado localmente        |
-| retenção              | descarte diário publicado; primeira execução pendente           |
-| administração         | campanhas e solicitações protegidas pelo Access                 |
-| versão Cloudflare     | `5d985998-da39-48c5-96b1-83e145af0e15`                          |
-| produção              | ativa no commit `c522403`                                       |
+| Componente            | Estado                                                               |
+| --------------------- | -------------------------------------------------------------------- |
+| build local           | configurado e validado                                               |
+| testes locais         | configurados e validados                                             |
+| repositório Git local | configurado                                                          |
+| GitHub remoto         | privado e configurado                                                |
+| CI                    | ativo e validado no GitHub                                           |
+| Cloudflare Workers    | preview isolado e produção com API ativos                            |
+| Vercel                | excluída do plano gratuito                                           |
+| domínio no projeto    | apex ativo e `www` com redirecionamento `301`                        |
+| monitoramento         | agendado no GitHub Actions a cada seis horas                         |
+| PostgreSQL remoto     | Aiven conectado; backup, restauração e migrations até 0006 validados |
+| notificações          | fila e e-mail ativos; monitor da DLQ publicado                       |
+| retenção              | descarte diário publicado; primeira execução pendente                |
+| administração         | campanhas e solicitações protegidas; portal da equipe em standby     |
+| versão Cloudflare     | `056d5810-a514-455b-b03b-7bdf7d7a03f2`                               |
+| produção              | ativa no commit `79b4690`                                            |
 
 Qualquer mudança desse estado deverá ser feita como uma etapa separada, aprovada e validada.

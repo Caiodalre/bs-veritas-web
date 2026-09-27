@@ -53,12 +53,12 @@ requisição pelo navegador não é seguro porque poderia criar um segundo lead.
   60 segundos e encaminhamento para `bs-veritas-quote-notifications-dlq`;
 - fila principal e fila de mensagens mortas com backlog em tempo real de 0 mensagens e 0 bytes;
 - nenhuma pausa de entrega indicada pela API;
-- fila de mensagens mortas sem consumidor, com retenção de 24 horas; alerta ou inspeção operacional
-  dentro desse período permanece pendente em produção;
-- monitor da DLQ implementado localmente para o cron `47 */6 * * *`, com e-mail somente quando o
+- fila de mensagens mortas sem consumidor, com retenção de 24 horas; a primeira execução real do
+  monitor dentro desse período ainda precisa de evidência operacional;
+- monitor da DLQ publicado somente em produção no cron `47 */6 * * *`, com e-mail somente quando o
   backlog é maior que zero e logs limitados a métricas técnicas;
-- testes, tipos, lint, formatação, build e dry-runs de produção e preview aprovados; publicação e
-  primeira execução real do alerta permanecem pendentes.
+- testes, tipos, lint, formatação, build e dry-runs de produção e preview aprovados; a primeira
+  execução real do alerta permanece pendente.
 
 ## Referências
 
