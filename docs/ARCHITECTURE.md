@@ -25,7 +25,7 @@ O V1 não terá:
 - escrita direta do navegador no banco de dados;
 - integração direta com sistemas de seguradoras.
 
-O V1 possui duas áreas internas de escopo limitado, protegidas pelo Cloudflare Access: administração de campanhas e acompanhamento do estado das solicitações. Elas não autenticam clientes, não são públicas e não substituem um CRM.
+O V1 possui áreas internas de escopo limitado, protegidas pelo Cloudflare Access: administração de campanhas, acompanhamento do estado das solicitações e controle comercial de funcionários, seguros fechados e repasses. Elas não autenticam clientes, não são públicas e não substituem um CRM completo ou sistema financeiro.
 
 ## Contexto do sistema
 
@@ -69,7 +69,7 @@ Next.js com exportação estática
 O preview utiliza somente os arquivos estáticos gerados pelo Next.js. O formulário permanece visível para revisão, mas desativado, e o Worker recusa `POST /api/quote` antes de qualquer integração.
 
 A camada dinâmica é um Cloudflare Worker restrito às rotas `/api/*`, com PostgreSQL da Aiven conectado por Hyperdrive. O endpoint de cotação está ativo somente em produção, protegido por rate limiting, validação Zod, honeypot e Turnstile.
-A mesma camada atende as APIs administrativas de campanhas e solicitações. O Cloudflare Access protege os caminhos no domínio oficial, e o Worker valida novamente o JWT antes de acessar R2 ou PostgreSQL. O preview mantém essas funções desativadas.
+A mesma camada atende as APIs administrativas de campanhas, solicitações e controle comercial. O Cloudflare Access protege os caminhos no domínio oficial, e o Worker valida novamente o JWT antes de acessar R2 ou PostgreSQL. O controle comercial exige ainda um funcionário ativo com função administrativa no banco. O preview mantém essas funções desativadas.
 A decisão completa está registrada em [`docs/decisions/0001-quote-runtime-and-database.md`](decisions/0001-quote-runtime-and-database.md).
 
 O e-mail corporativo é uma infraestrutura independente. A troca do provedor de e-mail não deve exigir reconstrução do site.

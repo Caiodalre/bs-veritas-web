@@ -108,6 +108,7 @@ function createWorkerEnv(
   return {
     ASSETS: assets,
     CAMPAIGN_ADMIN_ENABLED: "false",
+    OPERATIONS_ADMIN_ENABLED: "false",
     HYPERDRIVE: createHyperdriveBinding(),
     QUOTE_ADMIN_ENABLED: "false",
     QUOTE_DLQ_MONITOR_ENABLED: "false",
@@ -220,6 +221,17 @@ describe("quote worker", () => {
     expect(assets.fetch).toHaveBeenCalledWith(request);
   });
 
+  it("encaminha o controle comercial para a API protegida antes dos assets", async () => {
+    const assets = createAssetsBinding();
+    const response = await handleWorkerRequest(
+      new Request("https://example.test/api/admin/campaigns/operations/session"),
+      createWorkerEnv(assets),
+    );
+
+    expect(response.status).toBe(503);
+    expect(assets.fetch).not.toHaveBeenCalled();
+  });
+
   it("mapeia payloads RSC estáticos para a estrutura gerada pelo Next.js", async () => {
     const assets = createAssetsBinding();
     const request = new Request(
@@ -282,6 +294,7 @@ describe("quote worker", () => {
     const env: Env = {
       ASSETS: assets,
       CAMPAIGN_ADMIN_ENABLED: "false",
+      OPERATIONS_ADMIN_ENABLED: "false",
       QUOTE_ADMIN_ENABLED: "false",
       QUOTE_EXPECTED_HOSTNAME: "bsveritas.com.br",
       QUOTE_DLQ_MONITOR_ENABLED: "false",

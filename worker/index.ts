@@ -10,6 +10,10 @@ import {
   handleQuoteAdminRequest,
   type QuoteAdminEndpointDependencies,
 } from "./quote-admin-endpoint";
+import {
+  handleOperationsAdminRequest,
+  type OperationsAdminEndpointDependencies,
+} from "./operations-admin-endpoint";
 import { handleQuoteRetentionCleanup } from "./quote-retention";
 
 const quoteEndpoint = "/api/quote";
@@ -76,8 +80,13 @@ export async function handleWorkerRequest(
   quoteDependencies?: QuoteEndpointDependencies,
   campaignDependencies?: CampaignEndpointDependencies,
   quoteAdminDependencies?: QuoteAdminEndpointDependencies,
+  operationsAdminDependencies?: OperationsAdminEndpointDependencies,
 ): Promise<Response> {
   const { pathname } = new URL(request.url);
+
+  if (pathname.startsWith("/api/admin/campaigns/operations")) {
+    return handleOperationsAdminRequest(request, env, operationsAdminDependencies);
+  }
 
   if (pathname.startsWith("/api/admin/campaigns/quote-requests")) {
     return handleQuoteAdminRequest(request, env, quoteAdminDependencies);

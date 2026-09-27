@@ -5,6 +5,11 @@ export type CampaignAccessEnvironment = {
   CAMPAIGN_ACCESS_TEAM_DOMAIN?: string;
 };
 
+export type CampaignAccessIdentity = {
+  email: string;
+  subject: string;
+};
+
 const remoteKeySets = new Map<string, ReturnType<typeof createRemoteJWKSet>>();
 
 function normalizeTeamDomain(value: string) {
@@ -17,16 +22,16 @@ function normalizeTeamDomain(value: string) {
   return url.origin;
 }
 
-export async function verifyCampaignAccess(
+export async function getCampaignAccessIdentity(
   request: Request,
   env: CampaignAccessEnvironment,
-): Promise<boolean> {
+): Promise<CampaignAccessIdentity | undefined> {
   const token = request.headers.get("cf-access-jwt-assertion")?.trim();
   const audience = env.CAMPAIGN_ACCESS_AUD?.trim();
   const configuredTeamDomain = env.CAMPAIGN_ACCESS_TEAM_DOMAIN?.trim();
 
   if (!token || !audience || !configuredTeamDomain) {
-    return false;
+    return undefined;
   }
 
   try {
@@ -39,12 +44,26 @@ export async function verifyCampaignAccess(
       remoteKeySets.set(certsUrl, keySet);
     }
 
-    await jwtVerify(token, keySet, {
+    const { payload } = await jwtVerify(token, keySet, {
       audience,
       issuer,
     });
-    return true;
+    const email = typeof payload.email === "string" ? payload.email.trim().toLowerCase() : "";
+    const subject = typeof payload.sub === "string" ? payload.sub.trim() : "";
+
+    if (!email || !subject || !email.includes("@")) {
+      return undefined;
+    }
+
+    return { email, subject };
   } catch {
-    return false;
+    return undefined;
   }
+}
+
+export async function verifyCampaignAccess(
+  request: Request,
+  env: CampaignAccessEnvironment,
+): Promise<boolean> {
+  return Boolean(await getCampaignAccessIdentity(request, env));
 }

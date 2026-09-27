@@ -246,6 +246,32 @@ Quando o banco entrar no fluxo de publicação:
 
 O deploy da aplicação e a migration deverão ter uma ordem explícita e compatível. Mudanças destrutivas de schema exigirão plano específico e não serão aplicadas automaticamente.
 
+### Ordem do controle comercial
+
+A ativação do painel de funcionários, seguros fechados e repasses seguirá esta ordem:
+
+1. revisar e aprovar a migration `0005_operations_admin.sql`;
+2. confirmar backup recuperável e a política aprovada de manter os registros comerciais e sua
+   auditoria sem exclusão automática;
+3. aplicar a migration com o usuário administrativo e confirmar tabelas, índices, restrições e
+   funções;
+4. verificar que `bs_veritas_quote_writer` possui somente `EXECUTE` nas funções do módulo e nenhum
+   acesso direto às tabelas;
+5. publicar o Worker com `OPERATIONS_ADMIN_ENABLED=true` somente em produção;
+6. abrir `/admin/campanhas/gestao` com uma identidade já permitida pelo Cloudflare Access e ativar o
+   primeiro administrador;
+7. cadastrar outros funcionários e confirmar separadamente no Access os e-mails que poderão entrar
+   como administradores;
+8. executar um teste com dados fictícios, confirmar a auditoria e remover ou anonimizar o registro de
+   teste conforme o procedimento aprovado.
+
+O rollback do Worker desativa a interface, mas não remove tabelas nem registros. A migration é
+aditiva e não modifica as solicitações de cotação existentes.
+
+O V1 não publica função, agendamento ou endpoint de exclusão para funcionários, vendas, repasses ou
+eventos de auditoria. Uma futura política de descarte deverá ser tratada como mudança separada e não
+poderá reutilizar automaticamente a rotina de retenção dos pedidos de cotação.
+
 ### Ordem da rotina de retenção
 
 A ativação do descarte automático seguirá obrigatoriamente esta ordem:
