@@ -10,7 +10,10 @@ A experiência pública inicial está online. O repositório privado e a integra
 
 A produção está disponível em [https://bsveritas.com.br](https://bsveritas.com.br), com redirecionamento permanente de `www`. O formulário de cotação está ativo somente no domínio oficial, persiste as solicitações no PostgreSQL da Aiven e enfileira a notificação comercial após a gravação.
 
-A operação interna possui áreas restritas para administrar campanhas e acompanhar solicitações. Essas rotas são protegidas pelo Cloudflare Access e por validação adicional do token no Worker; não constituem autenticação de clientes nem um CRM público.
+A operação interna possui áreas restritas para administrar campanhas, acompanhar solicitações e
+controlar funcionários, vendas e repasses. Essas rotas são protegidas pelo Cloudflare Access e por
+validação adicional do token e do perfil no Worker e no PostgreSQL; não constituem autenticação de
+clientes nem um CRM público.
 
 Já estão configurados:
 
@@ -30,6 +33,8 @@ Já estão configurados:
 - carrossel acessível com Porto Seguro, Petlove, Icatu e Bradesco Seguros como parceiros comerciais confirmados;
 - administração protegida de campanhas com imagens privadas no R2;
 - painel protegido de solicitações com filtro, paginação e atualização de situação;
+- portal de equipe em `/painel`, com ADM master, administradores e visão individual do funcionário,
+  sem armazenamento de senhas no site;
 - página de Sinistros com primeiros cuidados, limites e orientação segura;
 - página de Contato com canais públicos e formulário de cotação protegido por Turnstile, honeypot, rate limiting e validação no servidor;
 - Política de Privacidade com práticas atuais, direitos dos titulares e canal de atendimento;

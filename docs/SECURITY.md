@@ -65,14 +65,15 @@ Já existem no repositório:
 - novas tentativas automáticas de e-mail com espera progressiva e fila de mensagens mortas;
 - migration e Cron Trigger de descarte ao fim da retenção publicados somente em produção;
 - backup lógico do PostgreSQL/Aiven restaurado e validado em PostgreSQL 18 local isolado.
-- Cloudflare Access restringindo as áreas internas aos administradores aprovados;
+- Cloudflare Access restringindo as áreas internas às identidades individuais aprovadas;
 - validação do JWT do Access dentro do Worker antes de consultar R2 ou dados de solicitações;
 - bucket R2 privado, APIs administrativas com `Cache-Control: no-store` e preview administrativo desativado;
 - funções PostgreSQL de consulta paginada e atualização de situação com privilégio mínimo, sem leitura, alteração ou exclusão direta da tabela pelo papel da aplicação.
 
 Ainda não estão configurados ou homologados:
 
-- migration e publicação do controle comercial de funcionários, seguros fechados e repasses;
+- migration `0006_staff_portal_access.sql`, proteção de `/painel*` no Access e publicação dos perfis
+  do portal da equipe;
 - acompanhamento e registro da primeira execução agendada do descarte ao fim da retenção;
 - analytics de navegador, que permanece deliberadamente desativado;
 - MFA e canal específico para incidentes e vulnerabilidades.
@@ -212,7 +213,12 @@ CSP e HSTS foram verificados no domínio final durante a publicação inicial de
 
 ## Autenticação administrativa
 
-O V1 não possui painel administrativo público. As áreas internas de campanhas e solicitações são protegidas pelo Cloudflare Access, aceitam somente as identidades aprovadas e validam o token novamente no Worker. Além desses controles, as plataformas de infraestrutura deverão seguir estas regras:
+O V1 não possui painel administrativo público. As áreas internas são protegidas pelo Cloudflare
+Access, aceitam somente identidades individuais aprovadas e validam o token novamente no Worker. O
+portal da equipe não armazena senha: ele vincula o `sub` do Access ao funcionário previamente
+cadastrado e ativo. A API e as funções PostgreSQL repetem a autorização por perfil: master gerencia
+acessos, administrador gerencia vendas e funcionário consulta apenas os próprios registros. Além
+desses controles, as plataformas de infraestrutura deverão seguir estas regras:
 
 - autenticação multifator obrigatória;
 - contas individuais, sem senha compartilhada;

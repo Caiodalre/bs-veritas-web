@@ -2,34 +2,34 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Wordmark } from "@/components/brand/wordmark";
 import { Container } from "@/components/layout/container";
-import { CampaignAdmin } from "@/features/campaigns/components/campaign-admin";
+import { OperationsAdmin } from "@/features/operations-admin/components/operations-admin";
 
 export const metadata: Metadata = {
-  title: "Administrar campanhas",
+  title: "Painel da equipe",
   robots: { index: false, follow: false },
 };
 
-export default function CampaignAdminPage() {
+export default function StaffPortalPage() {
   return (
     <div className="min-h-screen bg-aqua-50">
       <header className="border-b border-white/10 bg-navy-950 text-white">
-        <Container className="flex min-h-20 items-center justify-between gap-4">
+        <Container className="flex min-h-20 flex-wrap items-center justify-between gap-4 py-4">
           <Wordmark inverted />
           <nav
-            aria-label="Navegação administrativa"
+            aria-label="Navegação do painel"
             className="flex flex-wrap gap-4 text-sm font-semibold"
           >
+            <Link
+              className="text-aqua-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-300"
+              href="/admin/campanhas"
+            >
+              Campanhas
+            </Link>
             <Link
               className="text-aqua-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-300"
               href="/admin/campanhas/solicitacoes"
             >
               Solicitações
-            </Link>
-            <Link
-              className="text-aqua-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-300"
-              href="/painel"
-            >
-              Painel
             </Link>
             <Link
               className="text-aqua-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-300"
@@ -44,17 +44,17 @@ export default function CampaignAdminPage() {
         <Container>
           <div className="mb-10 max-w-3xl">
             <p className="text-sm font-bold uppercase tracking-[0.18em] text-aqua-700">
-              Área protegida
+              Área protegida da equipe
             </p>
             <h1 className="mt-4 font-serif text-3xl font-bold tracking-[-0.025em] text-navy-950 sm:text-4xl">
-              Campanhas das seguradoras
+              Funcionários, vendas e repasses
             </h1>
             <p className="mt-5 text-base leading-8 text-slate-600">
-              Envie as peças recebidas, revise o conteúdo e controle o que aparece no carrossel
-              público.
+              Cada integrante acessa com sua identidade verificada e enxerga apenas as funções
+              permitidas para o seu perfil.
             </p>
           </div>
-          <CampaignAdmin />
+          <OperationsAdmin />
         </Container>
       </main>
     </div>

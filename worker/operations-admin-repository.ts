@@ -4,6 +4,7 @@ import type {
   InsuranceSale,
   InsuranceSaleInput,
   OperationsActor,
+  OperationsIdentity,
   OperationsSummary,
   StaffMember,
   StaffRole,
@@ -21,27 +22,27 @@ export type OperationsSessionResult = {
 };
 
 export type OperationsAdminRepository = {
-  getSession(email: string): Promise<OperationsSessionResult>;
-  bootstrapAdmin(email: string, name: string): Promise<StaffMember | undefined>;
-  listStaff(actorEmail: string): Promise<readonly StaffMember[]>;
-  createStaff(actorEmail: string, input: CreateStaffMemberInput): Promise<StaffMember>;
+  getSession(identity: OperationsIdentity): Promise<OperationsSessionResult>;
+  bootstrapMaster(identity: OperationsIdentity, name: string): Promise<StaffMember | undefined>;
+  listStaff(identity: OperationsIdentity): Promise<readonly StaffMember[]>;
+  createStaff(identity: OperationsIdentity, input: CreateStaffMemberInput): Promise<StaffMember>;
   updateStaff(
-    actorEmail: string,
+    identity: OperationsIdentity,
     id: string,
     input: UpdateStaffMemberInput,
   ): Promise<StaffMember | undefined>;
   listSales(input: {
-    actorEmail: string;
+    identity: OperationsIdentity;
     cursor?: SalesCursor;
     limit: number;
   }): Promise<readonly InsuranceSale[]>;
-  createSale(actorEmail: string, input: InsuranceSaleInput): Promise<InsuranceSale>;
+  createSale(identity: OperationsIdentity, input: InsuranceSaleInput): Promise<InsuranceSale>;
   updateSale(
-    actorEmail: string,
+    identity: OperationsIdentity,
     id: string,
     input: InsuranceSaleInput,
   ): Promise<InsuranceSale | undefined>;
-  getSummary(actorEmail: string): Promise<OperationsSummary>;
+  getSummary(identity: OperationsIdentity): Promise<OperationsSummary>;
 };
 
 type StaffRow = {
@@ -50,7 +51,9 @@ type StaffRow = {
   updated_at: Date | string;
   name: string;
   email: string;
+  access_subject: string | null;
   role: StaffRole;
+  is_master: boolean;
   active: boolean;
 };
 
@@ -58,6 +61,7 @@ type SessionRow = {
   staff_member_id: string | null;
   staff_name: string | null;
   staff_role: StaffRole | null;
+  staff_is_master: boolean | null;
   bootstrap_available: boolean;
 };
 
@@ -107,6 +111,8 @@ function mapStaff(row: StaffRow): StaffMember {
     name: row.name,
     email: row.email,
     role: row.role,
+    isMaster: row.is_master,
+    accessBound: Boolean(row.access_subject),
     active: row.active,
   };
 }
@@ -142,9 +148,12 @@ export function createPostgresOperationsAdminRepository(
   });
 
   return {
-    async getSession(email) {
+    async getSession(identity) {
       const rows = await client<SessionRow[]>`
-        select * from public.get_operations_session(${email}::text)
+        select * from public.get_operations_session(
+          ${identity.email}::text,
+          ${identity.subject}::text
+        )
       `;
       const row = rows[0];
       if (!row) return { bootstrapAvailable: false };
@@ -154,37 +163,47 @@ export function createPostgresOperationsAdminRepository(
         ...(row.staff_member_id && row.staff_name && row.staff_role
           ? {
               actor: {
-                email,
+                email: identity.email,
                 staffMemberId: row.staff_member_id,
                 name: row.staff_name,
                 role: row.staff_role,
+                isMaster: Boolean(row.staff_is_master),
               },
             }
           : {}),
       };
     },
 
-    async bootstrapAdmin(email, name) {
+    async bootstrapMaster(identity, name) {
       const rows = await client<StaffRow[]>`
-        select * from public.bootstrap_operations_admin(${email}::text, ${name}::text)
+        select * from public.bootstrap_operations_master(
+          ${identity.email}::text,
+          ${identity.subject}::text,
+          ${name}::text
+        )
       `;
       return rows[0] ? mapStaff(rows[0]) : undefined;
     },
 
-    async listStaff(actorEmail) {
+    async listStaff(identity) {
       const rows = await client<StaffRow[]>`
-        select * from public.list_staff_members(${actorEmail}::text)
+        select * from public.list_staff_members(
+          ${identity.email}::text,
+          ${identity.subject}::text
+        )
       `;
       return rows.map(mapStaff);
     },
 
-    async createStaff(actorEmail, input) {
+    async createStaff(identity, input) {
       const rows = await client<StaffRow[]>`
         select * from public.create_staff_member(
-          ${actorEmail}::text,
+          ${identity.email}::text,
+          ${identity.subject}::text,
           ${input.name}::text,
           ${input.email}::text,
-          ${input.role}::public.staff_role
+          ${input.role}::public.staff_role,
+          ${input.isMaster}::boolean
         )
       `;
       const row = rows[0];
@@ -192,14 +211,16 @@ export function createPostgresOperationsAdminRepository(
       return mapStaff(row);
     },
 
-    async updateStaff(actorEmail, id, input) {
+    async updateStaff(identity, id, input) {
       const rows = await client<StaffRow[]>`
         select * from public.update_staff_member(
-          ${actorEmail}::text,
+          ${identity.email}::text,
+          ${identity.subject}::text,
           ${id}::uuid,
           ${input.name}::text,
           ${input.email}::text,
           ${input.role}::public.staff_role,
+          ${input.isMaster}::boolean,
           ${input.active}::boolean
         )
       `;
@@ -209,7 +230,8 @@ export function createPostgresOperationsAdminRepository(
     async listSales(input) {
       const rows = await client<SaleRow[]>`
         select * from public.list_insurance_sales(
-          ${input.actorEmail}::text,
+          ${input.identity.email}::text,
+          ${input.identity.subject}::text,
           ${input.cursor?.soldAt ?? null}::date,
           ${input.cursor?.id ?? null}::uuid,
           ${input.limit}::integer
@@ -218,10 +240,11 @@ export function createPostgresOperationsAdminRepository(
       return rows.map(mapSale);
     },
 
-    async createSale(actorEmail, input) {
+    async createSale(identity, input) {
       const rows = await client<SaleRow[]>`
         select * from public.create_insurance_sale(
-          ${actorEmail}::text,
+          ${identity.email}::text,
+          ${identity.subject}::text,
           ${input.soldAt}::date,
           ${input.staffMemberId}::uuid,
           ${input.customerName}::text,
@@ -240,10 +263,11 @@ export function createPostgresOperationsAdminRepository(
       return mapSale(row);
     },
 
-    async updateSale(actorEmail, id, input) {
+    async updateSale(identity, id, input) {
       const rows = await client<SaleRow[]>`
         select * from public.update_insurance_sale(
-          ${actorEmail}::text,
+          ${identity.email}::text,
+          ${identity.subject}::text,
           ${id}::uuid,
           ${input.soldAt}::date,
           ${input.staffMemberId}::uuid,
@@ -261,9 +285,12 @@ export function createPostgresOperationsAdminRepository(
       return rows[0] ? mapSale(rows[0]) : undefined;
     },
 
-    async getSummary(actorEmail) {
+    async getSummary(identity) {
       const rows = await client<SummaryRow[]>`
-        select * from public.get_operations_summary(${actorEmail}::text)
+        select * from public.get_operations_summary(
+          ${identity.email}::text,
+          ${identity.subject}::text
+        )
       `;
       const row = rows[0];
       if (!row) throw new Error("Operations summary was not returned.");

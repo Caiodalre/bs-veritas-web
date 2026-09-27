@@ -27,9 +27,9 @@ export default function QuoteRequestAdminPage() {
             </Link>
             <Link
               className="text-aqua-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-300"
-              href="/admin/campanhas/gestao"
+              href="/painel"
             >
-              Gestão
+              Painel
             </Link>
             <Link
               className="text-aqua-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-300"

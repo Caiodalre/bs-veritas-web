@@ -82,7 +82,9 @@ export const staffMembers = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
     name: varchar("name", { length: 150 }).notNull(),
     email: varchar("email", { length: 254 }).notNull(),
+    accessSubject: varchar("access_subject", { length: 255 }),
     role: staffRole("role").default("employee").notNull(),
+    isMaster: boolean("is_master").default(false).notNull(),
     active: boolean("active").default(true).notNull(),
   },
   (table) => [
@@ -94,7 +96,18 @@ export const staffMembers = pgTable(
       "staff_members_email_check",
       sql`${table.email} = lower(btrim(${table.email})) and position('@' in ${table.email}) > 1`,
     ),
+    check(
+      "staff_members_access_subject_check",
+      sql`${table.accessSubject} is null or (char_length(btrim(${table.accessSubject})) between 1 and 255 and ${table.accessSubject} = btrim(${table.accessSubject}))`,
+    ),
+    check(
+      "staff_members_master_role_check",
+      sql`not ${table.isMaster} or ${table.role} = 'administrator'`,
+    ),
     uniqueIndex("staff_members_email_unique_idx").on(table.email),
+    uniqueIndex("staff_members_access_subject_unique_idx")
+      .on(table.accessSubject)
+      .where(sql`${table.accessSubject} is not null`),
     index("staff_members_active_role_name_idx").on(table.active, table.role, table.name),
   ],
 );

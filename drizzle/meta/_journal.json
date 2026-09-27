@@ -43,6 +43,13 @@
       "when": 1790419180504,
       "tag": "0005_operations_admin",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1790510551995,
+      "tag": "0006_staff_portal_access",
+      "breakpoints": true
     }
   ]
 }

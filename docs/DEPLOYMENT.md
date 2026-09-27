@@ -248,22 +248,26 @@ O deploy da aplicação e a migration deverão ter uma ordem explícita e compat
 
 ### Ordem do controle comercial
 
-A ativação do painel de funcionários, seguros fechados e repasses seguirá esta ordem:
+A base `0005_operations_admin.sql` foi aplicada e validada em produção em 2026-09-27. A evolução do
+portal de equipe seguirá esta ordem:
 
-1. revisar e aprovar a migration `0005_operations_admin.sql`;
-2. confirmar backup recuperável e a política aprovada de manter os registros comerciais e sua
-   auditoria sem exclusão automática;
-3. aplicar a migration com o usuário administrativo e confirmar tabelas, índices, restrições e
-   funções;
-4. verificar que `bs_veritas_quote_writer` possui somente `EXECUTE` nas funções do módulo e nenhum
-   acesso direto às tabelas;
-5. publicar o Worker com `OPERATIONS_ADMIN_ENABLED=true` somente em produção;
-6. abrir `/admin/campanhas/gestao` com uma identidade já permitida pelo Cloudflare Access e ativar o
-   primeiro administrador;
-7. cadastrar outros funcionários e confirmar separadamente no Access os e-mails que poderão entrar
-   como administradores;
-8. executar um teste com dados fictícios, confirmar a auditoria e remover ou anonimizar o registro de
-   teste conforme o procedimento aprovado.
+1. revisar e aprovar a migration aditiva `0006_staff_portal_access.sql`;
+2. confirmar backup recuperável e manter a política aprovada de não excluir automaticamente os
+   registros comerciais e sua auditoria;
+3. aplicar a migration com o usuário administrativo e confirmar as colunas `access_subject` e
+   `is_master`, restrições, índice único parcial e funções;
+4. verificar que `bs_veritas_quote_writer` continua sem acesso direto às tabelas e possui somente
+   `EXECUTE` nas nove funções públicas do módulo;
+5. atualizar a aplicação Cloudflare Access para proteger `/painel*`, mantendo também protegidas a
+   rota legada e a API operacional; a política deve usar contas individuais da equipe;
+6. publicar a revisão aprovada do Worker, mantendo `OPERATIONS_ADMIN_ENABLED=true` somente em
+   produção;
+7. abrir `/painel` com o ADM master já cadastrado, confirmar o vínculo da identidade e cadastrar os
+   demais funcionários sem criar senhas no site;
+8. testar com identidades fictícias ou controladas que o master gerencia acessos, o administrador
+   gerencia vendas e o funcionário enxerga somente os próprios registros;
+9. confirmar que desativar um funcionário bloqueia sua sessão no banco mesmo que o Access ainda o
+   autentique.
 
 O rollback do Worker desativa a interface, mas não remove tabelas nem registros. A migration é
 aditiva e não modifica as solicitações de cotação existentes.

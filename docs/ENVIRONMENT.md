@@ -204,10 +204,11 @@ não recebe esse segredo.
 
 ## Banco de dados
 
-O schema e as quatro migrations de cotação foram aplicados ao serviço PostgreSQL da Aiven usado pela produção. O
-usuário de aplicação `bs_veritas_app` recebe o papel `bs_veritas_quote_writer`, limitado a inserir
-solicitações e ler somente o UUID retornado. A conexão do Worker é intermediada pelo Hyperdrive; a
-string de conexão e a senha não são enviadas ao navegador nem versionadas.
+As migrations até `0005_operations_admin.sql` foram aplicadas ao serviço PostgreSQL da Aiven usado
+pela produção. `0006_staff_portal_access.sql` permanece local e pendente de aprovação e aplicação. O
+usuário de aplicação `bs_veritas_app` recebe o papel `bs_veritas_quote_writer`, limitado às operações
+explicitamente concedidas. A conexão do Worker é intermediada pelo Hyperdrive; a string de conexão e
+a senha não são enviadas ao navegador nem versionadas.
 
 Regras operacionais:
 

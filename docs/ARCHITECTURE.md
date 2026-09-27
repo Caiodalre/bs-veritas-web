@@ -69,7 +69,12 @@ Next.js com exportação estática
 O preview utiliza somente os arquivos estáticos gerados pelo Next.js. O formulário permanece visível para revisão, mas desativado, e o Worker recusa `POST /api/quote` antes de qualquer integração.
 
 A camada dinâmica é um Cloudflare Worker restrito às rotas `/api/*`, com PostgreSQL da Aiven conectado por Hyperdrive. O endpoint de cotação está ativo somente em produção, protegido por rate limiting, validação Zod, honeypot e Turnstile.
-A mesma camada atende as APIs administrativas de campanhas, solicitações e controle comercial. O Cloudflare Access protege os caminhos no domínio oficial, e o Worker valida novamente o JWT antes de acessar R2 ou PostgreSQL. O controle comercial exige ainda um funcionário ativo com função administrativa no banco. O preview mantém essas funções desativadas.
+A mesma camada atende as APIs administrativas de campanhas, solicitações e controle comercial. O
+Cloudflare Access protege os caminhos no domínio oficial, e o Worker valida novamente o JWT antes de
+acessar R2 ou PostgreSQL. O portal em `/painel` exige um funcionário ativo vinculado ao `sub` do
+Access. O ADM master gerencia perfis, administradores gerenciam vendas e funcionários consultam
+somente os próprios registros; essas regras também são aplicadas pelas funções PostgreSQL. O preview
+mantém essas funções desativadas.
 A decisão completa está registrada em [`docs/decisions/0001-quote-runtime-and-database.md`](decisions/0001-quote-runtime-and-database.md).
 
 O e-mail corporativo é uma infraestrutura independente. A troca do provedor de e-mail não deve exigir reconstrução do site.
