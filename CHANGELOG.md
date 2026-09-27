@@ -5,6 +5,15 @@ Este arquivo registra mudanças relevantes do **B&S Veritas Web**.
 O projeto possui produção no domínio oficial com formulário de cotação ativo e um preview público não
 indexável, sem acesso ao banco ou às integrações de produção.
 
+## Não lançado — cotação contextual
+
+### Adicionado
+
+- chamadas para cotação nas páginas de cada modalidade, preservando o WhatsApp como alternativa;
+- navegação até o formulário de contato com a modalidade escolhida previamente selecionada;
+- validação do parâmetro `seguro` contra o catálogo público, ignorando valores desconhecidos;
+- testes unitários e de navegador para links, seleção contextual, acessibilidade e responsividade.
+
 ## Não lançado — controle comercial interno
 
 ### Adicionado

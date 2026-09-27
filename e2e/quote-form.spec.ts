@@ -50,3 +50,11 @@ test("campos e destinos essenciais permanecem acessíveis", async ({ page }) => 
   await page.keyboard.press("Tab");
   await expect(page.getByLabel("Telefone com DDD *")).toBeFocused();
 });
+
+test("pré-seleciona uma modalidade válida sem aceitar valores desconhecidos", async ({ page }) => {
+  await page.goto("/contato?seguro=residencial#solicitar-cotacao");
+  await expect(page.getByLabel("Seguro de interesse *")).toHaveValue("residencial");
+
+  await page.goto("/contato?seguro=inexistente#solicitar-cotacao");
+  await expect(page.getByLabel("Seguro de interesse *")).toHaveValue("");
+});

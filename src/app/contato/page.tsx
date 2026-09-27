@@ -123,7 +123,11 @@ export default function ContactPage() {
         </Container>
       </section>
 
-      <section aria-labelledby="quote-form-title" className="bg-aqua-50 py-20 sm:py-24">
+      <section
+        aria-labelledby="quote-form-title"
+        className="scroll-mt-20 bg-aqua-50 py-20 sm:py-24"
+        id="solicitar-cotacao"
+      >
         <Container className="grid gap-10 lg:grid-cols-[0.72fr_1.28fr] lg:items-start">
           <div>
             <p className="text-sm font-bold uppercase tracking-[0.18em] text-aqua-700">

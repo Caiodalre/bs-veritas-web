@@ -197,6 +197,11 @@ test("mantém contraste, hover e foco nos botões sobre fundo claro e escuro", a
 test("não envia mensagens ao verificar os destinos externos", async ({ page }) => {
   await page.goto("/seguros/auto");
 
+  await expect(page.getByRole("link", { name: "Solicitar cotação" }).first()).toHaveAttribute(
+    "href",
+    "/contato?seguro=auto#solicitar-cotacao",
+  );
+
   const whatsappHref = await page
     .getByRole("link", { name: "Cotar pelo WhatsApp" })
     .getAttribute("href");
