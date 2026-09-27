@@ -353,6 +353,7 @@ export function QuoteForm({ initialInsuranceType, siteKey: configuredSiteKey }: 
               aria-label="Verificação de segurança"
               className="min-h-[65px] max-w-full rounded-md outline-none focus-visible:ring-3 focus-visible:ring-aqua-300"
               ref={turnstileContainerRef}
+              role="group"
               tabIndex={-1}
             />
             {turnstileMessage ? (
