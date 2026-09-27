@@ -9,11 +9,7 @@ type WordmarkProps = {
 
 export function Wordmark({ className, inverted = false }: WordmarkProps) {
   return (
-    <Link
-      aria-label={`${siteConfig.name} — início`}
-      className={cn("inline-flex flex-col leading-none", className)}
-      href="/#inicio"
-    >
+    <Link className={cn("inline-flex flex-col leading-none", className)} href="/#inicio">
       <span
         className={cn(
           "font-serif text-[1.36rem] font-bold tracking-[0.035em] sm:text-[1.5rem]",

@@ -76,6 +76,12 @@ describe("QuoteForm", () => {
     expect(honeypot?.parentElement?.parentElement).toHaveAttribute("inert");
   });
 
+  it("identifica semanticamente a verificação de segurança", () => {
+    render(<QuoteForm siteKey="test-site-key" />);
+
+    expect(screen.getByRole("group", { name: "Verificação de segurança" })).toBeInTheDocument();
+  });
+
   it("inicia com a modalidade contextual selecionada", () => {
     render(<QuoteForm initialInsuranceType="residencial" siteKey="test-site-key" />);
 
