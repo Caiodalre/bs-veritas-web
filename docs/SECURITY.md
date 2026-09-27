@@ -69,11 +69,13 @@ Já existem no repositório:
 - validação do JWT do Access dentro do Worker antes de consultar R2 ou dados de solicitações;
 - bucket R2 privado, APIs administrativas com `Cache-Control: no-store` e preview administrativo desativado;
 - funções PostgreSQL de consulta paginada e atualização de situação com privilégio mínimo, sem leitura, alteração ou exclusão direta da tabela pelo papel da aplicação.
+- migration `0006_staff_portal_access.sql` aplicada e validada, com `/painel*` protegido pelo Access;
+- monitor da DLQ publicado somente em produção no cron `47 */6 * * *`, sem consumir ou remover mensagens.
 
 Ainda não estão configurados ou homologados:
 
-- migration `0006_staff_portal_access.sql`, proteção de `/painel*` no Access e publicação dos perfis
-  do portal da equipe;
+- adoção operacional e expansão dos perfis do portal da equipe, mantidas em standby por decisão do responsável;
+- acompanhamento e registro da primeira execução real do monitor da DLQ;
 - acompanhamento e registro da primeira execução agendada do descarte ao fim da retenção;
 - analytics de navegador, que permanece deliberadamente desativado;
 - MFA e canal específico para incidentes e vulnerabilidades.
@@ -313,8 +315,8 @@ Dados de vulnerabilidade não devem ser enviados para formulários comerciais co
 - [x] testes, lint e build aprovados;
 - [x] estratégia de rollback documentada;
 - [x] endpoint público `security.txt` com contato, validade e URL canônica;
-- [ ] alerta da DLQ dentro da retenção de 24 horas — implementação local validada; publicação e
-      execução real pendentes;
+- [ ] alerta da DLQ dentro da retenção de 24 horas — implementação e publicação validadas; primeira
+      execução real pendente;
 - [ ] canal de incidente e vulnerabilidade definido.
 
 Nenhum item deve ser marcado como concluído sem evidência verificável.
