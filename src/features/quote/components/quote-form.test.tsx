@@ -8,6 +8,10 @@ import {
 } from "@/features/quote/turnstile-site-key";
 import { QuoteForm } from "./quote-form";
 
+vi.mock("next/navigation", () => ({
+  useSearchParams: () => new URLSearchParams(),
+}));
+
 vi.mock("next/script", () => {
   function MockScript({ onReady }: ComponentProps<"script"> & { onReady?: () => void }) {
     useEffect(() => {
@@ -70,6 +74,12 @@ describe("QuoteForm", () => {
     expect(honeypot).toHaveAttribute("tabindex", "-1");
     expect(honeypot?.parentElement?.parentElement).toHaveAttribute("aria-hidden", "true");
     expect(honeypot?.parentElement?.parentElement).toHaveAttribute("inert");
+  });
+
+  it("inicia com a modalidade contextual selecionada", () => {
+    render(<QuoteForm initialInsuranceType="residencial" siteKey="test-site-key" />);
+
+    expect(screen.getByLabelText("Seguro de interesse *")).toHaveValue("residencial");
   });
 
   it("envia somente após a verificação e confirma o recebimento", async () => {

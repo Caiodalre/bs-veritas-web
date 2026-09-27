@@ -1,5 +1,12 @@
 import type { Metadata } from "next";
-import { ArrowLeft, CheckCircle2, ExternalLink, Info, MessageCircle } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle2,
+  ExternalLink,
+  Info,
+  MessageCircle,
+} from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/layout/container";
@@ -79,15 +86,24 @@ export default async function InsurancePage({ params }: InsurancePageProps) {
                 {insurance.introduction}
               </p>
             </div>
-            <a
-              className={buttonStyles({ size: "lg" })}
-              href={createWhatsAppHref(insurance.whatsappMessage)}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              Cotar pelo WhatsApp
-              <MessageCircle aria-hidden="true" size={18} />
-            </a>
+            <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
+              <Link
+                className={buttonStyles({ size: "lg" })}
+                href={`/contato?seguro=${insurance.slug}#solicitar-cotacao`}
+              >
+                Solicitar cotação
+                <ArrowRight aria-hidden="true" size={18} />
+              </Link>
+              <a
+                className={buttonStyles({ size: "lg", variant: "outlineDark" })}
+                href={createWhatsAppHref(insurance.whatsappMessage)}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                Cotar pelo WhatsApp
+                <MessageCircle aria-hidden="true" size={18} />
+              </a>
+            </div>
           </div>
         </Container>
       </section>
@@ -217,15 +233,24 @@ export default async function InsurancePage({ params }: InsurancePageProps) {
               <ArrowLeft aria-hidden="true" size={18} />
               Ver todos os seguros
             </Link>
-            <a
-              className={buttonStyles({ variant: "subtle" })}
-              href={createWhatsAppHref(insurance.whatsappMessage)}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              Conversar sobre {insurance.shortName}
-              <MessageCircle aria-hidden="true" size={18} />
-            </a>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Link
+                className={buttonStyles()}
+                href={`/contato?seguro=${insurance.slug}#solicitar-cotacao`}
+              >
+                Solicitar cotação
+                <ArrowRight aria-hidden="true" size={18} />
+              </Link>
+              <a
+                className={buttonStyles({ variant: "subtle" })}
+                href={createWhatsAppHref(insurance.whatsappMessage)}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                Conversar sobre {insurance.shortName}
+                <MessageCircle aria-hidden="true" size={18} />
+              </a>
+            </div>
           </div>
         </Container>
       </section>

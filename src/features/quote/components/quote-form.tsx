@@ -2,9 +2,13 @@
 
 import Link from "next/link";
 import Script from "next/script";
-import { useEffect, useRef, useState, useSyncExternalStore, type FormEvent } from "react";
+import { Suspense, useEffect, useRef, useState, useSyncExternalStore, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { insuranceCatalog } from "@/features/insurance/catalog";
+import {
+  InsuranceTypeSearchParam,
+  resolveContextualInsuranceType,
+} from "@/features/quote/components/contextual-quote-form";
 import {
   isQuoteSubmissionEnabled,
   resolveTurnstileSiteKey,
@@ -59,7 +63,12 @@ function getFailureMessage(status: number) {
   return "Não foi possível registrar sua solicitação agora. Tente novamente ou use um dos canais oficiais acima.";
 }
 
-export function QuoteForm({ siteKey: configuredSiteKey }: { siteKey?: string }) {
+type QuoteFormProps = {
+  initialInsuranceType?: string;
+  siteKey?: string;
+};
+
+export function QuoteForm({ initialInsuranceType, siteKey: configuredSiteKey }: QuoteFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const turnstileContainerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | undefined>(undefined);
@@ -81,6 +90,9 @@ export function QuoteForm({ siteKey: configuredSiteKey }: { siteKey?: string }) 
   const [turnstileMessage, setTurnstileMessage] = useState("");
   const [submissionState, setSubmissionState] = useState<SubmissionState>("idle");
   const [statusMessage, setStatusMessage] = useState(initialStatusMessage);
+  const [insuranceType, setInsuranceType] = useState(
+    resolveContextualInsuranceType(initialInsuranceType ?? null) ?? "",
+  );
 
   useEffect(() => {
     const container = turnstileContainerRef.current;
@@ -204,6 +216,9 @@ export function QuoteForm({ siteKey: configuredSiteKey }: { siteKey?: string }) 
 
   return (
     <>
+      <Suspense fallback={null}>
+        <InsuranceTypeSearchParam onResolve={setInsuranceType} />
+      </Suspense>
       {siteKey && submissionEnabled ? (
         <Script
           id="cloudflare-turnstile"
@@ -268,10 +283,11 @@ export function QuoteForm({ siteKey: configuredSiteKey }: { siteKey?: string }) 
             Seguro de interesse *
             <select
               className={fieldClassName}
-              defaultValue=""
               disabled={fieldsDisabled}
               name="insuranceType"
+              onChange={(event) => setInsuranceType(event.currentTarget.value)}
               required
+              value={insuranceType}
             >
               <option disabled value="">
                 Selecione uma modalidade
