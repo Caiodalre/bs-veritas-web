@@ -16,7 +16,10 @@ indexável, sem acesso ao banco ou às integrações de produção.
   nas cadeias afetadas;
 - CI configurado para rejeitar dependências com vulnerabilidades de severidade alta ou crítica;
 - Dependabot configurado para atualizações semanais agrupadas de pacotes e GitHub Actions, mantendo
-  atualizações principais separadas para revisão individual.
+  atualizações principais separadas para revisão individual;
+- GitHub Actions fixadas em commits completos e imutáveis, preservando os nomes das versões para
+  manutenção pelo Dependabot;
+- CI configurado para rejeitar novas referências externas de Actions que não usem SHA completo.
 
 ### Validação
 

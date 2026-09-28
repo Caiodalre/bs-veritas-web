@@ -12,6 +12,7 @@
     "lint": "eslint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "ci:check-actions": "node scripts/check-github-actions-pins.mjs",
     "security:audit": "pnpm audit --audit-level high",
     "test": "vitest run",
     "test:watch": "vitest",
