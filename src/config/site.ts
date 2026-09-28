@@ -13,9 +13,9 @@ export const siteConfig = {
   },
   contact: {
     email: "contato@bsveritas.com.br",
-    phone: "+55 11 98526-9641",
-    phoneHref: "tel:+5511985269641",
-    whatsappHref: "https://wa.me/5511985269641",
+    phone: "+55 11 92506-5022",
+    phoneHref: "tel:+5511925065022",
+    whatsappHref: "https://wa.me/5511925065022",
   },
   description:
     "Soluções em seguros para pessoas, famílias e empresas, com atendimento próximo, transparente e personalizado.",

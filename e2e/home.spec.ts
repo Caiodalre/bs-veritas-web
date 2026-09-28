@@ -141,7 +141,7 @@ test("publica os canais oficiais de contato sem formulario", async ({ page }) =>
   );
   await expect(page.getByRole("link", { name: "Ligar agora" })).toHaveAttribute(
     "href",
-    "tel:+5511985269641",
+    "tel:+5511925065022",
   );
   await expect(page.getByRole("link", { name: "Enviar e-mail" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Enviar e-mail" })).toHaveAttribute(

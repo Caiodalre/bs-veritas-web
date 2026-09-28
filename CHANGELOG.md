@@ -5,6 +5,13 @@ Este arquivo registra mudanças relevantes do **B&S Veritas Web**.
 O projeto possui produção no domínio oficial com formulário de cotação ativo e um preview público não
 indexável, sem acesso ao banco ou às integrações de produção.
 
+## Não lançado — atualização do contato oficial
+
+### Alterado
+
+- telefone e WhatsApp oficiais atualizados para `+55 11 92506-5022` em todo o site e nos dados
+  estruturados.
+
 ## Não lançado — cotação contextual
 
 ### Adicionado
