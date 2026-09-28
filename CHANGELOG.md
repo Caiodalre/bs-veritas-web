@@ -14,7 +14,9 @@ indexável, sem acesso ao banco ou às integrações de produção.
   `0.31.11`/`0.45.3`;
 - resoluções transitivas restritas a `sharp 0.35.4`, `js-yaml 4.3.2` e `esbuild 0.25.12` ou superior
   nas cadeias afetadas;
-- CI configurado para rejeitar dependências com vulnerabilidades de severidade alta ou crítica.
+- CI configurado para rejeitar dependências com vulnerabilidades de severidade alta ou crítica;
+- Dependabot configurado para atualizações semanais agrupadas de pacotes e GitHub Actions, mantendo
+  atualizações principais separadas para revisão individual.
 
 ### Validação
 
