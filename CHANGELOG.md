@@ -5,14 +5,21 @@ Este arquivo registra mudanças relevantes do **B&S Veritas Web**.
 O projeto possui produção no domínio oficial com formulário de cotação ativo e um preview público não
 indexável, sem acesso ao banco ou às integrações de produção.
 
-## Não lançado — atualização do contato oficial
+## Atualização do contato oficial — 2026-09-27
 
 ### Alterado
 
 - telefone e WhatsApp oficiais atualizados para `+55 11 92506-5022` em todo o site e nos dados
   estruturados.
 
-## Não lançado — cotação contextual
+### Publicação
+
+- PR #74 integrada pelo merge commit `97161977580108301f7a8c797a72e07cb36fdc9f`;
+- versão Cloudflare `139b0adf-f8ee-42d2-8c80-1c2432503a81` publicada;
+- página pública validada com o novo telefone e links de ligação e WhatsApp, sem ocorrência do número
+  anterior.
+
+## Cotação contextual — 2026-09-27
 
 ### Adicionado
 
@@ -21,7 +28,13 @@ indexável, sem acesso ao banco ou às integrações de produção.
 - validação do parâmetro `seguro` contra o catálogo público, ignorando valores desconhecidos;
 - testes unitários e de navegador para links, seleção contextual, acessibilidade e responsividade.
 
-## Não lançado — controle comercial interno
+### Publicação
+
+- PR #70 integrada pelo merge commit `ed074c4523b73d3cce9c52e312099340ff946b4c`;
+- versão Cloudflare `581aaa52-65ac-42c9-a667-7a91a23015de` publicada;
+- jornada contextual verificada sem remover os canais alternativos de contato.
+
+## Controle comercial interno — 2026-09-27
 
 ### Adicionado
 
@@ -39,17 +52,16 @@ indexável, sem acesso ao banco ou às integrações de produção.
   perfil master;
 - testes de endpoint, segurança da migration, TypeScript, lint, build e bundle do Worker.
 
-### Pendente antes da publicação
+### Estado operacional
 
-- aplicar e verificar `0006_staff_portal_access.sql` no PostgreSQL/Aiven;
-- proteger `/painel*` no Cloudflare Access e publicar o Worker;
-- executar smoke test somente com dados fictícios.
-
-### Estado da base
-
-- `0005_operations_admin.sql` aplicada e validada em produção em 2026-09-27;
-- tabelas, índices, funções, histórico de migrations e ausência de privilégios diretos foram
-  confirmados sem exposição de dados ou credenciais.
+- PRs #68 e #69 integradas pelos merge commits `ca331e4a751c07659dcf9083033b541a845b637c` e
+  `e62c0521f0a875040eabb108eec2d65154ab6380`;
+- migrations `0005_operations_admin.sql` e `0006_staff_portal_access.sql` aplicadas e validadas em
+  produção em 2026-09-27;
+- tabelas, índices, funções, histórico de migrations, ADM master e ausência de privilégios diretos
+  confirmados sem exposição de dados ou credenciais;
+- `/painel*` protegido pelo Cloudflare Access e por uma segunda autorização no PostgreSQL;
+- adoção operacional e expansão dos perfis mantidas em standby até nova decisão do responsável.
 
 ### Decidido
 
@@ -96,7 +108,7 @@ indexável, sem acesso ao banco ou às integrações de produção.
 - PR #51 mesclado no commit `7dcbb5f4c9f745602a35879d46adc825a402928e`;
 - versão Cloudflare `65ca2b79-30a0-41b6-8e9d-5f5f8ea3fb3b` publicada.
 
-## Não lançado
+## Retenção, filas e campanhas — 2026-09-22
 
 ### Adicionado
 
@@ -114,10 +126,18 @@ indexável, sem acesso ao banco ou às integrações de produção.
 ### Observações
 
 - o preview continua sem acesso a banco, fila, e-mail, rate limiter ou segredo Turnstile;
-- a rotina de descarte exige aplicar a migration antes de publicar o Cron Trigger;
 - a entrega da fila é pelo menos uma vez e uma notificação duplicada pode ocorrer em caso de nova tentativa;
 - a disponibilidade de produtos permanece condicionada ao perfil, à região e às regras de cada empresa;
 - nenhuma dependência npm, coleta adicional de dados pessoais ou plano pago foi adicionado.
+
+### Publicação
+
+- migrations e Cron Trigger da retenção publicados; a primeira execução real ainda precisa de
+  evidência operacional;
+- produtor, consumidor, DLQ e monitor técnico publicados; a primeira execução real do monitor ainda
+  precisa de evidência operacional;
+- área pública e administração de campanhas publicadas, com ocultação automática quando não houver
+  campanha vigente.
 
 ## Publicação da Política de Cookies — 2026-09-13
 
