@@ -5,6 +5,22 @@ Este arquivo registra mudanças relevantes do **B&S Veritas Web**.
 O projeto possui produção no domínio oficial com formulário de cotação ativo e um preview público não
 indexável, sem acesso ao banco ou às integrações de produção.
 
+## Não lançado — correções de segurança de dependências
+
+### Alterado
+
+- Next.js atualizado de `16.3.2` para `16.3.6`, eliminando duas vulnerabilidades críticas conhecidas;
+- Wrangler atualizado de `4.126.0` para `4.141.0` e Drizzle Kit/ORM atualizados para
+  `0.31.11`/`0.45.3`;
+- resoluções transitivas restritas a `sharp 0.35.4`, `js-yaml 4.3.2` e `esbuild 0.25.12` ou superior
+  nas cadeias afetadas.
+
+### Validação
+
+- `pnpm audit` sem vulnerabilidades conhecidas;
+- 196 testes unitários e de componentes e 37 testes de navegador aprovados;
+- TypeScript, ESLint, Prettier, build estático, CLI do Drizzle e dry-run do Worker aprovados.
+
 ## Atualização do contato oficial — 2026-09-27
 
 ### Alterado
