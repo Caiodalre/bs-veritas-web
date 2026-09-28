@@ -244,6 +244,10 @@ A Vercel Hobby não faz parte da infraestrutura porque não permite uso comercia
 ativo apenas no domínio oficial; o preview serve para revisão visual e recusa qualquer tentativa de
 envio ou persistência.
 
+O Dependabot verifica semanalmente as dependências npm/pnpm e as ações do GitHub. Atualizações minor e
+patch são agrupadas para reduzir ruído; atualizações major permanecem separadas e sempre passam pelo CI
+antes de qualquer integração.
+
 ## Dados de desenvolvimento
 
 - utilizar nomes, telefones e e-mails claramente fictícios;
