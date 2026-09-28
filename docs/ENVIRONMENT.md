@@ -118,6 +118,7 @@ Se a porta estiver ocupada, o Next.js poderá selecionar outra. O endereço exib
 | `pnpm lint`              | executar o ESLint                                     |
 | `pnpm format`            | formatar os arquivos cobertos pelo Prettier           |
 | `pnpm format:check`      | verificar a formatação sem alterar arquivos           |
+| `pnpm ci:check-actions`  | validar pins imutáveis das GitHub Actions             |
 | `pnpm security:audit`    | bloquear vulnerabilidades altas ou críticas           |
 | `pnpm test`              | executar os testes Vitest uma vez                     |
 | `pnpm test:watch`        | executar Vitest em modo de observação                 |
@@ -144,6 +145,7 @@ Antes de concluir uma alteração de código:
 
 ```powershell
 pnpm format:check
+pnpm ci:check-actions
 pnpm security:audit
 pnpm typecheck
 pnpm lint
@@ -246,7 +248,8 @@ envio ou persistência.
 
 O Dependabot verifica semanalmente as dependências npm/pnpm e as ações do GitHub. Atualizações minor e
 patch são agrupadas para reduzir ruído; atualizações major permanecem separadas e sempre passam pelo CI
-antes de qualquer integração.
+antes de qualquer integração. As ações externas dos workflows são fixadas em commits completos e
+imutáveis; o comentário de versão permite que o Dependabot proponha atualizações rastreáveis.
 
 ## Dados de desenvolvimento
 
