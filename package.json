@@ -12,6 +12,7 @@
     "lint": "eslint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "security:audit": "pnpm audit --audit-level high",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",

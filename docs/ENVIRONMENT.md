@@ -118,6 +118,7 @@ Se a porta estiver ocupada, o Next.js poderá selecionar outra. O endereço exib
 | `pnpm lint`              | executar o ESLint                                     |
 | `pnpm format`            | formatar os arquivos cobertos pelo Prettier           |
 | `pnpm format:check`      | verificar a formatação sem alterar arquivos           |
+| `pnpm security:audit`    | bloquear vulnerabilidades altas ou críticas           |
 | `pnpm test`              | executar os testes Vitest uma vez                     |
 | `pnpm test:watch`        | executar Vitest em modo de observação                 |
 | `pnpm test:e2e`          | executar os testes Playwright                         |
@@ -143,6 +144,7 @@ Antes de concluir uma alteração de código:
 
 ```powershell
 pnpm format:check
+pnpm security:audit
 pnpm typecheck
 pnpm lint
 pnpm test
