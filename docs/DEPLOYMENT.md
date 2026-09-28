@@ -159,6 +159,7 @@ Na raiz do projeto:
 ```powershell
 pnpm install --frozen-lockfile
 pnpm format:check
+pnpm security:audit
 pnpm typecheck
 pnpm lint
 pnpm test
