@@ -6,6 +6,19 @@
   "main": "./worker/index.ts",
   "workers_dev": true,
   "preview_urls": true,
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+    "redact_query_string": true,
+    "logs": {
+      "enabled": true,
+      "invocation_logs": false,
+      "persist": true,
+    },
+    "traces": {
+      "enabled": false,
+    },
+  },
   "routes": [
     {
       "pattern": "bsveritas.com.br",
@@ -92,6 +105,17 @@
   ],
   "env": {
     "preview": {
+      "observability": {
+        "enabled": false,
+        "logs": {
+          "enabled": false,
+          "invocation_logs": false,
+          "persist": false,
+        },
+        "traces": {
+          "enabled": false,
+        },
+      },
       "workers_dev": true,
       "preview_urls": true,
       "routes": [],
