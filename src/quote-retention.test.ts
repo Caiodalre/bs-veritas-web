@@ -77,16 +77,20 @@ describe("handleQuoteRetentionCleanup", () => {
       throw new TypeError("postgres://secret.example/database");
     });
 
-    await expect(
-      handleQuoteRetentionCleanup(
-        controller,
-        {
-          HYPERDRIVE: { connectionString: "postgres://secret.example/database" },
-          QUOTE_RETENTION_CLEANUP_ENABLED: "true",
-        },
-        { logger, purgeExpiredQuotes },
-      ),
-    ).rejects.toThrow(TypeError);
+    const result = handleQuoteRetentionCleanup(
+      controller,
+      {
+        HYPERDRIVE: { connectionString: "postgres://secret.example/database" },
+        QUOTE_RETENTION_CLEANUP_ENABLED: "true",
+      },
+      { logger, purgeExpiredQuotes },
+    );
+
+    await expect(result).rejects.toThrow("Quote retention cleanup failed.");
+    await result.catch((error: Error) => {
+      expect(error.cause).toBeUndefined();
+      expect(error.stack).not.toContain("secret.example");
+    });
 
     const loggedValue = logger.error.mock.calls.flat().join(" ");
     expect(loggedValue).toContain("quote_retention_cleanup_failed");

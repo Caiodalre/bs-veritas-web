@@ -106,6 +106,7 @@ export async function handleQuoteNotificationDlqMonitor(
         errorType: error instanceof Error ? error.name : "UnknownError",
       }),
     );
-    throw error;
+    // The runtime also records uncaught exceptions. Do not forward provider details or a cause.
+    throw new Error("Quote notification DLQ monitor failed.");
   }
 }
