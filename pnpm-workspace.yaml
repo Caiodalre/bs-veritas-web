@@ -6,4 +6,7 @@ allowBuilds:
 
 overrides:
   "@esbuild-kit/core-utils>esbuild": 0.25.12
+  # Security patches for pinned/transitive development dependencies.
+  "brace-expansion@<1.1.21": 1.1.21
+  "undici@7.29.0": 7.29.1
   js-yaml: 4.3.2
