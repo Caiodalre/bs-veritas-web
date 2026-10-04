@@ -85,6 +85,24 @@ repasses e eventos de auditoria sem exclusão automática. Essa decisão não re
 anos dos pedidos de cotação. Qualquer descarte ou anonimização futura exige nova aprovação formal,
 backup recuperável, implementação específica e validação antes da publicação.
 
+## Substituição transitória do glob do ESLint
+
+Para remover `braces` (GHSA-vfj7-8cjw-p6xm), o override de pnpm substitui somente
+`@next/eslint-plugin-next@16.3.6 > fast-glob` pelo alias `npm:tinyglobby@0.2.17`.
+O patch versionado em `patches/` acrescenta `expandDirectories: false` à chamada
+`globSync`, preservando a busca de raízes sem expansão recursiva de diretórios estáticos.
+Não é uma substituição global da API de `fast-glob` e não altera o runtime do site.
+
+Os testes `next-eslint-glob.test.ts` verificam a dependência efetivamente resolvida,
+raízes padrão, caminhos relativos/absolutos, padrões e a regra real de links internos.
+A auditoria continua cobrindo todas as dependências, sem ignorar o advisory.
+
+Ao atualizar o plugin Next ESLint, revisar o override e o patch em conjunto: ambos são
+restritos à versão 16.3.6. Remover essa adaptação quando a dependência oficial deixar de
+introduzir o pacote vulnerável, após auditoria, lint e testes em Windows e Linux.
+Referências: [advisory](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) e
+[migração oficial para tinyglobby](https://superchupu.dev/tinyglobby/migration).
+
 ## Princípios obrigatórios
 
 - menor privilégio para pessoas, serviços e credenciais;
