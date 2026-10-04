@@ -118,16 +118,20 @@ describe("handleQuoteNotificationDlqMonitor", () => {
       throw new TypeError("Sensitive queue provider detail.");
     });
 
-    await expect(
-      handleQuoteNotificationDlqMonitor(
-        {
-          QUOTE_DLQ_MONITOR_ENABLED: "true",
-          QUOTE_NOTIFICATION_DLQ: createQueue({ backlogCount: 0, backlogBytes: 0 }),
-          QUOTE_NOTIFICATION_EMAIL: emailBinding,
-        },
-        { getMetrics, logger },
-      ),
-    ).rejects.toThrow(TypeError);
+    const result = handleQuoteNotificationDlqMonitor(
+      {
+        QUOTE_DLQ_MONITOR_ENABLED: "true",
+        QUOTE_NOTIFICATION_DLQ: createQueue({ backlogCount: 0, backlogBytes: 0 }),
+        QUOTE_NOTIFICATION_EMAIL: emailBinding,
+      },
+      { getMetrics, logger },
+    );
+
+    await expect(result).rejects.toThrow("Quote notification DLQ monitor failed.");
+    await result.catch((error: Error) => {
+      expect(error.cause).toBeUndefined();
+      expect(error.stack).not.toContain("Sensitive queue provider detail.");
+    });
 
     const loggedValue = logger.error.mock.calls.flat().join(" ");
     expect(loggedValue).toContain("quote_notification_dlq_monitor_failed");

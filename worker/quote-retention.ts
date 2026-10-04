@@ -75,6 +75,7 @@ export async function handleQuoteRetentionCleanup(
         scheduledTime: controller.scheduledTime,
       }),
     );
-    throw error;
+    // The runtime also records uncaught exceptions. Do not forward provider details or a cause.
+    throw new Error("Quote retention cleanup failed.");
   }
 }

@@ -283,6 +283,34 @@ A ativação do descarte automático seguirá obrigatoriamente esta ordem:
 O rollback do Worker remove o agendamento, mas não desfaz registros já eliminados. A função exclui
 somente linhas cujo `retention_expires_at` já venceu e processa no máximo 500 registros por execução.
 
+## Logs operacionais persistentes
+
+O `wrangler.jsonc` configura Workers Logs em produção, com persistência e amostragem de 100%
+dos eventos, sujeita aos limites da plataforma. A configuração só entra em vigor após deploy
+aprovado: não recupera execuções anteriores. O preview mantém logs persistentes desativados.
+
+Os logs automáticos de invocação e os traces ficam desativados; as query strings são redigidas.
+Os eventos estruturados da aplicação continuam habilitados. Não adicionar nomes, contatos,
+conteúdo de solicitações, tokens ou strings de conexão aos logs. As falhas dos crons lançam uma
+nova exceção de mensagem fixa, sem anexar a exceção original como `cause`, para evitar que o
+runtime persista detalhes do provedor. Isso preserva a sinalização de execução com falha.
+Metadados operacionais da plataforma ainda podem acompanhar os eventos.
+
+Após a publicação, consultar Workers Logs do Worker `bs-veritas-web`, no intervalo da execução:
+
+- retenção: buscar `quote_retention_cleanup_completed`, conferir `deletedCount` numérico e
+  `scheduledTime` correspondente ao cron diário `17 6 * * *` (03:17 BRT);
+- DLQ: buscar `quote_notification_dlq_monitor_completed` ou `quote_notification_dlq_alert_sent`,
+  conferir `backlogCount` e `backlogBytes` numéricos para `47 */6 * * *`;
+- confirmar o resultado da execução e a ausência de exceções nos Cron Events; eventos
+  `*_failed` ou `*_binding_missing` precisam de investigação, não contam como sucesso;
+- não disparar o cron manualmente, consumir mensagens ou alterar o banco para validar logs.
+
+A ausência de evento não comprova sucesso nem falha. Consultar dentro da janela de retenção
+do plano e verificar limites de ingestão antes de concluir que uma execução não aconteceu.
+Não ativar plano pago, Logpush ou exportação externa sem aprovação.
+Referência: [Workers Logs — configuração, limites e retenção](https://developers.cloudflare.com/workers/observability/logs/workers-logs/).
+
 ## Homologação do preview
 
 O preview candidato deverá validar pelo menos:
