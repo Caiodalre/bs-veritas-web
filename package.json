@@ -50,7 +50,7 @@
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.1.11",
-    "wrangler": "4.141.0"
+    "wrangler": "4.147.0"
   },
   "packageManager": "pnpm@11.3.0"
 }
