@@ -66,7 +66,7 @@ test("navega pelo catalogo de seguros", async ({ page }) => {
   await page.goto("/seguros");
 
   await expect(
-    page.getByRole("heading", { level: 1, name: "Uma escolha orientada pela sua necessidade" }),
+    page.getByRole("heading", { level: 1, name: "Qual seguro faz sentido para você?" }),
   ).toBeVisible();
 
   await page.getByRole("link", { name: "Conhecer Seguro Auto" }).click();
@@ -102,7 +102,7 @@ test("exibe a pagina institucional sobre", async ({ page }) => {
   await expect(
     page.getByRole("heading", {
       level: 1,
-      name: "Confiança se constrói com clareza e presença",
+      name: "Conheça a B&S Veritas",
     }),
   ).toBeVisible();
   await expect(page.getByRole("heading", { name: "O que orienta cada atendimento" })).toBeVisible();
@@ -128,7 +128,7 @@ test("publica orientacoes seguras sobre sinistros", async ({ page }) => {
   );
 });
 
-test("publica os canais oficiais de contato sem formulario", async ({ page }) => {
+test("publica os canais oficiais de contato e o acesso ao formulário", async ({ page }) => {
   await page.goto("/contato");
 
   await expect(
@@ -144,6 +144,10 @@ test("publica os canais oficiais de contato sem formulario", async ({ page }) =>
     "tel:+5511925065022",
   );
   await expect(page.getByRole("link", { name: "Enviar e-mail" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Preencher cotação" })).toHaveAttribute(
+    "href",
+    "#solicitar-cotacao",
+  );
   await expect(page.getByRole("link", { name: "Enviar e-mail" })).toHaveAttribute(
     "href",
     "mailto:contato@bsveritas.com.br",
@@ -308,14 +312,15 @@ test.describe("layout mobile", () => {
     await page.locator("summary").click();
     await expect(page.getByRole("link", { name: "Conversar pelo WhatsApp" }).first()).toBeVisible();
 
-    const partnerCarousel = page.getByRole("region", {
+    const partnerGrid = page.getByRole("region", {
       name: "Seguradoras e plataformas parceiras",
     });
 
-    await page.getByRole("link", { name: "Icatu", exact: true }).click();
-    await expect
-      .poll(() => partnerCarousel.evaluate((element) => element.scrollLeft))
-      .toBeGreaterThan(0);
+    await partnerGrid.scrollIntoViewIfNeeded();
+    await expect(partnerGrid.getByRole("img", { name: "Logotipo Icatu" })).toBeInViewport();
+    await expect(
+      partnerGrid.getByRole("img", { name: "Logotipo Bradesco Seguros" }),
+    ).toBeInViewport();
 
     const hasHorizontalOverflow = await page.evaluate(
       () => document.documentElement.scrollWidth > document.documentElement.clientWidth,

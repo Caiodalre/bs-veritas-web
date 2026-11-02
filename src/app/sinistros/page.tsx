@@ -1,13 +1,4 @@
-import type { LucideIcon } from "lucide-react";
-import {
-  ArrowRight,
-  ClipboardList,
-  FileSearch,
-  MessageCircle,
-  PhoneCall,
-  Scale,
-  ShieldAlert,
-} from "lucide-react";
+import { ArrowDown, ArrowRight, FileSearch, MessageCircle, Scale, ShieldAlert } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
@@ -22,28 +13,6 @@ export const metadata: Metadata = {
     canonical: "/sinistros",
   },
 };
-
-const firstActions: readonly {
-  title: string;
-  text: string;
-  icon: LucideIcon;
-}[] = [
-  {
-    title: "Proteja as pessoas",
-    text: "Em situação de risco ou emergência, priorize a segurança e acione os serviços públicos adequados.",
-    icon: ShieldAlert,
-  },
-  {
-    title: "Use os canais oficiais",
-    text: "Localize na apólice, aplicativo ou cartão do seguro a assistência e o aviso de sinistro da seguradora.",
-    icon: PhoneCall,
-  },
-  {
-    title: "Registre o contexto",
-    text: "Quando for seguro, anote data, horário, local, envolvidos e um resumo objetivo do ocorrido.",
-    icon: ClipboardList,
-  },
-];
 
 const supportMoments = [
   {
@@ -64,16 +33,28 @@ const supportMoments = [
 ] as const;
 
 const preparationItems = [
-  "Identifique a seguradora e a modalidade contratada.",
-  "Tenha uma descrição breve e cronológica do ocorrido.",
-  "Guarde números de protocolo e comunicações oficiais.",
-  "Siga as orientações da seguradora antes de reparos ou descarte de bens, salvo medidas urgentes e seguras para evitar agravamento.",
+  {
+    title: "Localize o canal da seguradora",
+    text: "Identifique a seguradora e a modalidade contratada. Consulte na apólice, aplicativo ou cartão do seguro os canais de assistência e aviso de sinistro.",
+  },
+  {
+    title: "Registre o ocorrido com segurança",
+    text: "Quando for seguro, anote data, horário, local, envolvidos e um resumo objetivo do ocorrido.",
+  },
+  {
+    title: "Guarde os protocolos",
+    text: "Mantenha os números de protocolo e as comunicações oficiais para acompanhar o atendimento.",
+  },
+  {
+    title: "Confira as orientações antes de agir",
+    text: "Siga as orientações da seguradora antes de reparos ou descarte de bens, salvo medidas urgentes e seguras para evitar agravamento.",
+  },
 ] as const;
 
 export default function ClaimsPage() {
   return (
     <SiteShell>
-      <section className="bg-navy-950 py-16 text-white sm:py-20">
+      <section className="bg-navy-950 py-8 text-white sm:py-12">
         <Container>
           <nav aria-label="Navegação estrutural" className="text-sm text-slate-300">
             <Link className="hover:text-aqua-200" href="/">
@@ -84,143 +65,125 @@ export default function ClaimsPage() {
             </span>
             <span aria-current="page">Sinistros</span>
           </nav>
-          <p className="mt-10 text-sm font-bold uppercase tracking-[0.18em] text-aqua-300">
-            Apoio em momentos delicados
-          </p>
-          <h1 className="mt-4 max-w-4xl font-serif text-4xl leading-tight font-bold tracking-[-0.03em] sm:text-5xl">
+          <h1 className="mt-5 max-w-4xl font-serif text-3xl leading-tight font-bold tracking-[-0.03em] sm:text-5xl">
             Orientação clara quando acontece um sinistro
           </h1>
-          <p className="mt-6 max-w-3xl text-base leading-8 text-slate-300 sm:text-lg">
-            O primeiro passo é preservar a segurança e usar os canais oficiais da seguradora. A
-            corretora pode apoiar a compreensão do processo, sempre respeitando as condições da
-            apólice.
-          </p>
-          <a
-            className={buttonStyles({ className: "mt-8", size: "lg" })}
-            href={createWhatsAppHref(whatsappMessages.claimsSupport)}
-            rel="noopener noreferrer"
-            target="_blank"
+          <aside
+            aria-labelledby="urgent-risk-title"
+            className="mt-6 max-w-4xl rounded-xl border border-amber-200 bg-amber-50 p-5 sm:p-6"
           >
-            Pedir apoio da corretora
-            <MessageCircle aria-hidden="true" size={18} />
-          </a>
-          <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-400">
-            Este contato não substitui o aviso de sinistro nem os canais de emergência.
-          </p>
-        </Container>
-      </section>
-
-      <section className="py-20 sm:py-24">
-        <Container>
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 sm:p-8">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+            <div className="flex items-center gap-3">
               <ShieldAlert
                 aria-hidden="true"
                 className="shrink-0 text-amber-700"
-                size={30}
+                size={24}
                 strokeWidth={1.8}
               />
-              <div>
-                <h2 className="font-serif text-2xl font-bold text-navy-950">Há risco imediato?</h2>
-                <p className="mt-3 max-w-4xl leading-7 text-slate-700">
-                  Acione os serviços de emergência, as autoridades competentes e a assistência
-                  indicada na apólice. Este site não é um canal de emergência nem substitui o aviso
-                  oficial à seguradora.
-                </p>
-              </div>
+              <h2 className="text-lg font-bold text-navy-950" id="urgent-risk-title">
+                Há risco imediato?
+              </h2>
             </div>
-          </div>
-
-          <div className="mt-16 max-w-3xl">
-            <p className="text-sm font-bold uppercase tracking-[0.18em] text-aqua-700">
-              Primeiros cuidados
+            <p className="mt-3 text-base leading-6 text-slate-700">
+              Acione os serviços de emergência, as autoridades competentes e a assistência indicada
+              na apólice. Este site não é um canal de emergência nem substitui o aviso oficial à
+              seguradora.
             </p>
-            <h2 className="mt-4 font-serif text-3xl font-bold tracking-[-0.025em] text-navy-950 sm:text-4xl">
-              Uma sequência simples para começar
-            </h2>
+          </aside>
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <a className={buttonStyles({ variant: "secondary" })} href="#primeiros-passos">
+              Ver próximos passos
+              <ArrowDown aria-hidden="true" size={18} />
+            </a>
+            <a
+              className={buttonStyles({ variant: "outlineDark" })}
+              href={createWhatsAppHref(whatsappMessages.claimsSupport)}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Pedir apoio da corretora
+              <MessageCircle aria-hidden="true" size={18} />
+            </a>
           </div>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">
+            O contato com a corretora não substitui o aviso de sinistro à seguradora.
+          </p>
+        </Container>
+      </section>
 
-          <ol className="mt-10 grid gap-5 md:grid-cols-3">
-            {firstActions.map(({ icon: Icon, text, title }, index) => (
-              <li className="rounded-xl border border-border bg-white p-7" key={title}>
-                <div className="flex items-center justify-between">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-aqua-100 text-aqua-700">
-                    <Icon aria-hidden="true" size={25} strokeWidth={1.7} />
-                  </div>
-                  <span className="text-xs font-bold tracking-[0.18em] text-aqua-700">
-                    0{index + 1}
+      <section
+        aria-labelledby="first-steps-title"
+        className="scroll-mt-20 bg-aqua-50 py-10 sm:py-12"
+        id="primeiros-passos"
+      >
+        <Container>
+          <h2
+            className="font-serif text-2xl font-bold text-navy-950 sm:text-3xl"
+            id="first-steps-title"
+          >
+            Próximos passos com a seguradora
+          </h2>
+          <ol className="mt-6 grid gap-4 md:grid-cols-2">
+            {preparationItems.map(({ title, text }, index) => (
+              <li className="rounded-xl border border-aqua-200 bg-white p-5 sm:p-6" key={title}>
+                <div className="flex items-center gap-3">
+                  <span
+                    aria-hidden="true"
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-navy-950 text-sm font-bold text-aqua-300"
+                  >
+                    {index + 1}
                   </span>
+                  <h3 className="text-base font-bold text-navy-950">{title}</h3>
                 </div>
-                <h3 className="mt-6 font-serif text-xl font-bold text-navy-950">{title}</h3>
-                <p className="mt-3 text-sm leading-7 text-slate-600">{text}</p>
+                <p className="mt-3 text-sm leading-6 text-slate-700">{text}</p>
               </li>
             ))}
           </ol>
+          <p className="mt-5 max-w-3xl text-sm leading-6 text-slate-600">
+            Os documentos e prazos variam conforme o produto, a seguradora e as circunstâncias.
+            Consulte sempre a apólice e as instruções oficiais antes de enviar qualquer material.
+          </p>
         </Container>
       </section>
 
-      <section className="bg-aqua-50 py-20 sm:py-24">
-        <Container className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
-          <div>
-            <p className="text-sm font-bold uppercase tracking-[0.18em] text-aqua-700">
-              Antes do contato
-            </p>
-            <h2 className="mt-4 font-serif text-3xl leading-tight font-bold tracking-[-0.025em] text-navy-950 sm:text-4xl">
-              Organize as informações essenciais
-            </h2>
-            <p className="mt-6 leading-8 text-slate-600">
-              Os documentos e prazos variam conforme o produto, a seguradora e as circunstâncias.
-              Consulte sempre a apólice e as instruções oficiais antes de enviar qualquer material.
-            </p>
-          </div>
-          <ul className="grid gap-4">
-            {preparationItems.map((item, index) => (
-              <li
-                className="flex gap-4 rounded-xl border border-aqua-200 bg-white p-5 text-sm leading-7 text-slate-700"
-                key={item}
-              >
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-navy-950 text-xs font-bold text-aqua-300">
-                  {index + 1}
-                </span>
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </Container>
-      </section>
-
-      <section className="bg-navy-950 py-20 text-white sm:py-24">
+      <section className="bg-navy-950 py-10 text-white sm:py-12">
         <Container>
           <div className="max-w-3xl">
             <p className="text-sm font-bold uppercase tracking-[0.18em] text-aqua-300">
               Papel da corretora
             </p>
-            <h2 className="mt-4 font-serif text-3xl font-bold tracking-[-0.025em] sm:text-4xl">
+            <h2 className="mt-3 font-serif text-2xl font-bold tracking-[-0.025em] sm:text-3xl">
               Apoio sem promessas indevidas
             </h2>
           </div>
-          <div className="mt-12 grid gap-5 md:grid-cols-3">
+          <div className="mt-6 grid gap-4 md:grid-cols-3">
             {supportMoments.map(({ icon: Icon, text, title }) => (
               <article
-                className="rounded-xl border border-white/10 bg-white/[0.045] p-7"
+                className="rounded-xl border border-white/10 bg-white/[0.045] p-5 sm:p-6"
                 key={title}
               >
-                <Icon aria-hidden="true" className="text-aqua-300" size={26} strokeWidth={1.7} />
-                <h3 className="mt-6 font-serif text-xl font-bold">{title}</h3>
-                <p className="mt-3 text-sm leading-7 text-slate-300">{text}</p>
+                <div className="flex items-center gap-3">
+                  <Icon
+                    aria-hidden="true"
+                    className="shrink-0 text-aqua-300"
+                    size={22}
+                    strokeWidth={1.7}
+                  />
+                  <h3 className="text-base font-bold">{title}</h3>
+                </div>
+                <p className="mt-3 text-sm leading-6 text-slate-300">{text}</p>
               </article>
             ))}
           </div>
         </Container>
       </section>
 
-      <section className="py-16 sm:py-20">
+      <section className="py-10 sm:py-12">
         <Container className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
           <div>
-            <h2 className="font-serif text-3xl font-bold text-navy-950">
+            <h2 className="font-serif text-2xl font-bold text-navy-950">
               Proteja também as suas informações
             </h2>
-            <p className="mt-4 max-w-3xl leading-8 text-slate-600">
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
               Não envie CPF, RG, dados bancários, imagens de documentos ou informações médicas por
               mensagens abertas. Utilize os canais oficiais indicados pela seguradora para conteúdos
               sensíveis.

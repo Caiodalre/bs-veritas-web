@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ArrowRight, CheckCircle2, MessageCircle } from "lucide-react";
+import { ArrowRight, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { SiteShell } from "@/components/layout/site-shell";
@@ -17,25 +17,10 @@ export const metadata: Metadata = {
   },
 };
 
-const guidanceSteps = [
-  {
-    title: "Entendimento",
-    text: "A conversa começa pela sua realidade, prioridades e dúvidas.",
-  },
-  {
-    title: "Comparação",
-    text: "As condições relevantes são organizadas para facilitar a avaliação.",
-  },
-  {
-    title: "Acompanhamento",
-    text: "A orientação continua durante a contratação e nos próximos ciclos.",
-  },
-] as const;
-
 export default function InsuranceCatalogPage() {
   return (
     <SiteShell>
-      <section className="bg-navy-950 py-16 text-white sm:py-20">
+      <section className="bg-navy-950 py-8 text-white sm:py-12">
         <Container>
           <nav aria-label="Navegação estrutural" className="text-sm text-slate-300">
             <Link className="hover:text-aqua-200" href="/">
@@ -46,15 +31,12 @@ export default function InsuranceCatalogPage() {
             </span>
             <span aria-current="page">Seguros</span>
           </nav>
-          <p className="mt-10 text-sm font-bold uppercase tracking-[0.18em] text-aqua-300">
-            Soluções de proteção
-          </p>
-          <h1 className="mt-4 max-w-4xl font-serif text-4xl leading-tight font-bold tracking-[-0.03em] sm:text-5xl">
-            Uma escolha orientada pela sua necessidade
+          <h1 className="mt-6 max-w-4xl font-serif text-3xl leading-tight font-bold tracking-[-0.03em] sm:text-5xl">
+            Qual seguro faz sentido para você?
           </h1>
-          <p className="mt-6 max-w-3xl text-base leading-8 text-slate-300 sm:text-lg">
-            Conheça as modalidades atendidas e os principais pontos que ajudam a construir uma
-            decisão clara, sem tratar seguro como uma solução pronta para todos.
+          <p className="mt-4 max-w-3xl text-base leading-7 text-slate-300 sm:text-lg">
+            Compare o foco das seis modalidades e veja o que considerar em cada uma. Os detalhes
+            ajudam a preparar a conversa, sem substituir a análise da proposta.
           </p>
           <a
             className={buttonStyles({ className: "mt-8", size: "lg" })}
@@ -68,26 +50,30 @@ export default function InsuranceCatalogPage() {
         </Container>
       </section>
 
-      <section className="py-20 sm:py-24">
+      <section aria-label="Guia de modalidades" className="py-10 sm:py-12">
         <Container>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {insuranceCatalog.map((insurance) => (
               <article
-                className="group flex flex-col rounded-2xl border border-border bg-white p-7 shadow-[0_14px_45px_rgba(7,24,39,0.055)] transition duration-200 hover:-translate-y-1 hover:border-aqua-400"
+                className="flex flex-col rounded-xl border border-border bg-white p-5 sm:p-6"
                 key={insurance.slug}
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-aqua-100 text-aqua-700 transition-colors group-hover:bg-aqua-300 group-hover:text-navy-950">
-                  <InsuranceIcon name={insurance.icon} />
+                <div className="flex items-center gap-3">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-aqua-100 text-aqua-700">
+                    <InsuranceIcon name={insurance.icon} />
+                  </span>
+                  <h2 className="font-serif text-2xl font-bold text-navy-950">{insurance.name}</h2>
                 </div>
-                <h2 className="mt-6 font-serif text-2xl font-bold text-navy-950">
-                  {insurance.name}
-                </h2>
-                <p className="mt-3 flex-1 text-sm leading-7 text-slate-600">
-                  {insurance.description}
-                </p>
+                <p className="mt-4 text-sm leading-7 text-slate-600">{insurance.description}</p>
+                <div className="mt-4 flex-1 border-t border-border pt-4">
+                  <p className="text-sm font-semibold text-navy-950">Ponto de partida</p>
+                  <p className="mt-2 text-sm leading-7 text-slate-600">
+                    {insurance.practicalQuestions[0]}
+                  </p>
+                </div>
                 <Link
                   aria-label={"Conhecer " + insurance.name}
-                  className="mt-6 inline-flex items-center gap-2 font-semibold text-aqua-700 hover:text-navy-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-500"
+                  className="mt-4 inline-flex min-h-12 items-center gap-2 rounded-md font-semibold text-aqua-700 hover:text-navy-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-700"
                   href={"/seguros/" + insurance.slug}
                 >
                   Conhecer detalhes
@@ -99,32 +85,7 @@ export default function InsuranceCatalogPage() {
         </Container>
       </section>
 
-      <section className="bg-aqua-50 py-20 sm:py-24">
-        <Container>
-          <div className="max-w-3xl">
-            <p className="text-sm font-bold uppercase tracking-[0.18em] text-aqua-700">
-              Atendimento consultivo
-            </p>
-            <h2 className="mt-4 font-serif text-3xl font-bold tracking-[-0.025em] text-navy-950 sm:text-4xl">
-              Como a orientação acontece
-            </h2>
-          </div>
-          <ol className="mt-12 grid gap-5 md:grid-cols-3">
-            {guidanceSteps.map((step, index) => (
-              <li className="rounded-xl border border-aqua-200 bg-white p-6" key={step.title}>
-                <CheckCircle2 aria-hidden="true" className="text-aqua-700" size={24} />
-                <p className="mt-5 text-xs font-bold tracking-[0.18em] text-aqua-700">
-                  0{index + 1}
-                </p>
-                <h3 className="mt-2 font-serif text-xl font-bold text-navy-950">{step.title}</h3>
-                <p className="mt-3 text-sm leading-7 text-slate-600">{step.text}</p>
-              </li>
-            ))}
-          </ol>
-        </Container>
-      </section>
-
-      <section className="bg-navy-900 py-16 text-white sm:py-20">
+      <section className="bg-navy-900 py-10 text-white sm:py-12">
         <Container className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-3xl">
             <h2 className="font-serif text-3xl font-bold">Ainda não sabe por onde começar?</h2>

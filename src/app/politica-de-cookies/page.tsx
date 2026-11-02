@@ -1,6 +1,7 @@
 import { Cookie, ExternalLink, Mail, ShieldCheck } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { DocumentIndex } from "@/components/layout/document-index";
 import { Container } from "@/components/layout/container";
 import { SiteShell } from "@/components/layout/site-shell";
 import { buttonStyles } from "@/components/ui/button";
@@ -40,10 +41,41 @@ const unusedCategories = [
   },
 ] as const;
 
+const documentSections = [
+  {
+    id: "definicao",
+    title: "1. O que são cookies",
+  },
+  {
+    id: "inventario",
+    title: "2. Inventário atual",
+  },
+  {
+    id: "infraestrutura",
+    title: "3. Infraestrutura e segurança",
+  },
+  {
+    id: "banner",
+    title: "4. Por que não há banner de cookies",
+  },
+  {
+    id: "mudancas",
+    title: "5. Mudanças futuras e escolhas",
+  },
+  {
+    id: "navegador",
+    title: "6. Controles do navegador",
+  },
+  {
+    id: "privacidade",
+    title: "7. Privacidade e atualizações",
+  },
+] as const;
+
 export default function CookiePolicyPage() {
   return (
     <SiteShell>
-      <section className="bg-navy-950 py-16 text-white sm:py-20">
+      <section className="bg-navy-950 py-8 text-white sm:py-12">
         <Container>
           <nav aria-label="Navegação estrutural" className="text-sm text-slate-300">
             <Link className="hover:text-aqua-200" href="/">
@@ -54,13 +86,13 @@ export default function CookiePolicyPage() {
             </span>
             <span aria-current="page">Política de Cookies</span>
           </nav>
-          <p className="mt-10 text-sm font-bold uppercase tracking-[0.18em] text-aqua-300">
+          <p className="mt-6 text-sm font-bold uppercase tracking-[0.18em] text-aqua-300">
             Transparência digital
           </p>
-          <h1 className="mt-4 max-w-4xl font-serif text-4xl leading-tight font-bold tracking-[-0.03em] sm:text-5xl">
+          <h1 className="mt-4 max-w-4xl font-serif text-3xl leading-tight font-bold tracking-[-0.03em] sm:text-5xl">
             Como este site utiliza cookies
           </h1>
-          <p className="mt-6 max-w-3xl text-base leading-8 text-slate-300 sm:text-lg">
+          <p className="mt-4 max-w-3xl text-base leading-7 text-slate-300 sm:text-lg">
             Esta política apresenta o inventário atual de cookies do site da B&S Veritas e explica
             quais controles serão adotados antes de qualquer uso futuro de tecnologias não
             essenciais.
@@ -71,27 +103,32 @@ export default function CookiePolicyPage() {
         </Container>
       </section>
 
-      <section className="py-16 sm:py-20">
-        <Container className="grid gap-10 lg:grid-cols-[0.72fr_1.28fr] lg:items-start">
-          <aside className="rounded-2xl border border-aqua-200 bg-aqua-50 p-7 lg:sticky lg:top-24">
-            <Cookie aria-hidden="true" className="text-aqua-700" size={30} strokeWidth={1.7} />
-            <h2 className="mt-5 font-serif text-2xl font-bold text-navy-950">Situação atual</h2>
-            <ul className="mt-5 space-y-4 text-sm leading-7 text-slate-700">
-              {currentStatus.map((item) => (
-                <li className="flex gap-3" key={item}>
-                  <span
-                    aria-hidden="true"
-                    className="mt-3 h-1.5 w-1.5 shrink-0 rounded-full bg-aqua-600"
-                  />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      <section className="py-8 sm:py-12">
+        <Container className="grid gap-8 lg:grid-cols-[18rem_minmax(0,1fr)] lg:items-start">
+          <DocumentIndex sections={documentSections} />
 
-          <div className="space-y-10 text-base leading-8 text-slate-700">
+          <div className="min-w-0 space-y-10 text-base leading-8 text-slate-700">
+            <aside className="rounded-xl border border-aqua-200 bg-aqua-50 p-5 sm:p-6">
+              <Cookie aria-hidden="true" className="text-aqua-700" size={30} strokeWidth={1.7} />
+              <h2 className="mt-5 font-serif text-2xl font-bold text-navy-950">Situação atual</h2>
+              <ul className="mt-5 space-y-4 text-sm leading-7 text-slate-700">
+                {currentStatus.map((item) => (
+                  <li className="flex gap-3" key={item}>
+                    <span
+                      aria-hidden="true"
+                      className="mt-3 h-1.5 w-1.5 shrink-0 rounded-full bg-aqua-600"
+                    />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </aside>
             <section aria-labelledby="definicao">
-              <h2 className="font-serif text-3xl font-bold text-navy-950" id="definicao">
+              <h2
+                className="scroll-mt-24 font-serif text-2xl font-bold text-navy-950 sm:text-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-700"
+                id="definicao"
+                tabIndex={-1}
+              >
                 1. O que são cookies
               </h2>
               <p className="mt-4">
@@ -107,7 +144,11 @@ export default function CookiePolicyPage() {
             </section>
 
             <section aria-labelledby="inventario">
-              <h2 className="font-serif text-3xl font-bold text-navy-950" id="inventario">
+              <h2
+                className="scroll-mt-24 font-serif text-2xl font-bold text-navy-950 sm:text-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-700"
+                id="inventario"
+                tabIndex={-1}
+              >
                 2. Inventário atual
               </h2>
               <p className="mt-4">
@@ -116,26 +157,42 @@ export default function CookiePolicyPage() {
                 também não depende de conta, sessão autenticada ou carrinho.
               </p>
               <div className="mt-5 overflow-hidden rounded-2xl border border-slate-200">
-                <div className="grid gap-2 bg-slate-100 px-5 py-4 font-semibold text-navy-950 sm:grid-cols-[0.8fr_1.2fr_auto]">
+                <div
+                  aria-hidden="true"
+                  className="hidden gap-2 bg-slate-100 px-5 py-4 font-semibold text-navy-950 sm:grid sm:grid-cols-[0.8fr_1.2fr_auto]"
+                >
                   <span>Categoria</span>
                   <span>Finalidade típica</span>
                   <span>Status</span>
                 </div>
                 {unusedCategories.map((category) => (
-                  <div
+                  <dl
                     className="grid gap-2 border-t border-slate-200 px-5 py-4 sm:grid-cols-[0.8fr_1.2fr_auto]"
                     key={category.name}
                   >
-                    <span className="font-semibold text-navy-950">{category.name}</span>
-                    <span>{category.purpose}</span>
-                    <span className="font-semibold text-aqua-700">Não utilizada</span>
-                  </div>
+                    <div>
+                      <dt className="text-sm text-slate-600 sm:sr-only">Categoria</dt>
+                      <dd className="font-semibold text-navy-950">{category.name}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-sm text-slate-600 sm:sr-only">Finalidade típica</dt>
+                      <dd>{category.purpose}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-sm text-slate-600 sm:sr-only">Status</dt>
+                      <dd className="font-semibold text-aqua-700">Não utilizada</dd>
+                    </div>
+                  </dl>
                 ))}
               </div>
             </section>
 
             <section aria-labelledby="infraestrutura">
-              <h2 className="font-serif text-3xl font-bold text-navy-950" id="infraestrutura">
+              <h2
+                className="scroll-mt-24 font-serif text-2xl font-bold text-navy-950 sm:text-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-700"
+                id="infraestrutura"
+                tabIndex={-1}
+              >
                 3. Infraestrutura e segurança
               </h2>
               <p className="mt-4">
@@ -160,7 +217,11 @@ export default function CookiePolicyPage() {
             </section>
 
             <section aria-labelledby="banner">
-              <h2 className="font-serif text-3xl font-bold text-navy-950" id="banner">
+              <h2
+                className="scroll-mt-24 font-serif text-2xl font-bold text-navy-950 sm:text-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-700"
+                id="banner"
+                tabIndex={-1}
+              >
                 4. Por que não há banner de cookies
               </h2>
               <p className="mt-4">
@@ -175,7 +236,11 @@ export default function CookiePolicyPage() {
             </section>
 
             <section aria-labelledby="mudancas">
-              <h2 className="font-serif text-3xl font-bold text-navy-950" id="mudancas">
+              <h2
+                className="scroll-mt-24 font-serif text-2xl font-bold text-navy-950 sm:text-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-700"
+                id="mudancas"
+                tabIndex={-1}
+              >
                 5. Mudanças futuras e escolhas
               </h2>
               <p className="mt-4">
@@ -200,7 +265,11 @@ export default function CookiePolicyPage() {
             </section>
 
             <section aria-labelledby="navegador">
-              <h2 className="font-serif text-3xl font-bold text-navy-950" id="navegador">
+              <h2
+                className="scroll-mt-24 font-serif text-2xl font-bold text-navy-950 sm:text-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-700"
+                id="navegador"
+                tabIndex={-1}
+              >
                 6. Controles do navegador
               </h2>
               <p className="mt-4">
@@ -211,7 +280,11 @@ export default function CookiePolicyPage() {
             </section>
 
             <section aria-labelledby="privacidade">
-              <h2 className="font-serif text-3xl font-bold text-navy-950" id="privacidade">
+              <h2
+                className="scroll-mt-24 font-serif text-2xl font-bold text-navy-950 sm:text-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-700"
+                id="privacidade"
+                tabIndex={-1}
+              >
                 7. Privacidade e atualizações
               </h2>
               <p className="mt-4">
@@ -230,11 +303,17 @@ export default function CookiePolicyPage() {
                 A versão e a data apresentadas no início identificam o texto vigente.
               </p>
             </section>
+            <a
+              className="inline-flex min-h-12 items-center rounded-md font-semibold text-aqua-700 hover:text-navy-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-700"
+              href="#document-index-title"
+            >
+              Voltar ao índice
+            </a>
           </div>
         </Container>
       </section>
 
-      <section className="bg-navy-950 py-16 text-white sm:py-20">
+      <section className="bg-navy-950 py-8 text-white sm:py-12">
         <Container className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-3xl">
             <ShieldCheck aria-hidden="true" className="text-aqua-300" size={34} strokeWidth={1.6} />

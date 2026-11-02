@@ -82,6 +82,46 @@ describe("QuoteForm", () => {
     expect(screen.getByRole("group", { name: "Verificação de segurança" })).toBeInTheDocument();
   });
 
+  it("apresenta as instruções antes dos campos e preserva os avisos de envio", () => {
+    render(<QuoteForm siteKey="test-site-key" />);
+    const instructions = screen.getByText(/Os campos marcados com \* são obrigatórios/);
+    const firstField = screen.getByLabelText("Nome completo *");
+
+    expect(
+      instructions.compareDocumentPosition(firstField) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).not.toBe(0);
+    expect(
+      screen.getByRole("form", { name: "Solicitação de cotação" }),
+    ).toHaveAccessibleDescription(instructions.textContent ?? "");
+    expect(
+      screen.getByText(/O envio não representa proposta, contratação ou garantia/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/incluindo a retenção aplicável por até cinco anos/),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("status")).toBeEmptyDOMElement();
+  });
+
+  it.each(["servidor", "conexão"])("orienta a usar outro canal em falha de %s", async (failure) => {
+    if (failure === "servidor") {
+      vi.mocked(fetch).mockResolvedValueOnce(Response.json({}, { status: 500 }));
+    } else {
+      vi.mocked(fetch).mockRejectedValueOnce(new Error("Falha simulada"));
+    }
+    render(<QuoteForm siteKey="test-site-key" />);
+    await waitFor(() => expect(turnstile.render).toHaveBeenCalledOnce());
+    fillRequiredFields();
+    await act(async () => renderOptions.callback("verified-token"));
+    fireEvent.click(screen.getByRole("button", { name: "Solicitar cotação" }));
+
+    await waitFor(() =>
+      expect(screen.getByRole("status")).toHaveTextContent(
+        "outro canal de atendimento nesta página",
+      ),
+    );
+    expect(reset).toHaveBeenCalledWith("quote-widget");
+  });
+
   it("inicia com a modalidade contextual selecionada", () => {
     render(<QuoteForm initialInsuranceType="residencial" siteKey="test-site-key" />);
 

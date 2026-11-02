@@ -1,4 +1,12 @@
-import { Building2, Mail, MapPin, MessageCircle, Phone, ShieldCheck } from "lucide-react";
+import {
+  ArrowDown,
+  Building2,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Phone,
+  ShieldCheck,
+} from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
@@ -18,20 +26,11 @@ export const metadata: Metadata = {
 
 const contactChannels = [
   {
-    title: "WhatsApp",
-    description: "Inicie uma conversa pelo canal oficial da corretora.",
-    action: "Conversar pelo WhatsApp",
-    href: createWhatsAppHref(whatsappMessages.generalQuote),
-    icon: MessageCircle,
-    external: true,
-  },
-  {
     title: "Telefone",
     description: siteConfig.contact.phone,
     action: "Ligar agora",
     href: siteConfig.contact.phoneHref,
     icon: Phone,
-    external: false,
   },
   {
     title: "E-mail",
@@ -39,14 +38,13 @@ const contactChannels = [
     action: "Enviar e-mail",
     href: `mailto:${siteConfig.contact.email}`,
     icon: Mail,
-    external: false,
   },
 ] as const;
 
 export default function ContactPage() {
   return (
     <SiteShell>
-      <section className="bg-navy-950 py-16 text-white sm:py-20">
+      <section className="bg-navy-950 py-8 text-white sm:py-12">
         <Container>
           <nav aria-label="Navegação estrutural" className="text-sm text-slate-300">
             <Link className="hover:text-aqua-200" href="/">
@@ -57,39 +55,73 @@ export default function ContactPage() {
             </span>
             <span aria-current="page">Contato</span>
           </nav>
-          <p className="mt-10 text-sm font-bold uppercase tracking-[0.18em] text-aqua-300">
+          <p className="mt-5 text-sm font-bold uppercase tracking-[0.18em] text-aqua-300">
             Canais oficiais
           </p>
-          <h1 className="mt-4 max-w-4xl font-serif text-4xl leading-tight font-bold tracking-[-0.03em] sm:text-5xl">
+          <h1 className="mt-3 max-w-4xl font-serif text-4xl leading-tight font-bold tracking-[-0.03em] sm:text-5xl">
             Fale com a B&S Veritas
           </h1>
-          <p className="mt-6 max-w-3xl text-base leading-8 text-slate-300 sm:text-lg">
-            Escolha o canal mais conveniente para tirar dúvidas, conversar sobre seguros ou
-            solicitar uma cotação com atendimento humano e próximo.
+          <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300 sm:text-lg">
+            Converse pelo WhatsApp ou preencha o formulário para solicitar uma cotação.
+          </p>
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <a
+              className={buttonStyles()}
+              href={createWhatsAppHref(whatsappMessages.generalQuote)}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <MessageCircle aria-hidden="true" size={20} />
+              Conversar pelo WhatsApp
+            </a>
+            <a className={buttonStyles({ variant: "outlineDark" })} href="#solicitar-cotacao">
+              Preencher cotação
+              <ArrowDown aria-hidden="true" size={18} />
+            </a>
+          </div>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">
+            No WhatsApp, você pode revisar a mensagem antes de enviá-la.
           </p>
         </Container>
       </section>
 
-      <section className="py-20 sm:py-24">
+      <section
+        aria-labelledby="quote-form-title"
+        className="scroll-mt-20 bg-aqua-50 py-8 sm:py-12"
+        id="solicitar-cotacao"
+      >
+        <Container className="grid max-w-5xl gap-6">
+          <div>
+            <h2
+              className="font-serif text-2xl font-bold tracking-[-0.025em] text-navy-950 sm:text-3xl"
+              id="quote-form-title"
+            >
+              Solicite sua cotação
+            </h2>
+            <p className="mt-3 max-w-xl leading-7 text-slate-700">
+              Informe seus contatos e o seguro de interesse. Nossa equipe continuará o atendimento.
+            </p>
+          </div>
+          <QuoteForm />
+        </Container>
+      </section>
+
+      <section aria-labelledby="other-contact-title" className="py-10 sm:py-12">
         <Container>
-          <div className="grid gap-5 md:grid-cols-3">
-            {contactChannels.map(({ action, description, external, href, icon: Icon, title }) => (
-              <article
-                className="flex flex-col rounded-2xl border border-border bg-white p-7 shadow-[0_14px_45px_rgba(7,24,39,0.055)]"
-                key={title}
-              >
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-aqua-100 text-aqua-700">
-                  <Icon aria-hidden="true" size={25} strokeWidth={1.7} />
+          <h2 className="font-serif text-2xl font-bold text-navy-950" id="other-contact-title">
+            Outros canais de atendimento
+          </h2>
+          <div className="mt-5 grid gap-4 md:grid-cols-2">
+            {contactChannels.map(({ action, description, href, icon: Icon, title }) => (
+              <article className="rounded-xl border border-border bg-white p-5 sm:p-6" key={title}>
+                <div className="flex items-center gap-3">
+                  <Icon aria-hidden="true" className="shrink-0 text-aqua-700" size={22} />
+                  <h3 className="text-base font-bold text-navy-950">{title}</h3>
                 </div>
-                <h2 className="mt-6 font-serif text-xl font-bold text-navy-950">{title}</h2>
-                <p className="mt-3 flex-1 break-words text-sm leading-7 text-slate-600">
-                  {description}
-                </p>
+                <p className="mt-2 break-words text-sm leading-6 text-slate-600">{description}</p>
                 <a
-                  className={buttonStyles({ className: "mt-6 w-full", variant: "outlineLight" })}
+                  className={buttonStyles({ className: "mt-4", variant: "outlineLight" })}
                   href={href}
-                  rel={external ? "noopener noreferrer" : undefined}
-                  target={external ? "_blank" : undefined}
                 >
                   {action}
                 </a>
@@ -97,23 +129,20 @@ export default function ContactPage() {
             ))}
           </div>
 
-          <p className="mt-5 text-center text-sm leading-6 text-slate-600">
-            No WhatsApp, a mensagem inicial será apenas preenchida. Você poderá revisar o texto
-            antes de enviá-lo.
-          </p>
-
-          <div className="mt-12 grid gap-5 md:grid-cols-2">
-            <div className="rounded-xl border border-aqua-200 bg-aqua-50 p-6">
-              <MapPin aria-hidden="true" className="text-aqua-700" size={26} />
-              <h2 className="mt-5 font-serif text-xl font-bold text-navy-950">Localização</h2>
-              <p className="mt-3 text-sm leading-7 text-slate-700">{siteConfig.location}</p>
+          <div className="mt-8 grid gap-6 border-t border-border pt-6 md:grid-cols-2">
+            <div>
+              <h3 className="flex items-center gap-3 text-base font-bold text-navy-950">
+                <MapPin aria-hidden="true" className="shrink-0 text-aqua-700" size={22} />
+                Localização
+              </h3>
+              <p className="mt-2 text-sm leading-6 text-slate-700">{siteConfig.location}</p>
             </div>
-            <div className="rounded-xl border border-aqua-200 bg-aqua-50 p-6">
-              <Building2 aria-hidden="true" className="text-aqua-700" size={26} />
-              <h2 className="mt-5 font-serif text-xl font-bold text-navy-950">
+            <div>
+              <h3 className="flex items-center gap-3 text-base font-bold text-navy-950">
+                <Building2 aria-hidden="true" className="shrink-0 text-aqua-700" size={22} />
                 Identificação empresarial
-              </h2>
-              <p className="mt-3 text-sm leading-7 text-slate-700">
+              </h3>
+              <p className="mt-2 text-sm leading-6 text-slate-700">
                 {siteConfig.legalName}
                 <br />
                 CNPJ {siteConfig.cnpj}
@@ -123,42 +152,12 @@ export default function ContactPage() {
         </Container>
       </section>
 
-      <section
-        aria-labelledby="quote-form-title"
-        className="scroll-mt-20 bg-aqua-50 py-20 sm:py-24"
-        id="solicitar-cotacao"
-      >
-        <Container className="grid gap-10 lg:grid-cols-[0.72fr_1.28fr] lg:items-start">
-          <div>
-            <p className="text-sm font-bold uppercase tracking-[0.18em] text-aqua-700">
-              Solicitação de cotação
-            </p>
-            <h2
-              className="mt-4 font-serif text-3xl font-bold tracking-[-0.025em] text-navy-950 sm:text-4xl"
-              id="quote-form-title"
-            >
-              Conte o essencial para iniciarmos
-            </h2>
-            <p className="mt-5 leading-8 text-slate-700">
-              Envie seus dados de contato e a modalidade desejada. A equipe analisará a solicitação
-              e continuará o atendimento de forma humana, sem contratação automática.
-            </p>
-            <ul className="mt-7 space-y-3 text-sm leading-6 text-slate-700">
-              <li>• Você não precisa informar documentos nesta etapa.</li>
-              <li>• Coberturas e condições variam conforme produto e seguradora.</li>
-              <li>• O envio não representa proposta, contratação ou garantia de aceitação.</li>
-            </ul>
-          </div>
-          <QuoteForm />
-        </Container>
-      </section>
-
-      <section className="bg-navy-950 py-16 text-white sm:py-20">
+      <section className="bg-navy-950 py-8 text-white sm:py-10">
         <Container className="grid gap-8 lg:grid-cols-[auto_1fr_auto] lg:items-center">
           <ShieldCheck aria-hidden="true" className="text-aqua-300" size={38} strokeWidth={1.6} />
           <div>
-            <h2 className="font-serif text-3xl font-bold">Proteja suas informações</h2>
-            <p className="mt-4 max-w-3xl leading-8 text-slate-300">
+            <h2 className="font-serif text-2xl font-bold">Proteja suas informações</h2>
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">
               No primeiro contato, não envie documentos, CPF, dados bancários, informações médicas
               ou dados completos de apólices. Compartilhe apenas o necessário para iniciarmos o
               atendimento com segurança.

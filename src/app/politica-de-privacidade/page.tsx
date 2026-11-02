@@ -1,6 +1,7 @@
 import { ExternalLink, LockKeyhole, Mail, ShieldCheck } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { DocumentIndex } from "@/components/layout/document-index";
 import { Container } from "@/components/layout/container";
 import { SiteShell } from "@/components/layout/site-shell";
 import { buttonStyles } from "@/components/ui/button";
@@ -37,10 +38,45 @@ const holderRights = [
   "revogar o consentimento ou se opor ao tratamento nas situações previstas em lei.",
 ] as const;
 
+const documentSections = [
+  {
+    id: "controlador",
+    title: "1. Controlador e alcance",
+  },
+  {
+    id: "informacoes",
+    title: "2. Informações tratadas",
+  },
+  {
+    id: "finalidades",
+    title: "3. Finalidades e bases legais",
+  },
+  {
+    id: "compartilhamento",
+    title: "4. Compartilhamento e tratamento internacional",
+  },
+  {
+    id: "retencao",
+    title: "5. Retenção",
+  },
+  {
+    id: "direitos",
+    title: "6. Direitos do titular",
+  },
+  {
+    id: "cookies",
+    title: "7. Cookies e serviços externos",
+  },
+  {
+    id: "seguranca",
+    title: "8. Segurança e atualizações",
+  },
+] as const;
+
 export default function PrivacyPolicyPage() {
   return (
     <SiteShell>
-      <section className="bg-navy-950 py-16 text-white sm:py-20">
+      <section className="bg-navy-950 py-8 text-white sm:py-12">
         <Container>
           <nav aria-label="Navegação estrutural" className="text-sm text-slate-300">
             <Link className="hover:text-aqua-200" href="/">
@@ -51,13 +87,13 @@ export default function PrivacyPolicyPage() {
             </span>
             <span aria-current="page">Política de Privacidade</span>
           </nav>
-          <p className="mt-10 text-sm font-bold uppercase tracking-[0.18em] text-aqua-300">
+          <p className="mt-6 text-sm font-bold uppercase tracking-[0.18em] text-aqua-300">
             Privacidade e dados
           </p>
-          <h1 className="mt-4 max-w-4xl font-serif text-4xl leading-tight font-bold tracking-[-0.03em] sm:text-5xl">
+          <h1 className="mt-4 max-w-4xl font-serif text-3xl leading-tight font-bold tracking-[-0.03em] sm:text-5xl">
             Como tratamos informações pessoais
           </h1>
-          <p className="mt-6 max-w-3xl text-base leading-8 text-slate-300 sm:text-lg">
+          <p className="mt-4 max-w-3xl text-base leading-7 text-slate-300 sm:text-lg">
             Esta política explica, de forma clara, como a B&S Veritas protege informações
             relacionadas aos visitantes do site e às pessoas que iniciam contato pelos nossos canais
             oficiais.
@@ -68,27 +104,37 @@ export default function PrivacyPolicyPage() {
         </Container>
       </section>
 
-      <section className="py-16 sm:py-20">
-        <Container className="grid gap-10 lg:grid-cols-[0.72fr_1.28fr] lg:items-start">
-          <aside className="rounded-2xl border border-aqua-200 bg-aqua-50 p-7 lg:sticky lg:top-24">
-            <ShieldCheck aria-hidden="true" className="text-aqua-700" size={30} strokeWidth={1.7} />
-            <h2 className="mt-5 font-serif text-2xl font-bold text-navy-950">Resumo atual</h2>
-            <ul className="mt-5 space-y-4 text-sm leading-7 text-slate-700">
-              {currentPractices.map((practice) => (
-                <li className="flex gap-3" key={practice}>
-                  <span
-                    aria-hidden="true"
-                    className="mt-3 h-1.5 w-1.5 shrink-0 rounded-full bg-aqua-600"
-                  />
-                  <span>{practice}</span>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      <section className="py-8 sm:py-12">
+        <Container className="grid gap-8 lg:grid-cols-[18rem_minmax(0,1fr)] lg:items-start">
+          <DocumentIndex sections={documentSections} />
 
-          <div className="space-y-10 text-base leading-8 text-slate-700">
+          <div className="min-w-0 space-y-10 text-base leading-8 text-slate-700">
+            <aside className="rounded-xl border border-aqua-200 bg-aqua-50 p-5 sm:p-6">
+              <ShieldCheck
+                aria-hidden="true"
+                className="text-aqua-700"
+                size={30}
+                strokeWidth={1.7}
+              />
+              <h2 className="mt-5 font-serif text-2xl font-bold text-navy-950">Resumo atual</h2>
+              <ul className="mt-5 space-y-4 text-sm leading-7 text-slate-700">
+                {currentPractices.map((practice) => (
+                  <li className="flex gap-3" key={practice}>
+                    <span
+                      aria-hidden="true"
+                      className="mt-3 h-1.5 w-1.5 shrink-0 rounded-full bg-aqua-600"
+                    />
+                    <span>{practice}</span>
+                  </li>
+                ))}
+              </ul>
+            </aside>
             <section aria-labelledby="controlador">
-              <h2 className="font-serif text-3xl font-bold text-navy-950" id="controlador">
+              <h2
+                className="scroll-mt-24 font-serif text-2xl font-bold text-navy-950 sm:text-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-700"
+                id="controlador"
+                tabIndex={-1}
+              >
                 1. Controlador e alcance
               </h2>
               <p className="mt-4">
@@ -104,7 +150,11 @@ export default function PrivacyPolicyPage() {
             </section>
 
             <section aria-labelledby="informacoes">
-              <h2 className="font-serif text-3xl font-bold text-navy-950" id="informacoes">
+              <h2
+                className="scroll-mt-24 font-serif text-2xl font-bold text-navy-950 sm:text-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-700"
+                id="informacoes"
+                tabIndex={-1}
+              >
                 2. Informações tratadas
               </h2>
               <p className="mt-4">
@@ -133,7 +183,11 @@ export default function PrivacyPolicyPage() {
             </section>
 
             <section aria-labelledby="finalidades">
-              <h2 className="font-serif text-3xl font-bold text-navy-950" id="finalidades">
+              <h2
+                className="scroll-mt-24 font-serif text-2xl font-bold text-navy-950 sm:text-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-700"
+                id="finalidades"
+                tabIndex={-1}
+              >
                 3. Finalidades e bases legais
               </h2>
               <p className="mt-4">As informações podem ser utilizadas para:</p>
@@ -152,7 +206,11 @@ export default function PrivacyPolicyPage() {
             </section>
 
             <section aria-labelledby="compartilhamento">
-              <h2 className="font-serif text-3xl font-bold text-navy-950" id="compartilhamento">
+              <h2
+                className="scroll-mt-24 font-serif text-2xl font-bold text-navy-950 sm:text-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-700"
+                id="compartilhamento"
+                tabIndex={-1}
+              >
                 4. Compartilhamento e tratamento internacional
               </h2>
               <p className="mt-4">
@@ -169,7 +227,11 @@ export default function PrivacyPolicyPage() {
             </section>
 
             <section aria-labelledby="retencao">
-              <h2 className="font-serif text-3xl font-bold text-navy-950" id="retencao">
+              <h2
+                className="scroll-mt-24 font-serif text-2xl font-bold text-navy-950 sm:text-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-700"
+                id="retencao"
+                tabIndex={-1}
+              >
                 5. Retenção
               </h2>
               <p className="mt-4">
@@ -193,7 +255,11 @@ export default function PrivacyPolicyPage() {
             </section>
 
             <section aria-labelledby="direitos">
-              <h2 className="font-serif text-3xl font-bold text-navy-950" id="direitos">
+              <h2
+                className="scroll-mt-24 font-serif text-2xl font-bold text-navy-950 sm:text-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-700"
+                id="direitos"
+                tabIndex={-1}
+              >
                 6. Direitos do titular
               </h2>
               <p className="mt-4">Nos termos da LGPD, você pode, quando aplicável:</p>
@@ -218,7 +284,11 @@ export default function PrivacyPolicyPage() {
             </section>
 
             <section aria-labelledby="cookies">
-              <h2 className="font-serif text-3xl font-bold text-navy-950" id="cookies">
+              <h2
+                className="scroll-mt-24 font-serif text-2xl font-bold text-navy-950 sm:text-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-700"
+                id="cookies"
+                tabIndex={-1}
+              >
                 7. Cookies e serviços externos
               </h2>
               <p className="mt-4">
@@ -240,7 +310,11 @@ export default function PrivacyPolicyPage() {
             </section>
 
             <section aria-labelledby="seguranca">
-              <h2 className="font-serif text-3xl font-bold text-navy-950" id="seguranca">
+              <h2
+                className="scroll-mt-24 font-serif text-2xl font-bold text-navy-950 sm:text-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-700"
+                id="seguranca"
+                tabIndex={-1}
+              >
                 8. Segurança e atualizações
               </h2>
               <p className="mt-4">
@@ -253,11 +327,17 @@ export default function PrivacyPolicyPage() {
                 tecnológicas. A versão e a data exibidas no início indicarão a atualização vigente.
               </p>
             </section>
+            <a
+              className="inline-flex min-h-12 items-center rounded-md font-semibold text-aqua-700 hover:text-navy-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-700"
+              href="#document-index-title"
+            >
+              Voltar ao índice
+            </a>
           </div>
         </Container>
       </section>
 
-      <section className="bg-navy-950 py-16 text-white sm:py-20">
+      <section className="bg-navy-950 py-8 text-white sm:py-12">
         <Container className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-3xl">
             <LockKeyhole aria-hidden="true" className="text-aqua-300" size={34} strokeWidth={1.6} />

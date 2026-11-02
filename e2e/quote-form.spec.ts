@@ -12,9 +12,7 @@ for (const viewport of viewports) {
     await page.setViewportSize(viewport);
     await page.goto("/contato");
 
-    await expect(
-      page.getByRole("heading", { name: "Conte o essencial para iniciarmos" }),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Solicite sua cotação" })).toBeVisible();
     await expect(page.getByLabel("Nome completo *")).toBeVisible();
     await expect(page.getByRole("button", { name: "Solicitar cotação" })).toBeVisible();
 
@@ -22,6 +20,22 @@ for (const viewport of viewports) {
       () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
     );
     expect(hasHorizontalOverflow).toBe(false);
+
+    await page.evaluate(() => document.fonts.ready);
+    const positions = await page.evaluate(() => {
+      const quote = document.getElementById("solicitar-cotacao");
+      const channels = document.getElementById("other-contact-title");
+      const name = document.querySelector('input[name="fullName"]');
+      if (!quote || !channels || !name) throw new Error("Seções de contato ausentes");
+      return {
+        quote: quote.getBoundingClientRect().top + window.scrollY,
+        channels: channels.getBoundingClientRect().top + window.scrollY,
+        firstField: name.getBoundingClientRect().top + window.scrollY,
+      };
+    });
+    expect(positions.quote).toBeLessThan(positions.channels);
+    expect(positions.firstField).toBeLessThan(1100);
+    await expect(page.getByRole("link", { name: "Preencher cotação" })).toBeInViewport();
 
     await page.screenshot({
       fullPage: true,
@@ -49,6 +63,38 @@ test("campos e destinos essenciais permanecem acessíveis", async ({ page }) => 
   await expect(page.getByLabel("Nome completo *")).toBeFocused();
   await page.keyboard.press("Tab");
   await expect(page.getByLabel("Telefone com DDD *")).toBeFocused();
+});
+
+test("atalho de cotação preserva a modalidade e posiciona o formulário no celular", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/contato?seguro=auto");
+  await page.getByRole("link", { name: "Preencher cotação" }).click();
+
+  await expect(page).toHaveURL(/\/contato\?seguro=auto#solicitar-cotacao$/);
+  await expect(page.getByLabel("Seguro de interesse *")).toHaveValue("auto");
+  await expect(page.getByLabel("Nome completo *")).toBeInViewport();
+  await expect
+    .poll(async () => {
+      const heading = await page
+        .getByRole("heading", { name: "Solicite sua cotação" })
+        .boundingBox();
+      const header = await page.getByRole("banner").boundingBox();
+      return Boolean(heading && header && heading.y >= header.y + header.height);
+    })
+    .toBe(true);
+});
+
+test("entrada pela modalidade continua chegando ao formulário com contexto", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/seguros/auto");
+  await page.getByRole("link", { name: "Solicitar cotação", exact: true }).first().click();
+  await expect(page).toHaveURL(/\/contato\?seguro=auto#solicitar-cotacao$/);
+  await expect(page.getByLabel("Seguro de interesse *")).toHaveValue("auto");
+  await expect(page.getByLabel("Nome completo *")).toBeInViewport();
 });
 
 test("pré-seleciona uma modalidade válida sem aceitar valores desconhecidos", async ({ page }) => {

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Wordmark } from "@/components/brand/wordmark";
 import { Container } from "@/components/layout/container";
 import { buttonStyles } from "@/components/ui/button";
-import { mainNavigation } from "@/config/site";
+import { NavigationLinks } from "@/components/layout/navigation-links";
 import { createWhatsAppHref, whatsappMessages } from "@/features/contact/whatsapp";
 
 export function SiteHeader() {
@@ -20,15 +20,7 @@ export function SiteHeader() {
         <Wordmark inverted />
 
         <nav aria-label="Navegação principal" className="hidden items-center gap-7 lg:flex">
-          {mainNavigation.map((item) => (
-            <Link
-              className="text-sm font-medium text-slate-200 transition-colors hover:text-aqua-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-300"
-              href={item.href}
-              key={item.href}
-            >
-              {item.label}
-            </Link>
-          ))}
+          <NavigationLinks />
         </nav>
 
         <div className="hidden lg:block">
@@ -61,15 +53,7 @@ export function SiteHeader() {
             aria-label="Navegação móvel"
             className="absolute right-0 top-14 w-[min(19rem,calc(100vw-2.5rem))] rounded-xl border border-white/10 bg-navy-900 p-3 shadow-2xl"
           >
-            {mainNavigation.map((item) => (
-              <Link
-                className="block rounded-lg px-4 py-3 text-sm font-medium text-slate-100 hover:bg-white/8 hover:text-aqua-200"
-                href={item.href}
-                key={item.href}
-              >
-                {item.label}
-              </Link>
-            ))}
+            <NavigationLinks mobile />
             <Link
               aria-label="Fale conosco por e-mail ou telefone"
               className={buttonStyles({ className: "mt-2 w-full", size: "sm" })}
