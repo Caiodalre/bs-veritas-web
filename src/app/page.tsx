@@ -18,24 +18,6 @@ const trustItems = [
   "Apoio também depois da contratação",
 ] as const;
 
-const quoteSteps = [
-  {
-    number: "01",
-    title: "Conte sua necessidade",
-    text: "Um contato inicial simples, sem documentos ou dados sensíveis.",
-  },
-  {
-    number: "02",
-    title: "Receba orientação",
-    text: "A equipe entende seu contexto antes de apresentar alternativas.",
-  },
-  {
-    number: "03",
-    title: "Escolha com clareza",
-    text: "Coberturas e condições são explicadas para uma decisão consciente.",
-  },
-] as const;
-
 export default function Home() {
   return (
     <div className="min-h-screen bg-background">
@@ -56,7 +38,7 @@ export default function Home() {
             className="absolute inset-y-0 right-0 -z-10 hidden w-[48%] skew-x-[-8deg] border-l border-white/10 bg-white/[0.025] lg:block"
           />
 
-          <Container className="grid min-h-[38rem] items-center gap-14 py-20 lg:grid-cols-[1.08fr_0.92fr] lg:py-24">
+          <Container className="grid items-center gap-10 py-10 sm:py-16 lg:grid-cols-[1.08fr_0.92fr]">
             <div className="max-w-3xl">
               <p className="mb-5 text-sm font-semibold uppercase tracking-[0.2em] text-aqua-300">
                 Consultoria em seguros para pessoas e empresas
@@ -127,10 +109,7 @@ export default function Home() {
         >
           <Container className="grid divide-y divide-white/10 md:grid-cols-3 md:divide-x md:divide-y-0">
             {trustItems.map((label) => (
-              <div
-                className="flex min-h-24 items-center gap-4 px-1 py-5 md:px-6 first:md:pl-0"
-                key={label}
-              >
+              <div className="flex items-center gap-3 px-1 py-4 md:px-6 first:md:pl-0" key={label}>
                 <CheckCircle2
                   aria-hidden="true"
                   className="shrink-0 text-aqua-300"
@@ -143,88 +122,76 @@ export default function Home() {
           </Container>
         </section>
 
-        <section className="scroll-mt-24 py-20 sm:py-24" id="seguros">
+        <section className="scroll-mt-24 py-10 sm:py-16" id="seguros">
           <Container>
             <div className="max-w-3xl">
               <p className="text-sm font-bold uppercase tracking-[0.18em] text-aqua-700">
-                Soluções completas
+                Modalidades
               </p>
               <h2 className="mt-4 font-serif text-3xl leading-tight font-bold tracking-[-0.025em] text-navy-950 sm:text-4xl">
                 Seguros para diferentes fases da sua vida
               </h2>
               <p className="mt-5 text-base leading-8 text-slate-600">
-                O atendimento começa pela compreensão da sua necessidade. As alternativas são
-                analisadas com clareza, sem fórmulas prontas.
+                Já sabe o que procura? Acesse a modalidade para conhecer os pontos de atenção e
+                solicitar uma cotação.
               </p>
             </div>
 
-            <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {insuranceCatalog.map((solution) => {
-                return (
-                  <article
-                    className="group flex flex-col rounded-2xl border border-border bg-white p-7 shadow-[0_14px_45px_rgba(7,24,39,0.055)] transition duration-200 hover:-translate-y-1 hover:border-aqua-400"
-                    key={solution.slug}
-                  >
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-aqua-100 text-aqua-700 transition-colors group-hover:bg-aqua-300 group-hover:text-navy-950">
-                      <InsuranceIcon name={solution.icon} size={25} />
-                    </div>
-                    <h3 className="mt-6 font-serif text-xl font-bold text-navy-950">
-                      {solution.name}
-                    </h3>
-                    <p className="mt-3 flex-1 text-sm leading-7 text-slate-600">
-                      {solution.description}
-                    </p>
-                    <Link
-                      aria-label={"Conhecer " + solution.name}
-                      className="mt-6 inline-flex items-center gap-2 font-semibold text-aqua-700 hover:text-navy-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-500"
-                      href={"/seguros/" + solution.slug}
-                    >
-                      Conhecer detalhes
-                      <ArrowRight aria-hidden="true" size={17} />
-                    </Link>
-                  </article>
-                );
-              })}
-            </div>
+            <nav
+              aria-label="Acesso rápido às modalidades"
+              className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-3"
+            >
+              {insuranceCatalog.map((solution) => (
+                <Link
+                  aria-label={"Conhecer " + solution.name}
+                  className="group flex min-h-20 items-center gap-4 rounded-xl border border-border bg-white p-4 text-navy-950 transition-colors hover:border-aqua-600 hover:bg-aqua-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-700"
+                  href={"/seguros/" + solution.slug}
+                  key={solution.slug}
+                >
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-aqua-100 text-aqua-700">
+                    <InsuranceIcon name={solution.icon} size={24} />
+                  </span>
+                  <span className="flex-1 font-serif text-xl font-bold">{solution.name}</span>
+                  <ArrowRight aria-hidden="true" className="shrink-0 text-aqua-700" size={18} />
+                </Link>
+              ))}
+            </nav>
+            <Link
+              className="mt-5 inline-flex min-h-12 items-center gap-2 rounded-md font-semibold text-aqua-700 hover:text-navy-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-700"
+              href="/seguros"
+            >
+              Precisa de ajuda para escolher a modalidade?
+              <ArrowRight aria-hidden="true" className="shrink-0" size={18} />
+            </Link>
           </Container>
         </section>
 
         <CampaignFeed />
 
-        <section className="scroll-mt-24 bg-navy-950 py-20 text-white sm:py-24" id="diferenciais">
-          <Container>
+        <section className="scroll-mt-24 bg-navy-950 py-10 text-white sm:py-12" id="diferenciais">
+          <Container className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
             <div>
               <p className="text-sm font-bold uppercase tracking-[0.18em] text-aqua-300">
                 Como ajudamos
               </p>
               <h2 className="mt-4 max-w-xl font-serif text-3xl leading-tight font-bold tracking-[-0.025em] sm:text-4xl">
-                Da necessidade à escolha, sem atalhos
+                Orientação de pessoas, para pessoas
               </h2>
-              <p className="mt-6 max-w-xl text-base leading-8 text-slate-300">
-                A conversa organiza o que precisa de proteção e os critérios que realmente importam
-                antes da comparação de propostas.
+              <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300">
+                Conheça quem acompanha sua cotação e como a B&S Veritas orienta a escolha e os
+                próximos ciclos do seguro.
               </p>
             </div>
 
-            <ol className="mt-12 grid gap-5 md:grid-cols-3">
-              {quoteSteps.map((step) => (
-                <li
-                  className="rounded-xl border border-white/10 bg-white/[0.045] p-6"
-                  key={step.number}
-                >
-                  <span className="text-sm font-bold tracking-[0.18em] text-aqua-300">
-                    {step.number}
-                  </span>
-                  <h3 className="mt-5 font-serif text-xl font-bold">{step.title}</h3>
-                  <p className="mt-3 text-sm leading-7 text-slate-300">{step.text}</p>
-                </li>
-              ))}
-            </ol>
+            <Link className={buttonStyles({ variant: "outlineDark" })} href="/sobre">
+              Conhecer a B&S Veritas
+              <ArrowRight aria-hidden="true" size={18} />
+            </Link>
           </Container>
         </section>
 
         <section
-          className="scroll-mt-24 border-y border-border bg-aqua-50 py-20 sm:py-24"
+          className="scroll-mt-24 border-y border-border bg-aqua-50 py-10 sm:py-12"
           id="seguradoras"
         >
           <Container>
@@ -233,56 +200,38 @@ export default function Home() {
                 Mercado segurador
               </p>
               <h2 className="mt-4 font-serif text-3xl leading-tight font-bold tracking-[-0.025em] text-navy-950 sm:text-4xl">
-                Escolha orientada, além da comparação de preço
+                Seguradoras e plataformas parceiras
               </h2>
-              <p className="mt-6 text-base leading-8 text-slate-600">
-                A análise considera coberturas, assistências, condições e adequação ao perfil. As
-                opções disponíveis são apresentadas de forma responsável durante o atendimento.
+              <p className="mt-4 text-base leading-7 text-slate-600">
+                Conheça as marcas parceiras da B&S Veritas. Durante o atendimento, avaliamos as
+                opções disponíveis conforme sua necessidade.
               </p>
             </div>
 
-            <div className="mx-auto mt-12 max-w-5xl">
-              <div
-                aria-label="Seguradoras e plataformas parceiras"
-                aria-roledescription="carrossel"
-                className="overflow-x-auto scroll-smooth pb-4 focus-visible:rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-700 focus-visible:ring-offset-4"
-                role="region"
-                tabIndex={0}
-              >
-                <ul className="flex snap-x snap-mandatory gap-4 px-1">
+            <div className="mx-auto mt-7 max-w-5xl">
+              <div aria-label="Seguradoras e plataformas parceiras" role="region">
+                <ul className="grid grid-cols-2 gap-3 lg:grid-cols-4">
                   {partnerCatalog.map((partner) => (
                     <li
-                      className="flex min-h-36 w-[78vw] max-w-80 flex-none scroll-mt-24 snap-center items-center justify-center rounded-xl border border-aqua-200 bg-white px-8 py-7 shadow-sm sm:w-80 lg:w-[calc((100%-2rem)/3)] lg:max-w-none"
+                      className="flex min-w-0 scroll-mt-24 flex-col items-center justify-center gap-3 rounded-xl border border-aqua-200 bg-white px-4 py-5 shadow-sm sm:p-6"
                       id={`parceira-${partner.slug}`}
                       key={partner.slug}
                     >
                       <Image
                         alt={`Logotipo ${partner.name}`}
-                        className="h-10 w-auto max-w-full object-contain"
+                        className="h-10 w-full object-contain"
                         height={partner.logoHeight}
                         src={partner.logoSrc}
                         unoptimized
                         width={partner.logoWidth}
                       />
+                      <span className="text-center text-sm font-semibold text-navy-950">
+                        {partner.name}
+                      </span>
                     </li>
                   ))}
                 </ul>
               </div>
-
-              <nav
-                aria-label="Selecionar marca parceira no carrossel"
-                className="mt-5 flex flex-wrap justify-center gap-2"
-              >
-                {partnerCatalog.map((partner) => (
-                  <a
-                    className="rounded-full border border-aqua-200 bg-white px-4 py-2 text-sm font-semibold text-aqua-700 transition-colors hover:border-aqua-600 hover:text-navy-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-700"
-                    href={`#parceira-${partner.slug}`}
-                    key={partner.slug}
-                  >
-                    {partner.name}
-                  </a>
-                ))}
-              </nav>
 
               <p className="mt-5 text-center text-sm leading-6 text-slate-500">
                 Parcerias comerciais confirmadas. A disponibilidade de produtos depende do perfil,
@@ -293,7 +242,7 @@ export default function Home() {
           </Container>
         </section>
 
-        <section className="scroll-mt-24 bg-navy-900 py-20 text-white sm:py-24" id="cotacao">
+        <section className="scroll-mt-24 bg-navy-900 py-10 text-white sm:py-12" id="cotacao">
           <Container className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
             <div className="max-w-3xl">
               <p className="text-sm font-bold uppercase tracking-[0.18em] text-aqua-300">

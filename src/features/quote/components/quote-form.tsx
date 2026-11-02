@@ -44,7 +44,6 @@ type SubmissionState = "idle" | "submitting" | "success" | "error";
 const fieldClassName =
   "mt-2 min-h-12 w-full rounded-md border border-slate-300 bg-white px-4 text-base text-navy-950 shadow-sm outline-none transition placeholder:text-slate-500 hover:border-slate-400 focus:border-aqua-700 focus:ring-3 focus:ring-aqua-200 disabled:cursor-not-allowed disabled:bg-slate-100";
 
-const initialStatusMessage = "Preencha os dados abaixo. Os campos marcados com * são obrigatórios.";
 const subscribeToHostname = () => () => undefined;
 const getServerSiteKey = () => undefined;
 const getBrowserSiteKey = () => resolveTurnstileSiteKey(window.location.hostname);
@@ -60,7 +59,7 @@ function getFailureMessage(status: number) {
     return "Revise os dados informados e tente novamente.";
   }
 
-  return "Não foi possível registrar sua solicitação agora. Tente novamente ou use um dos canais oficiais acima.";
+  return "Não foi possível registrar sua solicitação agora. Tente novamente ou use outro canal de atendimento nesta página.";
 }
 
 type QuoteFormProps = {
@@ -89,7 +88,7 @@ export function QuoteForm({ initialInsuranceType, siteKey: configuredSiteKey }: 
   const [turnstileToken, setTurnstileToken] = useState("");
   const [turnstileMessage, setTurnstileMessage] = useState("");
   const [submissionState, setSubmissionState] = useState<SubmissionState>("idle");
-  const [statusMessage, setStatusMessage] = useState(initialStatusMessage);
+  const [statusMessage, setStatusMessage] = useState("");
   const [insuranceType, setInsuranceType] = useState(
     resolveContextualInsuranceType(initialInsuranceType ?? null) ?? "",
   );
@@ -202,7 +201,7 @@ export function QuoteForm({ initialInsuranceType, siteKey: configuredSiteKey }: 
     } catch {
       setSubmissionState("error");
       setStatusMessage(
-        "Não foi possível conectar agora. Tente novamente ou use um dos canais oficiais acima.",
+        "Não foi possível conectar agora. Tente novamente ou use outro canal de atendimento nesta página.",
       );
       resetTurnstile();
     }
@@ -233,10 +232,15 @@ export function QuoteForm({ initialInsuranceType, siteKey: configuredSiteKey }: 
         />
       ) : null}
       <form
+        aria-describedby="quote-form-instructions"
+        aria-label="Solicitação de cotação"
         className="rounded-2xl border border-border bg-white p-6 shadow-[0_18px_55px_rgba(7,24,39,0.07)] sm:p-8"
         onSubmit={handleSubmit}
         ref={formRef}
       >
+        <p className="mb-5 text-sm leading-6 text-slate-600" id="quote-form-instructions">
+          Os campos marcados com * são obrigatórios. Não é necessário enviar documentos.
+        </p>
         <div className="grid gap-6 md:grid-cols-2">
           <label className="text-sm font-semibold text-navy-950">
             Nome completo *
@@ -336,6 +340,10 @@ export function QuoteForm({ initialInsuranceType, siteKey: configuredSiteKey }: 
         </div>
 
         <p className="mt-6 text-sm leading-6 text-slate-600">
+          O envio não representa proposta, contratação ou garantia de aceitação. Coberturas e
+          condições variam conforme produto e seguradora.
+        </p>
+        <p className="mt-3 text-sm leading-6 text-slate-600">
           Não envie CPF, documentos, dados bancários, informações médicas ou dados completos de
           apólices. Ao enviar, você declara ciência da nossa{" "}
           <Link

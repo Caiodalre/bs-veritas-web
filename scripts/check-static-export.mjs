@@ -4,7 +4,13 @@ const contactPage = new URL("../out/contato.html", import.meta.url);
 const securityTxtFile = new URL("../out/.well-known/security.txt", import.meta.url);
 const html = await readFile(contactPage, "utf8");
 const securityTxt = await readFile(securityTxtFile, "utf8");
-const requiredMarkers = ["Conte o essencial para iniciarmos", "<form", "Solicitar cotação"];
+const requiredMarkers = [
+  'id="solicitar-cotacao"',
+  "<form",
+  'name="fullName"',
+  'name="insuranceType"',
+  "Solicitar cotação",
+];
 const missingMarkers = requiredMarkers.filter((marker) => !html.includes(marker));
 
 if (missingMarkers.length > 0) {

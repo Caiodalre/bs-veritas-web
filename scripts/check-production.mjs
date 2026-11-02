@@ -86,7 +86,7 @@ async function checkRscNavigationPayload() {
   const body = await response.text();
 
   assert(response.status === 200, `${url} respondeu ${response.status}`);
-  assert(body.includes("Confiança se constrói"), `${url} não retornou o payload esperado`);
+  assert(body.includes("Conheça a B&S Veritas"), `${url} não retornou o payload esperado`);
 }
 
 async function checkTextResource(path, expectedText) {
